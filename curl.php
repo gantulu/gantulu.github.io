@@ -1,10 +1,5 @@
 <?php
 
-$api_key   = 'ee2e86319b09b26558aa4d20f75418d921b77c76'; // API KEY Anda
-$id_device = '12345'; // ID DEVICE yang di SCAN (Sebagai pengirim)
-$url   = 'https://api.watsap.id/send-message'; // URL API
-$no_hp = '081234567890'; // No.HP yang dikirim (No.HP Penerima)
-$pesan = '😁 Halo Terimakasih 🙏'; // Pesan yang dikirim
 
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, $url);
