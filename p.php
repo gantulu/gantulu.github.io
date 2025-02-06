@@ -12,8 +12,8 @@ curl_setopt_array($curl, array(
   CURLOPT_CUSTOMREQUEST => 'POST',
   CURLOPT_POSTFIELDS => array(
   'appkey' => 'b9547b63-3076-409b-860f-2960e86450f4',
-  'authkey' => '',
-  'to' => 'RECEIVER_NUMBER',
+  'authkey' => 'SaO5LIZAlDZapl7nCQVTuDGRSG2jQh5ooSRZpUzzoVXTrZ2rNW',
+  'to' => '6289506588503',
   'message' => 'Example message',
   'sandbox' => 'false'
   ),
