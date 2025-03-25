@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title> Names of India </title>
+  	<link rel="stylesheet" href="index.css">
+</head>
+<body>
+	<div id="hero">
+		<h1>Pronounciations of Indian Names</h1>
+		<h3>Learn how to correctly say Indian names</h3>
+	</div>	
+	<div id="display">
+		<div id="loader"> 
+			<h4> Loading</h4> 
+		</div>
+		<div id="allNames">
+		</div>
+		<div id="errorMessage"> 
+			<h2> Failed to get data. Please refresh </h2>
+		</div>
+	</div>
+	<footer>
+		<h4> Built by <a href="www.heyastha.com" style="text-decoration: none"> Astha Sharma </a>
+		<h4> Powered by <a href="https://www.apispreadsheets.com" style="text-decoration: none"> API Spreadsheets </a> </h4>
+	</footer>
+	<script>
+		let allNamesElm = document.getElementById("allNames")
+		let loaderElm = document.getElementById("loader")
+		let errorMessageElm = document.getElementById("errorMessage")
+		
+		function setErrorDisplay(){
+			loaderElm.style.display = "none"
+			allNamesElm.style.display = "none"
+			errorMessageElm.style.display = "block"
+		}
+			
+		fetch("https://api.apispreadsheets.com/data/7765/").then(res=>{
+			if (res.status === 200){
+				res.json().then(data=>{
+					const yourData = data["data"]
+					for(let i = 0; i < yourData.length; i++){
+						let rowInfo = yourData[i]
+
+						let rowInfoDiv = document.createElement("div")
+						rowInfoDiv.classList.add("name-row")
+
+						let rowName = document.createElement("h4")
+						let rowNameNode = document.createTextNode(rowInfo["name"])
+						rowName.appendChild(rowNameNode)
+						rowName.classList.add("name")
+
+						let rowWritten = document.createElement("p")
+						let rowWrittenNode = document.createTextNode(rowInfo["written"])
+						rowWritten.appendChild(rowWrittenNode)
+						rowWritten.classList.add("written")
+
+						
+						let rowAudio = document.createElement("audio")
+						rowAudio.id = "audio-player"
+						rowAudio.controls = "controls"
+						rowAudio.src = rowInfo["audio"]
+						rowAudio.type = "audio/mpeg"
+						rowAudio.classList.add("audio")
+
+						rowInfoDiv.appendChild(rowName)
+						rowInfoDiv.appendChild(rowWritten)
+						rowInfoDiv.appendChild(rowAudio)
+
+						allNamesElm.appendChild(rowInfoDiv)
+
+					}
+					
+					loaderElm.style.display = "none"
+					allNamesElm.style.display = "block"
+					errorMessageElm.style.display = "none"
+
+				}).catch(err => {
+					setErrorDisplay()
+				})
+			}
+			else{
+				setErrorDisplay()
+			}
+		}).catch(err =>{
+			setErrorDisplay()
+		})
+	</script>
+</body>
+</html>
