@@ -1,20 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title> Tokopedia</title>
-  	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
+ <title> Tokopedia</title>
+ <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.css">
 </head>
 <body>
-	<table id="tokopedia" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>nama</th>
-                <th>harga</th>
-                <th>deskripsi</th>
-                <th>pengirim</th>
-            </tr>
-        </thead>
-        
-    </table>
+ <table id="tokopedia" class="display" style="width:100%">
+  <thead>
+   <tr>
+    <th>nama</th>
+    <th>harga</th>
+    <th>deskripsi</th>
+    <th>pengirim</th>
+   </tr>
+  </thead>
+ </table>
+ <script type="text/javascript" scr="https://code.jquery.com/jquery-3.7.1.js"></script>
+ <script type="text/javascript" scr="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+ <script type="text/javascript" scr="https://cdn.datatables.net/2.2.2/js/dataTables.js"></script>
+ <script>
+  new DataTable('#tokopedia', {
+    ajax: 'https://script.google.com/macros/s/AKfycbzYn3v1hX8e3s_hzUyUHim6r9-vjMJAB8ggfDjqVQENUIB5fKjkSB1ixpX6_tQwZ86v/exec',
+    columns: [
+        { data: 'name' },
+        { data: 'position' },
+        { data: 'office' },
+        { data: 'extn' },
+        { data: 'start_date' },
+        { data: 'salary' }
+    ]
+});
+ </script>
 </body>
 </html>
