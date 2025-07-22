@@ -1,54 +1,61 @@
-<script>
-document.getElementById('form').addEventListener('submit', async function (e) {
+const token = "Bearer aff75d8cc39d3ca17aff0eca2cf40a2b99a47a9f58b543b55011b54dd52371b1";
+const collectionId = "68753222d5f2c7c5c8ce00be";
+
+document.getElementById("uploadForm").addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  const form = e.target;
-  const file = form.img1.files[0];
+  const itemId = document.getElementById("itemID").value;
+  if (!itemId) return alert("Item ID harus diisi.");
 
-  // Konversi file ke Base64
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+  const files = {
+    foto1: document.getElementById("foto1").files[0],
+    foto2: document.getElementById("foto2").files[0],
+    foto3: document.getElementById("foto3").files[0]
   };
 
-  const base64Image = file ? await getBase64(file) : null;
+  const uploadedAssets = {};
 
-  const jsonData = {
-    name: form.name.value,
-    color: form.color.value,
-    storage: form.storage.value,
-    harga: form.harga.value,
-    deskripsi: form.deskripsi.value,
-    pengirim: form.pengirim.value,
-    kota: form.kota.value,
-    link: form.link.value,
-    image: base64Image
-  };
+  for (const [field, file] of Object.entries(files)) {
+    if (!file) continue;
 
-  console.log('Data yang dikirim:', jsonData);
+    const formData = new FormData();
+    formData.append("file", file);
 
-  // Kirim ke BuildShip webhook
-  try {
-    const response = await fetch('https://qlpav7.buildship.run/file-uploadsf', {
-      method: 'POST',
+    const res = await fetch("https://api.webflow.com/v2/assets/upload", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        Authorization: token
       },
-      body: JSON.stringify(jsonData)
+      body: formData
     });
 
-    if (response.ok) {
-      alert('Berhasil mengirim data!');
-    } else {
-      alert('Gagal mengirim data!');
+    const json = await res.json();
+    if (!json?.data?.id) {
+      alert(`Gagal upload ${field}`);
+      return;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Terjadi error saat mengirim!');
+
+    uploadedAssets[field] = { assetId: json.data.id };
+  }
+
+  // Update item di Webflow
+  const patchRes = await fetch(
+    `https://api.webflow.com/v2/collections/${collectionId}/items/${itemId}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ fields: uploadedAssets })
+    }
+  );
+
+  const patchJson = await patchRes.json();
+  if (patchJson?.data?.id) {
+    alert("Berhasil update gambar ke CMS Webflow!");
+  } else {
+    console.error(patchJson);
+    alert("Gagal update item CMS.");
   }
 });
-</script>
