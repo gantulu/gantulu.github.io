@@ -1,20 +1,27 @@
-const img1Input = document.getElementById('img1');
-const uploadBtn = document.getElementById('upload-btn');
+document.getElementById("form").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-uploadBtn.addEventListener('click', () => {
-  const file = img1Input.files[0];
-  if (file) {
-    const formData = new FormData();
-    formData.append('img1', file);
+  const fileInput = document.getElementById("img1");
+  const file = fileInput.files[0];
 
-    fetch('https://qlpav7.buildship.run/file-uploadsf', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  } else {
-    console.error('Tidak ada file yang dipilih');
+  if (!file) {
+    alert("Pilih file gambar terlebih dahulu!");
+    return;
   }
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    const dataUrl = event.target.result;
+
+    // Preview gambar
+    const preview = document.getElementById("preview");
+    preview.src = dataUrl;
+    preview.style.display = "block";
+
+    // Tampilkan data URL (base64)
+    document.getElementById("output").value = dataUrl;
+  };
+
+  reader.readAsDataURL(file);
 });
