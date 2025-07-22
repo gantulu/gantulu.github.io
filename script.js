@@ -1,7 +1,16 @@
-async function callEndpoint(img1) {
+async function callEndpoint(itemId, name, color, harga, pengirim, kota, rintisan, img1, img2, img3) {
     const url = 'https://qlpav7.buildship.run/untitledFlow-2b2016a16bb1';
     const data = {
-        img1: img1
+        itemId: itemId,
+name: name,
+color: color,
+harga: harga,
+pengirim: pengirim,
+kota: kota,
+rintisan: rintisan,
+img1: img1,
+img2: img2,
+img3: img3
     }
     try {
         const response = await fetch(url, {
