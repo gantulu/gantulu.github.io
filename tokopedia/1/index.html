@@ -1,154 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Edit Item</title>
+  <title>Daftar iPhone</title>
+  <style>
+    .produk {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+    .produk img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
-  <h2>Daftar Item</h2>
-  <div id="itemsContainer"></div>
 
-  <!-- Modal Edit -->
-  <div id="editModal" style="display:none; background:#f0f0f0; padding:20px; border:1px solid #ccc;">
-    <h3>Edit Item</h3>
-    <form id="editForm">
-      <input type="hidden" id="editId">
-      <label>Nama:</label><br>
-      <input type="text" id="editName"><br><br>
-
-      <label>Penyimpanan Internal:</label><br>
-      <input type="text" id="editPenyimpanan"><br><br>
-
-      <label>Variant Warna:</label><br>
-      <input type="text" id="editWarna"><br><br>
-
-      <label>Deskripsi:</label><br>
-      <input type="text" id="editDeskripsi"><br><br>
-
-      <label>Harga:</label><br>
-      <input type="text" id="editHarga"><br><br>
-
-      <label>Pengirim:</label><br>
-      <input type="text" id="editPengirim"><br><br>
-
-      <label>Kota:</label><br>
-      <input type="text" id="editKota"><br><br>
-
-      <label>Image 1:</label><br>
-      <input type="file" id="editImage1"><br><br>
-
-      <label>Image 2:</label><br>
-      <input type="file" id="editImage2"><br><br>
-
-      <label>Image 3:</label><br>
-      <input type="file" id="editImage3"><br><br>
-
-      <button type="submit">Simpan</button>
-      <button type="button" onclick="closeModal()">Batal</button>
-    </form>
-  </div>
+  <h2>Daftar Produk iPhone</h2>
+  <div id="item-container">Memuat data...</div>
 
   <script>
-    const API_KEY_WEBFLOW = 'Bearer 3301b9f154f11de19dd0e574df67254bb4ef7511f74b069d4ec29b2c4371f6c5';
-    const API_KEY_APICO = 'Bearer 6525f97c82c230d32112c8b497ba98416aaf4ce0c46191220a23d616bf9e3801';
-    const COLLECTION_ID = '6808c4010c2dfac0e89d885c';
+    const options = { method: 'GET' };
 
-    function closeModal() {
-      document.getElementById('editModal').style.display = 'none';
-    }
+    fetch('https://api.apico.dev/v1/X2iKFZ/collections/6808c4010c2dfac0e89d885c/items', options)
+      .then(response => response.json())
+      .then(data => {
+        const container = document.getElementById('item-container');
+        container.innerHTML = ''; // Kosongkan isi awal
 
-    function openModal(item) {
-      document.getElementById('editModal').style.display = 'block';
-      document.getElementById('editId').value = item._id;
-      document.getElementById('editName').value = item.name || '';
-      document.getElementById('editPenyimpanan').value = item["penyimpanan-internal"] || '';
-      document.getElementById('editWarna').value = item["variant-warna"] || '';
-      document.getElementById('editDeskripsi').value = item.deskripsi || '';
-      document.getElementById('editHarga').value = item["harga-2"] || '';
-      document.getElementById('editPengirim').value = item.pengirim || '';
-      document.getElementById('editKota').value = item.kota || '';
-    }
+        if (!data || !data.items || data.items.length === 0) {
+          container.innerHTML = '<p>Tidak ada data ditemukan.</p>';
+          return;
+        }
 
-    async function uploadToWebflow(file) {
-      const formData = new FormData();
-      formData.append('file', file);
+        data.items.forEach(item => {
+          const f = item.fieldData;
 
-      const res = await fetch('https://api.webflow.com/v2/assets', {
-        method: 'POST',
-        headers: { 'Authorization': API_KEY_WEBFLOW },
-        body: formData
+          const div = document.createElement('div');
+          div.className = 'produk';
+          div.innerHTML = `
+            <h3>${f.name || 'Tanpa Nama'}</h3>
+            <p><strong>Warna:</strong> ${f["variant-warna"] || '-'}</p>
+            <p><strong>Penyimpanan:</strong> ${f["penyimpanan-internal"] || '-'}</p>
+            <p><strong>Harga:</strong> ${f["harga-2"] || '-'}</p>
+            <p><strong>Kota:</strong> ${f.kota || '-'}</p>
+            <p><strong>Pengirim:</strong> ${f.pengirim || '-'}</p>
+            <p><strong>Deskripsi:</strong><br>${f.deskripsi?.replace(/\n/g, '<br>') || '-'}</p>
+            <a href="${f.rintisan}" target="_blank">🔗 Link Rintisan</a>
+            <br><br>
+            <img src="${f.image1?.url || f.img1}" alt="Gambar 1">
+            <img src="${f.image2?.url || f.img2}" alt="Gambar 2">
+            <img src="${f.image3?.url || f.img3}" alt="Gambar 3">
+          `;
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        document.getElementById('item-container').innerHTML = '<p>Gagal mengambil data.</p>';
+        console.error(err);
       });
-
-      const result = await res.json();
-      if (result && result.id && result.url) {
-        return { fileId: result.id, url: result.url, alt: null };
-      } else {
-        throw new Error('Gagal upload ke Webflow');
-      }
-    }
-
-    async function updateItem(e) {
-      e.preventDefault();
-
-      const id = document.getElementById('editId').value;
-      const fieldData = {
-        name: document.getElementById('editName').value,
-        "penyimpanan-internal": document.getElementById('editPenyimpanan').value,
-        "variant-warna": document.getElementById('editWarna').value,
-        deskripsi: document.getElementById('editDeskripsi').value,
-        "harga-2": document.getElementById('editHarga').value,
-        pengirim: document.getElementById('editPengirim').value,
-        kota: document.getElementById('editKota').value
-      };
-
-      const img1 = document.getElementById('editImage1').files[0];
-      const img2 = document.getElementById('editImage2').files[0];
-      const img3 = document.getElementById('editImage3').files[0];
-
-      if (img1) fieldData.image1 = await uploadToWebflow(img1);
-      if (img2) fieldData.image2 = await uploadToWebflow(img2);
-      if (img3) fieldData.image3 = await uploadToWebflow(img3);
-
-      await fetch(`https://api.apico.dev/v1/X2iKFZ/collections/${COLLECTION_ID}/items/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': API_KEY_APICO,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ fieldData })
-      });
-
-      alert('Item berhasil diperbarui!');
-      closeModal();
-      loadItems();
-    }
-
-    async function loadItems() {
-      const res = await fetch(`https://api.apico.dev/v1/X2iKFZ/collections/${COLLECTION_ID}/items`, {
-        method: 'GET',
-        headers: { 'Authorization': API_KEY_APICO }
-      });
-      const data = await res.json();
-      const container = document.getElementById('itemsContainer');
-      container.innerHTML = '';
-
-      data.items.forEach(item => {
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <img src="${item.image1?.url || ''}" width="100"><br>
-          <strong>${item.name}</strong><br>
-          Harga: ${item["harga-2"] || '-'}<br>
-          Penyimpanan: ${item["penyimpanan-internal"] || '-'}<br>
-          Warna: ${item["variant-warna"] || '-'}<br>
-          <button onclick='openModal(${JSON.stringify(item).replace(/'/g, "\\'")})'>Edit</button>
-          <hr>
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    document.getElementById('editForm').addEventListener('submit', updateItem);
-
-    loadItems();
   </script>
+
 </body>
 </html>
