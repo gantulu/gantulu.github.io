@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Form</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        label { font-weight: bold; }
+        input[type="text"], select {
+            width: 250px;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+  <h2>Delivery Address Form (Malaysia)</h2>
+
+  <form>
+    <div class="form-group">
+      <label for="street">Street Address:</label><br>
+      <input type="text" id="street" name="street" placeholder="e.g., No. 10, Jalan Merdeka">
+    </div>
+
+    <div class="form-group">
+      <label for="state">State:</label><br>
+      <select id="state" name="state">
+        <option value="">Select a State</option>
+        <option value="Selangor">Selangor</option>
+        <option value="W.P. Kuala Lumpur">W.P. Kuala Lumpur</option>
+        <option value="Johor">Johor</option>
+        <option value="Penang">Penang</option>
+        <option value="Sabah">Sabah</option>
+        <option value="Sarawak">Sarawak</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+      <label for="city_postcode">City (and Postcode):</label><br>
+      <select id="city_postcode" name="city_postcode">
+        <option value="">Select a City and Postcode</option>
+        </select>
+      <input type="hidden" id="hiddenPostcode" name="postcode">
+    </div>
+
+    <input type="submit" value="Submit">
+  </form>
+
+  <script>
+    // Data now includes both city and a default postcode for that city
+    const citiesByState = {
+      "Selangor": [
+        { city: "Petaling Jaya", postcode: "46000" },
+        { city: "Shah Alam", postcode: "40000" },
+        { city: "Subang Jaya", postcode: "47500" },
+        { city: "Klang", postcode: "41000" }
+      ],
+      "W.P. Kuala Lumpur": [
+        { city: "Kuala Lumpur", postcode: "50000" },
+        { city: "Cheras", postcode: "56000" },
+        { city: "Kepong", postcode: "52000" }
+      ],
+      "Johor": [
+        { city: "Johor Bahru", postcode: "80000" },
+        { city: "Muar", postcode: "84000" }
+      ],
+      "Penang": [
+        { city: "George Town", postcode: "10000" },
+        { city: "Butterworth", postcode: "13000" }
+      ],
+      "Sabah": [
+        { city: "Kota Kinabalu", postcode: "88000" }
+      ],
+      "Sarawak": [
+        { city: "Kuching", postcode: "93000" }
+      ],
+      // Add more states and their cities with postcodes
+    };
+
+    const stateSelect = document.getElementById('state');
+    const cityPostcodeSelect = document.getElementById('city_postcode');
+    const hiddenPostcodeInput = document.getElementById('hiddenPostcode');
+
+    stateSelect.addEventListener('change', function() {
+      const selectedState = this.value;
+      cityPostcodeSelect.innerHTML = '<option value="">Select a City and Postcode</option>'; // Clear existing options
+      hiddenPostcodeInput.value = ''; // Clear hidden postcode too
+
+      if (selectedState) {
+        const cities = citiesByState[selectedState];
+        if (cities) {
+          cities.forEach(item => {
+            const option = document.createElement('option');
+            // Value could be just city, or city|postcode if you want to parse it later
+            option.value = `${item.city}|${item.postcode}`;
+            option.textContent = `${item.city} (${item.postcode})`;
+            cityPostcodeSelect.appendChild(option);
+          });
+        }
+      }
+    });
+
+    // Optional: Update hidden postcode field when city/postcode is selected
+    cityPostcodeSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      if (selectedValue) {
+        const postcode = selectedValue.split('|')[1];
+        hiddenPostcodeInput.value = postcode;
+      } else {
+        hiddenPostcodeInput.value = '';
+      }
+    });
+  </script>
+
+</body>
+</html>
