@@ -1,7 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Daftar iPhone</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Produk & Upload Gambar ke GitHub</title>
   <style>
     .produk {
       border: 1px solid #ccc;
@@ -11,9 +13,22 @@
       max-width: 500px;
     }
     .produk img {
-      width: 100%;
-      max-width: 200px;
+      width: 100px;
+      margin-right: 10px;
       border-radius: 8px;
+    }
+    .edit-form {
+      display: none;
+      margin-top: 20px;
+      border: 1px solid #888;
+      padding: 15px;
+      border-radius: 10px;
+      background: #f9f9f9;
+    }
+    .edit-form input, .edit-form textarea {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
     }
   </style>
 </head>
@@ -22,47 +37,174 @@
   <h2>Daftar Produk iPhone</h2>
   <div id="item-container">Memuat data...</div>
 
+  <div id="editForm" class="edit-form">
+    <h3>Edit Produk</h3>
+    <form id="form">
+      <input type="hidden" id="edit-id">
+
+      <label>Nama:</label>
+      <input type="text" id="edit-name">
+
+      <label>Warna:</label>
+      <input type="text" id="edit-warna">
+
+      <label>Penyimpanan:</label>
+      <input type="text" id="edit-storage">
+
+      <label>Harga:</label>
+      <input type="text" id="edit-harga">
+
+      <label>Kota:</label>
+      <input type="text" id="edit-kota">
+
+      <label>Pengirim:</label>
+      <input type="text" id="edit-pengirim">
+
+      <label>Deskripsi:</label>
+      <textarea id="edit-deskripsi" rows="5"></textarea>
+
+      <label>Link Rintisan:</label>
+      <input type="text" id="edit-link">
+
+      <hr>
+      <label>URL Gambar img1 (manual):</label>
+      <input type="text" id="edit-img1">
+      <input type="file" id="img1" onchange="handleFileUpload(event, 'edit-img1')">
+
+      <label>URL Gambar img2:</label>
+      <input type="text" id="edit-img2">
+      <input type="file" id="img2" onchange="handleFileUpload(event, 'edit-img2')">
+
+      <label>URL Gambar img3:</label>
+      <input type="text" id="edit-img3">
+      <input type="file" id="img3" onchange="handleFileUpload(event, 'edit-img3')">
+
+      <button type="submit">Simpan Perubahan</button>
+    </form>
+  </div>
+
+  <div id="result" style="margin-top: 20px;"></div>
+
   <script>
-    const options = { method: 'GET' };
+    const GITHUB_TOKEN = "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"; // Ganti dengan token GitHub
+    const REPO_OWNER = "gantulu";
+    const REPO_NAME = "gantulu.github.io";
+    const BRANCH = "main";
+    const UPLOAD_PATH = "tokopedia/1/";
 
-    fetch('https://api.apico.dev/v1/X2iKFZ/collections/6808c4010c2dfac0e89d885c/items', options)
-      .then(response => response.json())
-      .then(data => {
-        const container = document.getElementById('item-container');
-        container.innerHTML = ''; // Kosongkan isi awal
+    async function uploadToGitHub(input, fileName) {
+      const file = input.files[0];
+      if (!file) {
+        alert("Silakan pilih file terlebih dahulu.");
+        return;
+      }
 
-        if (!data || !data.items || data.items.length === 0) {
-          container.innerHTML = '<p>Tidak ada data ditemukan.</p>';
-          return;
-        }
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const contentBase64 = reader.result.split(',')[1];
 
-        data.items.forEach(item => {
-          const f = item.fieldData;
-
-          const div = document.createElement('div');
-          div.className = 'produk';
-          div.innerHTML = `
-            <h3>${f.name || 'Tanpa Nama'}</h3>
-            <p><strong>Warna:</strong> ${f["variant-warna"] || '-'}</p>
-            <p><strong>Penyimpanan:</strong> ${f["penyimpanan-internal"] || '-'}</p>
-            <p><strong>Harga:</strong> ${f["harga-2"] || '-'}</p>
-            <p><strong>Kota:</strong> ${f.kota || '-'}</p>
-            <p><strong>Pengirim:</strong> ${f.pengirim || '-'}</p>
-            <p><strong>Deskripsi:</strong><br>${f.deskripsi?.replace(/\n/g, '<br>') || '-'}</p>
-            <a href="${f.rintisan}" target="_blank">🔗 Link Rintisan</a>
-            <br><br>
-            <img src="${f.image1?.url || f.img1}" alt="Gambar 1">
-            <img src="${f.image2?.url || f.img2}" alt="Gambar 2">
-            <img src="${f.image3?.url || f.img3}" alt="Gambar 3">
-          `;
-          container.appendChild(div);
+        const apiURL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${UPLOAD_PATH}${fileName}`;
+        const res = await fetch(apiURL, {
+          method: "PUT",
+          headers: {
+            "Authorization": `Bearer ${GITHUB_TOKEN}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: `Upload ${fileName}`,
+            content: contentBase64,
+            branch: BRANCH
+          })
         });
-      })
-      .catch(err => {
-        document.getElementById('item-container').innerHTML = '<p>Gagal mengambil data.</p>';
-        console.error(err);
-      });
-  </script>
 
+        const data = await res.json();
+        const resultDiv = document.getElementById("result");
+
+        if (res.ok) {
+          const fileUrl = `https://${REPO_OWNER}.github.io/${UPLOAD_PATH}${fileName}`;
+          resultDiv.innerHTML += `
+            <p><strong>${fileName}</strong> berhasil diupload:
+            <a href="${fileUrl}" target="_blank">${fileUrl}</a></p>`;
+          document.getElementById(input.id.replace("img", "edit-img")).value = fileUrl;
+        } else {
+          console.error("Upload error:", data);
+          resultDiv.innerHTML += `
+            <p style="color: red;">Gagal upload ${fileName}: ${data.message}</p>`;
+        }
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function handleFileUpload(event, inputId) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      alert(`Silakan upload file ${file.name} ke GitHub dan masukkan URL-nya ke field ${inputId} secara manual.`);
+
+      // Contoh link GitHub setelah upload:
+      // https://raw.githubusercontent.com/USERNAME/REPO/main/path/to/${file.name}
+      const suggestion = `https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/path/to/${file.name}`;
+      document.getElementById(inputId).value = suggestion;
+    }
+
+    // Simulasi pengambilan data produk (gunakan fetch untuk API)
+    const items = [{
+      fieldData: {
+        name: "iPhone 13 128GB",
+        "variant-warna": "Starlight",
+        "penyimpanan-internal": "128GB",
+        "harga-2": "Rp5.100.000",
+        kota: "Wonogiri",
+        pengirim: "Perdi",
+        deskripsi: "DI JUAL IPHONE 13 128 GB, iBox KONDISI MULUS",
+        rintisan: "https://tokopedia.link",
+        img1: "https://example.com/img1.jpg",
+        img2: "https://example.com/img2.jpg",
+        img3: "https://example.com/img3.jpg"
+      }
+    }];
+
+    function editItem(item) {
+      const f = item.fieldData;
+      document.getElementById('edit-id').value = item._id || '';
+      document.getElementById('edit-name').value = f.name || '';
+      document.getElementById('edit-warna').value = f["variant-warna"] || '';
+      document.getElementById('edit-storage').value = f["penyimpanan-internal"] || '';
+      document.getElementById('edit-harga').value = f["harga-2"] || '';
+      document.getElementById('edit-kota').value = f.kota || '';
+      document.getElementById('edit-pengirim').value = f.pengirim || '';
+      document.getElementById('edit-deskripsi').value = f.deskripsi || '';
+      document.getElementById('edit-link').value = f.rintisan || '';
+      document.getElementById('edit-img1').value = f.img1 || '';
+      document.getElementById('edit-img2').value = f.img2 || '';
+      document.getElementById('edit-img3').value = f.img3 || '';
+      document.getElementById('editForm').style.display = 'block';
+      window.scrollTo(0, document.getElementById('editForm').offsetTop);
+    }
+
+    // Menampilkan produk di halaman
+    const container = document.getElementById('item-container');
+    items.forEach(item => {
+      const f = item.fieldData;
+      const div = document.createElement('div');
+      div.className = 'produk';
+      div.innerHTML = `
+        <h3>${f.name}</h3>
+        <p><strong>Warna:</strong> ${f["variant-warna"]}</p>
+        <p><strong>Penyimpanan:</strong> ${f["penyimpanan-internal"]}</p>
+        <p><strong>Harga:</strong> ${f["harga-2"]}</p>
+        <p><strong>Kota:</strong> ${f.kota}</p>
+        <p><strong>Pengirim:</strong> ${f.pengirim}</p>
+        <p><strong>Deskripsi:</strong><br>${f.deskripsi}</p>
+        <a href="${f.rintisan}" target="_blank">🔗 Link Rintisan</a><br><br>
+        <img src="${f.img1}" alt="img1"><br>
+        <img src="${f.img2}" alt="img2"><br>
+        <img src="${f.img3}" alt="img3"><br><br>
+        <button onclick='editItem(${JSON.stringify(item)})'>🔧 Edit</button>
+      `;
+      container.appendChild(div);
+    });
+  </script>
 </body>
 </html>
