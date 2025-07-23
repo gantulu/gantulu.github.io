@@ -3,132 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Address Form</title>
+    <title>Malaysia Address Form</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; }
-        label { font-weight: bold; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 30px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            font-weight: 600;
+        }
+        form {
+            background-color: #ffffff;
+            padding: 35px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            box-sizing: border-box;
+        }
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+            color: #34495e;
+            font-size: 0.95em;
+        }
         input[type="text"], select {
-            width: 250px;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: calc(100% - 20px); /* Adjust for padding */
+            padding: 12px 10px;
+            margin-bottom: 15px;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #555;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            outline: none;
         }
         input[type="submit"] {
-            padding: 10px 20px;
+            padding: 12px 25px;
             background-color: #007bff;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
+            font-size: 1.05em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin-top: 15px;
         }
         input[type="submit"]:hover {
             background-color: #0056b3;
+            transform: translateY(-2px);
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .city-postcode-group {
+            display: flex;
+            gap: 10px;
+        }
+        .city-postcode-group select {
+            flex: 2; /* City takes more space */
+            width: auto; /* Override default width */
+        }
+        .city-postcode-group input[type="text"] {
+            flex: 1; /* Postcode takes less space */
+            width: auto; /* Override default width */
         }
     </style>
 </head>
 <body>
 
-  <h2>Delivery Address Form (Malaysia)</h2>
-
   <form>
+    <h2>Delivery Address Form (Malaysia) 🇲🇾</h2>
+
     <div class="form-group">
-      <label for="street">Street Address:</label><br>
-      <input type="text" id="street" name="street" placeholder="e.g., No. 10, Jalan Merdeka">
+      <label for="street">Street Address:</label>
+      <input type="text" id="street" name="street" placeholder="e.g., No. 10, Jalan Merdeka, Taman Bahagia" required>
     </div>
 
     <div class="form-group">
-      <label for="state">State:</label><br>
-      <select id="state" name="state">
+      <label for="state">State:</label>
+      <select id="state" name="state" required>
         <option value="">Select a State</option>
-        <option value="Selangor">Selangor</option>
-        <option value="W.P. Kuala Lumpur">W.P. Kuala Lumpur</option>
         <option value="Johor">Johor</option>
+        <option value="Kedah">Kedah</option>
+        <option value="Kelantan">Kelantan</option>
+        <option value="Melaka">Melaka</option>
+        <option value="Negeri Sembilan">Negeri Sembilan</option>
+        <option value="Pahang">Pahang</option>
         <option value="Penang">Penang</option>
+        <option value="Perak">Perak</option>
+        <option value="Perlis">Perlis</option>
         <option value="Sabah">Sabah</option>
         <option value="Sarawak">Sarawak</option>
-        </select>
+        <option value="Selangor">Selangor</option>
+        <option value="Terengganu">Terengganu</option>
+        <option value="W.P. Kuala Lumpur">W.P. Kuala Lumpur</option>
+        <option value="W.P. Labuan">W.P. Labuan</option>
+        <option value="W.P. Putrajaya">W.P. Putrajaya</option>
+      </select>
     </div>
 
     <div class="form-group">
-      <label for="city_postcode">City (and Postcode):</label><br>
-      <select id="city_postcode" name="city_postcode">
-        <option value="">Select a City and Postcode</option>
-        </select>
-      <input type="hidden" id="hiddenPostcode" name="postcode">
+      <label for="city">City & Postcode:</label>
+      <div class="city-postcode-group">
+        <select id="city" name="city" required>
+          <option value="">Select a City</option>
+          </select>
+        <input type="text" id="postcode" name="postcode" placeholder="Postcode" required pattern="[0-9]{5}" title="Please enter a 5-digit postcode">
+      </div>
     </div>
 
-    <input type="submit" value="Submit">
+    <input type="submit" value="Submit Address">
   </form>
 
   <script>
-    // Data now includes both city and a default postcode for that city
+    // Data now includes both city and common postcodes for that city
+    // NOTE: This list is illustrative and NOT exhaustive. For production,
+    // ensure you have a comprehensive and regularly updated postcode database.
     const citiesByState = {
-      "Selangor": [
-        { city: "Petaling Jaya", postcode: "46000" },
-        { city: "Shah Alam", postcode: "40000" },
-        { city: "Subang Jaya", postcode: "47500" },
-        { city: "Klang", postcode: "41000" }
-      ],
-      "W.P. Kuala Lumpur": [
-        { city: "Kuala Lumpur", postcode: "50000" },
-        { city: "Cheras", postcode: "56000" },
-        { city: "Kepong", postcode: "52000" }
-      ],
-      "Johor": [
-        { city: "Johor Bahru", postcode: "80000" },
-        { city: "Muar", postcode: "84000" }
-      ],
-      "Penang": [
-        { city: "George Town", postcode: "10000" },
-        { city: "Butterworth", postcode: "13000" }
-      ],
-      "Sabah": [
-        { city: "Kota Kinabalu", postcode: "88000" }
-      ],
-      "Sarawak": [
-        { city: "Kuching", postcode: "93000" }
-      ],
-      // Add more states and their cities with postcodes
+        "Johor": [
+            { city: "Johor Bahru", postcode: "80000" },
+            { city: "Skudai", postcode: "81300" },
+            { city: "Muar", postcode: "84000" },
+            { city: "Batu Pahat", postcode: "83000" },
+            { city: "Kluang", postcode: "86000" },
+            { city: "Kota Tinggi", postcode: "81900" },
+            { city: "Segamat", postcode: "85000" },
+            { city: "Pontian", postcode: "82000" },
+            { city: "Kulai", postcode: "81000" },
+            { city: "Tangkak", postcode: "84900" },
+            { city: "Pasir Gudang", postcode: "81700" }
+        ],
+        "Kedah": [
+            { city: "Alor Setar", postcode: "05000" },
+            { city: "Sungai Petani", postcode: "08000" },
+            { city: "Langkawi", postcode: "07000" },
+            { city: "Kulim", postcode: "09000" },
+            { city: "Jitra", postcode: "06000" },
+            { city: "Baling", postcode: "09100" },
+            { city: "Yan", postcode: "06900" }
+        ],
+        "Kelantan": [
+            { city: "Kota Bharu", postcode: "15000" },
+            { city: "Pasir Mas", postcode: "17000" },
+            { city: "Tanah Merah", postcode: "17500" },
+            { city: "Machang", postcode: "18500" },
+            { city: "Kuala Krai", postcode: "18000" },
+            { city: "Tumpat", postcode: "16200" }
+        ],
+        "Melaka": [
+            { city: "Bandar Melaka", postcode: "75000" },
+            { city: "Alor Gajah", postcode: "78000" },
+            { city: "Jasin", postcode: "77000" },
+            { city: "Masjid Tanah", postcode: "78300" },
+            { city: "Merlimau", postcode: "77300" }
+        ],
+        "Negeri Sembilan": [
+            { city: "Seremban", postcode: "70000" },
+            { city: "Port Dickson", postcode: "71000" },
+            { city: "Nilai", postcode: "71800" },
+            { city: "Kuala Pilah", postcode: "72000" },
+            { city: "Jempol", postcode: "72100" },
+            { city: "Tampin", postcode: "73000" }
+        ],
+        "Pahang": [
+            { city: "Kuantan", postcode: "25000" },
+            { city: "Temerloh", postcode: "28000" },
+            { city: "Bentong", postcode: "28700" },
+            { city: "Raub", postcode: "27600" },
+            { city: "Pekan", postcode: "26600" },
+            { city: "Genting Highlands", postcode: "69000" },
+            { city: "Jerantut", postcode: "27000" },
+            { city: "Cameron Highlands", postcode: "39000" }
+        ],
+        "Penang": [
+            { city: "George Town", postcode: "10000" },
+            { city: "Butterworth", postcode: "13000" },
+            { city: "Bukit Mertajam", postcode: "14000" },
+            { city: "Bayan Lepas", postcode: "11900" },
+            { city: "Permatang Pauh", postcode: "13500" },
+            { city: "Balik Pulau", postcode: "11000" }
+        ],
+        "Perak": [
+            { city: "Ipoh", postcode: "30000" },
+            { city: "Taiping", postcode: "34000" },
+            { city: "Teluk Intan", postcode: "36000" },
+            { city: "Manjung", postcode: "32040" },
+            { city: "Kuala Kangsar", postcode: "33000" },
+            { city: "Gopeng", postcode: "31600" },
+            { city: "Bidor", postcode: "35500" }
+        ],
+        "Perlis": [
+            { city: "Kangar", postcode: "01000" },
+            { city: "Arau", postcode: "02600" },
+            { city: "Padang Besar", postcode: "02100" }
+        ],
+        "Sabah": [
+            { city: "Kota Kinabalu", postcode: "88000" },
+            { city: "Sandakan", postcode: "90000" },
+            { city: "Tawau", postcode: "91000" },
+            { city: "Lahad Datu", postcode: "91100" },
+            { city: "Keningau", postcode: "89000" },
+            { city: "Semporna", postcode: "91300" }
+        ],
+        "Sarawak": [
+            { city: "Kuching", postcode: "93000" },
+            { city: "Miri", postcode: "98000" },
+            { city: "Sibu", postcode: "96000" },
+            { city: "Bintulu", postcode: "97000" },
+            { city: "Serian", postcode: "94700" },
+            { city: "Kapit", postcode: "96800" },
+            { city: "Sarikei", postcode: "96100" }
+        ],
+        "Selangor": [
+            { city: "Petaling Jaya", postcode: "46000" },
+            { city: "Shah Alam", postcode: "40000" },
+            { city: "Subang Jaya", postcode: "47500" },
+            { city: "Klang", postcode: "41000" },
+            { city: "Puchong", postcode: "47100" },
+            { city: "Kajang", postcode: "43000" },
+            { city: "Ampang", postcode: "68000" },
+            { city: "Banting", postcode: "42700" },
+            { city: "Bandar Baru Bangi", postcode: "43650" },
+            { city: "Rawang", postcode: "48000" },
+            { city: "Kuala Selangor", postcode: "45000" },
+            { city: "Cyberjaya", postcode: "63000" },
+            { city: "Sepang", postcode: "43900" }
+        ],
+        "Terengganu": [
+            { city: "Kuala Terengganu", postcode: "20000" },
+            { city: "Chukai (Kemaman)", postcode: "24000" },
+            { city: "Dungun", postcode: "23000" },
+            { city: "Marang", postcode: "21600" },
+            { city: "Besut", postcode: "22000" }
+        ],
+        "W.P. Kuala Lumpur": [
+            { city: "Kuala Lumpur", postcode: "50000" },
+            { city: "Cheras", postcode: "56000" },
+            { city: "Kepong", postcode: "52000" },
+            { city: "Ampang", postcode: "55000" },
+            { city: "Sentul", postcode: "51000" },
+            { city: "Segambut", postcode: "51200" },
+            { city: "Bukit Bintang", postcode: "50200" },
+            { city: "Damansara", postcode: "50490" },
+            { city: "Hartamas", postcode: "50480" }
+        ],
+        "W.P. Labuan": [
+            { city: "Victoria", postcode: "87000" },
+            { city: "Pulau Labuan", postcode: "87000" }
+        ],
+        "W.P. Putrajaya": [
+            { city: "Putrajaya", postcode: "62000" },
+            { city: "Presint 1", postcode: "62000" },
+            { city: "Presint 2", postcode: "62100" }
+        ]
     };
 
     const stateSelect = document.getElementById('state');
-    const cityPostcodeSelect = document.getElementById('city_postcode');
-    const hiddenPostcodeInput = document.getElementById('hiddenPostcode');
+    const citySelect = document.getElementById('city');
+    const postcodeInput = document.getElementById('postcode'); // Now targets the visible postcode input
 
     stateSelect.addEventListener('change', function() {
-      const selectedState = this.value;
-      cityPostcodeSelect.innerHTML = '<option value="">Select a City and Postcode</option>'; // Clear existing options
-      hiddenPostcodeInput.value = ''; // Clear hidden postcode too
+        const selectedState = this.value;
+        citySelect.innerHTML = '<option value="">Select a City</option>'; // Clear existing options
+        postcodeInput.value = ''; // Clear postcode input when state changes
 
-      if (selectedState) {
-        const cities = citiesByState[selectedState];
-        if (cities) {
-          cities.forEach(item => {
-            const option = document.createElement('option');
-            // Value could be just city, or city|postcode if you want to parse it later
-            option.value = `${item.city}|${item.postcode}`;
-            option.textContent = `${item.city} (${item.postcode})`;
-            cityPostcodeSelect.appendChild(option);
-          });
+        if (selectedState) {
+            const cities = citiesByState[selectedState];
+            if (cities) {
+                // Sort cities alphabetically for better user experience
+                cities.sort((a, b) => a.city.localeCompare(b.city));
+
+                cities.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.city; // Store only the city name as value
+                    option.textContent = item.city; // Display only the city name
+                    option.dataset.postcode = item.postcode; // Store postcode in a data attribute
+                    citySelect.appendChild(option);
+                });
+            }
         }
-      }
     });
 
-    // Optional: Update hidden postcode field when city/postcode is selected
-    cityPostcodeSelect.addEventListener('change', function() {
-      const selectedValue = this.value;
-      if (selectedValue) {
-        const postcode = selectedValue.split('|')[1];
-        hiddenPostcodeInput.value = postcode;
-      } else {
-        hiddenPostcodeInput.value = '';
-      }
+    // Event listener for city selection to update postcode
+    citySelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        if (selectedOption && selectedOption.dataset.postcode) {
+            postcodeInput.value = selectedOption.dataset.postcode;
+        } else {
+            postcodeInput.value = ''; // Clear if no city selected or no postcode data
+        }
     });
-  </script>
+
+    // Optional: Add basic validation feedback on input for postcode pattern
+    postcodeInput.addEventListener('input', function() {
+        if (this.checkValidity()) {
+            this.style.borderColor = '#dcdcdc'; // Reset to default
+        } else {
+            this.style.borderColor = '#dc3545'; // Highlight invalid input
+        }
+    });
+
+    // Optional: Prevent default form submission for demonstration,
+    // in a real app, you'd send this data to a server.
+    document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Stop form from reloading page
+        if (this.checkValidity()) {
+            alert('Form submitted successfully!\n\nStreet: ' + document.getElementById('street').value +
+                  '\nState: ' + document.getElementById('state').value +
+                  '\nCity: ' + document.getElementById('city').value +
+                  '\nPostcode: ' + document.getElementById('postcode').value);
+            // Here you would typically send data to your backend server
+        } else {
+            alert('Please fill in all required fields correctly.');
+        }
+    });
+
+</script>
 
 </body>
 </html>
