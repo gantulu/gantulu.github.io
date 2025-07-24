@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Produk iPhone</title>
+  <title>Produk iPhone 15</title>
   <style>
     .product {
       border: 1px solid #ddd;
@@ -22,15 +22,24 @@
 </head>
 <body>
 
-  <h2>Daftar Produk iPhone</h2>
+  <h2>Produk iPhone 15</h2>
   <div id="productList"></div>
 
   <script>
+    const groupFilter = "iphone-15"; // 👈 Ganti item_group_id sesuai kebutuhan
+
     fetch('https://opensheet.vercel.app/1ERd6Ww_gAralYmGSgddVz8pSgtCAze8cU1PovcDQxqg/facebook%20feed')
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById('productList');
-        data.forEach(item => {
+        const filtered = data.filter(item => item.item_group_id === groupFilter);
+
+        if (filtered.length === 0) {
+          container.innerHTML = "<p>Tidak ada produk dengan group ID tersebut.</p>";
+          return;
+        }
+
+        filtered.forEach(item => {
           const div = document.createElement('div');
           div.className = 'product';
           div.innerHTML = `
