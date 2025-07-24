@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Produk Detail (Dropdown Varian)</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produk Detail (Mobile Friendly)</title>
   <style>
     * { box-sizing: border-box; }
     body {
       font-family: sans-serif;
       margin: 0;
       padding: 10px;
+      max-width: 500pz;
       background: #f2f2f2;
     }
     .item, .detail {
@@ -27,20 +28,22 @@
       margin: 8px 0;
       cursor: pointer;
     }
-    select, button {
-      padding: 8px 12px;
-      margin: 8px 4px 12px 0;
-      font-size: 0.9rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-    button {
+    button, .variant-btn {
       background: #007bff;
       color: #fff;
       border: none;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      margin: 4px 4px 4px 0;
       cursor: pointer;
     }
-    button:hover { background: #0056b3; }
+    button:hover, .variant-btn:hover { background: #0056b3; }
+    .variants {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
     .gallery img {
       width: 48%;
       margin: 1%;
@@ -48,8 +51,10 @@
     }
     @media (min-width: 600px) {
       .gallery img { width: 30%; }
-      button, select { font-size: 1rem; }
+      button, .variant-btn { font-size: 1rem; padding: 10px 14px; }
     }
+
+    /* Lightbox */
     .lightbox-overlay {
       display: none;
       position: fixed;
@@ -61,7 +66,9 @@
       padding: 20px;
       z-index: 9999;
     }
-    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay.active {
+      display: flex;
+    }
     .lightbox-content {
       display: flex;
       flex-wrap: wrap;
@@ -92,6 +99,7 @@
 
 <div id="content"></div>
 
+<!-- Lightbox Overlay -->
 <div id="lightbox" class="lightbox-overlay">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <div id="lightbox-content" class="lightbox-content"></div>
@@ -110,7 +118,7 @@
         if (!group.length) {
           return document.getElementById('content').innerHTML = '<p>Produk tidak ditemukan.</p>';
         }
-        showDetail(group[0], group);
+        showDetail(group);
       } else {
         showList(data);
       }
@@ -135,55 +143,41 @@
     });
   }
 
-  function showDetail(currentItem, groupItems) {
-    const sizes = [...new Set(groupItems.map(i => i.size).filter(Boolean))];
-    const colors = [...new Set(groupItems.map(i => i.color).filter(Boolean))];
+  function showDetail(groupItems) {
+    const main = groupItems[0];
+    const sizes = [...new Set(groupItems.map(i=>i.size).filter(Boolean))];
+    const colors = [...new Set(groupItems.map(i=>i.color).filter(Boolean))];
     const cont = document.getElementById('content');
 
     cont.innerHTML = `
       <div class="detail">
-        <h2>${currentItem.name}</h2>
-        <img id="main-img" src="${currentItem.image_link}" alt="Gambar Utama">
-        <p><strong>Harga:</strong> ${currentItem.price}</p>
-
-        <div><strong>Ukuran:</strong></div>
-        <select id="size-select">${sizes.map(s => `<option ${s === currentItem.size ? 'selected' : ''}>${s}</option>`).join('')}</select>
-
-        <div><strong>Warna:</strong></div>
-        <select id="color-select">${colors.map(c => `<option ${c === currentItem.color ? 'selected' : ''}>${c}</option>`).join('')}</select>
-
-        ${currentItem.description ? `<p>${currentItem.description}</p>` : ''}
+        <h2>${main.name}</h2>
+        <img id="main-img" src="${main.image_link}" alt="Gambar Utama">
+        <p><strong>Harga:</strong> ${main.price}</p>
+        <div><strong>Varian Ukuran:</strong></div>
+        <div class="variants">${sizes.map(s => `<span class="variant-btn" onclick="selectVariant('${s}','')">${s}</span>`).join('')}</div>
+        <div><strong>Varian Warna:</strong></div>
+        <div class="variants">${colors.map(c => `<span class="variant-btn" onclick="selectVariant('','${c}')">${c}</span>`).join('')}</div>
+        ${main.description ? `<p>${main.description}</p>` : ''}
         <button onclick="goBack()">Kembali</button>
       </div>
     `;
 
     document.getElementById('main-img').addEventListener('click', () => {
-      const links = (currentItem.additional_image_link || '')
+      const links = (main.additional_image_link || '')
         .split(';').map(s=>s.trim()).filter(Boolean);
       if (links.length) openLightbox(links);
     });
 
-    document.getElementById('size-select').addEventListener('change', function() {
-      const newSize = this.value;
-      const color = document.getElementById('color-select').value;
-      updateVariant(newSize, color, groupItems);
-    });
+    window.selectVariant = function(size, color) {
+      const found = groupItems.find(i => 
+        (size ? i.size === size : true) && (color ? i.color === color : true)
+      );
+      if (found) showDetail([found, ...groupItems]);
+      else alert('Varian tidak tersedia.');
+    };
 
-    document.getElementById('color-select').addEventListener('change', function() {
-      const newColor = this.value;
-      const size = document.getElementById('size-select').value;
-      updateVariant(size, newColor, groupItems);
-    });
-  }
-
-  function updateVariant(size, color, groupItems) {
-    const found = groupItems.find(i => i.size === size && i.color === color);
-    if (found) showDetail(found, groupItems);
-    else alert('Varian tidak tersedia.');
-  }
-
-  function goBack() {
-    location.href = location.pathname;
+    window.goBack = () => location.href = location.pathname;
   }
 
   function openLightbox(imgs) {
