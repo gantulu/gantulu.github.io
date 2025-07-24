@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Produk Detail (Mobile Friendly)</title>
+  <title>Produk Detail</title>
   <style>
     * { box-sizing: border-box; }
     body {
       font-family: sans-serif;
-      margin: 0;
+      margin: 0 auto;
       padding: 10px;
       background: #f2f2f2;
       max-width: 500px;
@@ -28,25 +28,24 @@
       margin: 8px 0;
       cursor: pointer;
     }
-    select {
-      width: 100%;
-      padding: 8px;
-      margin: 8px 0;
-      font-size: 1rem;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
     button {
       background: #007bff;
       color: #fff;
       border: none;
       border-radius: 4px;
-      padding: 10px 14px;
-      font-size: 1rem;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      margin: 4px 0;
       cursor: pointer;
-      margin-top: 8px;
     }
     button:hover { background: #0056b3; }
+    select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
 
     /* Lightbox */
     .lightbox-overlay {
@@ -57,30 +56,43 @@
       background: rgba(0,0,0,0.9);
       align-items: center;
       justify-content: center;
-      padding: 20px;
       z-index: 9999;
     }
-    .lightbox-overlay.active { display: flex; }
-    .lightbox-content {
+    .lightbox-overlay.active {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+    }
+    .lightbox-content {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      width: 100%;
-      max-width: 800px;
-      overflow-y: auto;
-      max-height: 90%;
+      position: relative;
     }
     .lightbox-content img {
-      width: 100%;
-      max-width: 180px;
-      margin: 8px;
-      border-radius: 4px;
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 6px;
     }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: white;
+      background: rgba(0,0,0,0.3);
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    .prev-btn { left: 10px; position: absolute; }
+    .next-btn { right: 10px; position: absolute; }
     .lightbox-close {
-      position: fixed;
-      top: 20px; right: 20px;
+      position: absolute;
+      top: 10px;
+      right: 10px;
       font-size: 24px;
-      color: #fff;
+      color: white;
       background: transparent;
       border: none;
       cursor: pointer;
@@ -90,16 +102,23 @@
 <body>
 <div id="content"></div>
 
-<!-- Lightbox Overlay -->
+<!-- Lightbox -->
 <div id="lightbox" class="lightbox-overlay">
   <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <div id="lightbox-content" class="lightbox-content"></div>
+  <div class="lightbox-content">
+    <button class="lightbox-nav prev-btn" onclick="prevImage()">‹</button>
+    <img id="lightbox-img" src="" alt="Preview" />
+    <button class="lightbox-nav next-btn" onclick="nextImage()">›</button>
+  </div>
 </div>
 
 <script>
   const params = new URLSearchParams(window.location.search);
   const groupId = params.get("item_group_id");
   const sheetUrl = "https://opensheet.elk.sh/1ERd6Ww_gAralYmGSgddVz8pSgtCAze8cU1PovcDQxqg/facebook%20feed";
+
+  let currentImageIndex = 0;
+  let currentImages = [];
 
   fetch(sheetUrl)
     .then(r => r.json())
@@ -136,8 +155,8 @@
 
   function showDetail(groupItems) {
     const main = groupItems[0];
-    const sizes = [...new Set(groupItems.map(i => i.size).filter(Boolean))];
-    const colors = [...new Set(groupItems.map(i => i.color).filter(Boolean))];
+    const sizes = [...new Set(groupItems.map(i=>i.size).filter(Boolean))];
+    const colors = [...new Set(groupItems.map(i=>i.color).filter(Boolean))];
     const cont = document.getElementById('content');
 
     cont.innerHTML = `
@@ -145,17 +164,15 @@
         <h2>${main.name}</h2>
         <img id="main-img" src="${main.image_link}" alt="Gambar Utama">
         <p><strong>Harga:</strong> ${main.price}</p>
-        
-        <label for="sizeSelect"><strong>Pilih Ukuran:</strong></label>
-        <select id="sizeSelect">
-          <option value="">-- Pilih Ukuran --</option>
-          ${sizes.map(s => `<option value="${s}" ${main.size === s ? 'selected' : ''}>${s}</option>`).join('')}
+
+        <label for="size-select"><strong>Varian Ukuran:</strong></label>
+        <select id="size-select">
+          ${sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
         </select>
 
-        <label for="colorSelect"><strong>Pilih Warna:</strong></label>
-        <select id="colorSelect">
-          <option value="">-- Pilih Warna --</option>
-          ${colors.map(c => `<option value="${c}" ${main.color === c ? 'selected' : ''}>${c}</option>`).join('')}
+        <label for="color-select"><strong>Varian Warna:</strong></label>
+        <select id="color-select">
+          ${colors.map(c => `<option value="${c}">${c}</option>`).join('')}
         </select>
 
         ${main.description ? `<p>${main.description}</p>` : ''}
@@ -164,40 +181,62 @@
     `;
 
     document.getElementById('main-img').addEventListener('click', () => {
-      const links = (main.additional_image_link || '').split(';').map(s=>s.trim()).filter(Boolean);
-      if (links.length) openLightbox(links);
+      currentImages = (main.additional_image_link || '')
+        .split(';').map(s=>s.trim()).filter(Boolean);
+      if (currentImages.length) {
+        currentImageIndex = 0;
+        openLightbox(currentImages);
+      }
     });
 
-    document.getElementById('sizeSelect').addEventListener('change', handleVariantChange);
-    document.getElementById('colorSelect').addEventListener('change', handleVariantChange);
+    document.getElementById('size-select').addEventListener('change', () => {
+      const size = document.getElementById('size-select').value;
+      const color = document.getElementById('color-select').value;
+      applyVariant(size, color, groupItems);
+    });
 
-    function handleVariantChange() {
-      const size = document.getElementById('sizeSelect').value;
-      const color = document.getElementById('colorSelect').value;
+    document.getElementById('color-select').addEventListener('change', () => {
+      const size = document.getElementById('size-select').value;
+      const color = document.getElementById('color-select').value;
+      applyVariant(size, color, groupItems);
+    });
+  }
 
-      const found = groupItems.find(i =>
-        (size ? i.size === size : true) &&
-        (color ? i.color === color : true)
-      );
-      if (found && (found.size !== main.size || found.color !== main.color)) {
-        showDetail([found, ...groupItems]);
-      }
-    }
+  function applyVariant(size, color, groupItems) {
+    const found = groupItems.find(i => 
+      (!size || i.size === size) &&
+      (!color || i.color === color)
+    );
+    if (found) showDetail([found, ...groupItems]);
+    else alert('Varian tidak tersedia.');
+  }
 
-    window.goBack = () => location.href = location.pathname;
+  function goBack() {
+    location.href = location.pathname;
   }
 
   function openLightbox(imgs) {
-    const box = document.getElementById('lightbox');
-    const holder = document.getElementById('lightbox-content');
-    holder.innerHTML = imgs.map(src => `<img src="${src}" alt="Galeri">`).join('');
-    box.classList.add('active');
+    document.getElementById('lightbox-img').src = imgs[currentImageIndex];
+    document.getElementById('lightbox').classList.add('active');
   }
 
   function closeLightbox() {
     document.getElementById('lightbox').classList.remove('active');
   }
-</script>
 
+  function prevImage() {
+    if (currentImages.length > 0) {
+      currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+      document.getElementById('lightbox-img').src = currentImages[currentImageIndex];
+    }
+  }
+
+  function nextImage() {
+    if (currentImages.length > 0) {
+      currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+      document.getElementById('lightbox-img').src = currentImages[currentImageIndex];
+    }
+  }
+</script>
 </body>
 </html>
