@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Produk dari Google Sheet</title>
+  <title>Produk iPhone</title>
   <style>
     .product {
       border: 1px solid #ddd;
@@ -22,11 +22,11 @@
 </head>
 <body>
 
-  <h2>Daftar Produk dari Google Sheet</h2>
+  <h2>Daftar Produk iPhone</h2>
   <div id="productList"></div>
 
   <script>
-    fetch('https://opensheet.vercel.app/1ERd6Ww_gAralYmGSgddVz8pSgtCAze8cU1PovcDQxqg/Sheet1')
+    fetch('https://opensheet.vercel.app/1ERd6Ww_gAralYmGSgddVz8pSgtCAze8cU1PovcDQxqg/facebook%20feed')
       .then(response => response.json())
       .then(data => {
         const container = document.getElementById('productList');
@@ -34,7 +34,7 @@
           const div = document.createElement('div');
           div.className = 'product';
           div.innerHTML = `
-            <img src="${item.image}" alt="${item.title}">
+            <img src="${item.image_link}" alt="${item.title}">
             <h3>${item.title}</h3>
             <p>Harga: Rp ${item.price}</p>
           `;
