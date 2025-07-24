@@ -1,84 +1,91 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Upload Gambar ke GitHub</title>
-</head>
-<body>
-  <h2>Upload Gambar ke GitHub</h2>
+<form id="uploadForm">
+  <label>Pilih Item:
+    <select id="itemSelect">
+      <option value="">Memuat data...</option>
+    </select>
+  </label><br /><br />
+  
+  <label>Gambar 1: <input type="file" id="img1" /></label><br />
+  <label>Gambar 2: <input type="file" id="img2" /></label><br />
+  <label>Gambar 3: <input type="file" id="img3" /></label><br /><br />
+  
+  <button type="submit">Upload dan Update CMS</button>
+</form>
 
-  <label>Gambar 1: <input type="file" id="img1" /></label><br><br>
-  <label>Gambar 2: <input type="file" id="img2" /></label><br><br>
-  <label>Gambar 3: <input type="file" id="img3" /></label><br><br>
+<script>
+const API_TOKEN = "3301b9f154f11de19dd0e574df67254bb4ef7511f74b069d4ec29b2c4371f6c5"; // 🔁 Ganti dengan token Webflow
+const COLLECTION_ID = "6808c4010c2dfac0e89d885c"; // 🔁 Ganti dengan collection ID
 
-  <button onclick="uploadAllImages()">Upload Semua</button>
+// 🔃 Ambil item dari Webflow
+async function fetchItems() {
+  const res = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items`, {
+    headers: { Authorization: `Bearer ${API_TOKEN}` }
+  });
+  const data = await res.json();
+  const select = document.getElementById("itemSelect");
 
-  <h3>Hasil Upload:</h3>
-  <ul id="result"></ul>
+  select.innerHTML = "";
+  data.items.forEach(item => {
+    const option = document.createElement("option");
+    option.value = item._id;
+    option.textContent = item.fieldData.name || item._id;
+    select.appendChild(option);
+  });
+}
 
-  <script>
-    const GITHUB_TOKEN = "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";
-    const REPO_OWNER = "gantulu";
-    const REPO_NAME = "gantulu.github.io";
-    const DEST_PATH = "tokopedia/1/uploads";
+fetchItems();
 
-    async function uploadImage(inputId) {
-      const fileInput = document.getElementById(inputId);
-      const file = fileInput.files[0];
-      if (!file) return null;
+// 📤 Upload 1 file ke Webflow Assets
+async function uploadToWebflow(file) {
+  const formData = new FormData();
+  formData.append("file", file);
 
-      const reader = new FileReader();
-      return new Promise((resolve) => {
-        reader.onloadend = async function () {
-          const contentBase64 = reader.result.split(",")[1];
-          const fileName = `${inputId}-${Date.now()}-${file.name}`;
-          const apiUrl = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DEST_PATH}/${fileName}`;
+  const upload = await fetch("https://api.webflow.com/v2/assets/upload", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${API_TOKEN}` },
+    body: formData
+  });
 
-          const response = await fetch(apiUrl, {
-            method: "PUT",
-            headers: {
-              "Authorization": `Bearer ${GITHUB_TOKEN}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              message: `Upload ${fileName}`,
-              content: contentBase64
-            })
-          });
+  return await upload.json(); // return { fileId, url }
+}
 
-          const result = await response.json();
-          if (response.ok) {
-            const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${DEST_PATH}/${fileName}`;
-            resolve(rawUrl);
-          } else {
-            resolve(null);
-            console.error(`Upload gagal untuk ${inputId}:`, result);
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
+// 🧠 Saat Submit
+document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    async function uploadAllImages() {
-      const resultList = document.getElementById("result");
-      resultList.innerHTML = "Mengunggah...";
+  const itemId = document.getElementById("itemSelect").value;
+  if (!itemId) return alert("Pilih item terlebih dahulu!");
 
-      const urls = await Promise.all([
-        uploadImage("img1"),
-        uploadImage("img2"),
-        uploadImage("img3")
-      ]);
+  const file1 = document.getElementById("img1").files[0];
+  const file2 = document.getElementById("img2").files[0];
+  const file3 = document.getElementById("img3").files[0];
 
-      resultList.innerHTML = "";
-      urls.forEach((url, i) => {
-        const li = document.createElement("li");
-        if (url) {
-          li.innerHTML = `img${i + 1}: <a href="${url}" target="_blank">${url}</a>`;
-        } else {
-          li.innerText = `img${i + 1}: Gagal upload`;
-        }
-        resultList.appendChild(li);
-      });
-    }
-  </script>
-</body>
-</html>
+  const [res1, res2, res3] = await Promise.all([
+    uploadToWebflow(file1),
+    uploadToWebflow(file2),
+    uploadToWebflow(file3)
+  ]);
+
+  // 🔁 PATCH ke Webflow CMS
+  const patch = await fetch(`https://api.webflow.com/v2/collections/${COLLECTION_ID}/items/${itemId}/live?skipInvalidFiles=true`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${API_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      isArchived: false,
+      isDraft: false,
+      fieldData: {
+        image1: { fileId: res1.fileId, url: res1.url },
+        image2: { fileId: res2.fileId, url: res2.url },
+        image3: { fileId: res3.fileId, url: res3.url }
+      }
+    })
+  });
+
+  const final = await patch.json();
+  console.log("Final result:", final);
+  alert("Sukses upload dan update CMS!");
+});
+</script>
