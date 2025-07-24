@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Produk Detail (Mobile Friendly)</title>
   <style>
     * { box-sizing: border-box; }
@@ -11,8 +11,7 @@
       margin: 0;
       padding: 10px;
       background: #f2f2f2;
-      justify-items: center;
-      max-width: 500;
+      max-width: 500px;
     }
     .item, .detail {
       background: #fff;
@@ -29,31 +28,25 @@
       margin: 8px 0;
       cursor: pointer;
     }
-    button, .variant-btn {
+    select {
+      width: 100%;
+      padding: 8px;
+      margin: 8px 0;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
       background: #007bff;
       color: #fff;
       border: none;
       border-radius: 4px;
-      padding: 8px 12px;
-      font-size: 0.9rem;
-      margin: 4px 4px 4px 0;
+      padding: 10px 14px;
+      font-size: 1rem;
       cursor: pointer;
-    }
-    button:hover, .variant-btn:hover { background: #0056b3; }
-    .variants {
-      display: flex;
-      flex-wrap: wrap;
       margin-top: 8px;
     }
-    .gallery img {
-      width: 48%;
-      margin: 1%;
-      border-radius: 6px;
-    }
-    @media (min-width: 600px) {
-      .gallery img { width: 30%; }
-      button, .variant-btn { font-size: 1rem; padding: 10px 14px; }
-    }
+    button:hover { background: #0056b3; }
 
     /* Lightbox */
     .lightbox-overlay {
@@ -67,9 +60,7 @@
       padding: 20px;
       z-index: 9999;
     }
-    .lightbox-overlay.active {
-      display: flex;
-    }
+    .lightbox-overlay.active { display: flex; }
     .lightbox-content {
       display: flex;
       flex-wrap: wrap;
@@ -94,14 +85,10 @@
       border: none;
       cursor: pointer;
     }
-    .cont {
-      max-width: 50px;
-    }
   </style>
 </head>
 <body>
-<div class="cont"></div>
- <div id="content"></div>
+<div id="content"></div>
 
 <!-- Lightbox Overlay -->
 <div id="lightbox" class="lightbox-overlay">
@@ -149,8 +136,8 @@
 
   function showDetail(groupItems) {
     const main = groupItems[0];
-    const sizes = [...new Set(groupItems.map(i=>i.size).filter(Boolean))];
-    const colors = [...new Set(groupItems.map(i=>i.color).filter(Boolean))];
+    const sizes = [...new Set(groupItems.map(i => i.size).filter(Boolean))];
+    const colors = [...new Set(groupItems.map(i => i.color).filter(Boolean))];
     const cont = document.getElementById('content');
 
     cont.innerHTML = `
@@ -158,28 +145,44 @@
         <h2>${main.name}</h2>
         <img id="main-img" src="${main.image_link}" alt="Gambar Utama">
         <p><strong>Harga:</strong> ${main.price}</p>
-        <div><strong>Varian Ukuran:</strong></div>
-        <div class="variants">${sizes.map(s => `<span class="variant-btn" onclick="selectVariant('${s}','')">${s}</span>`).join('')}</div>
-        <div><strong>Varian Warna:</strong></div>
-        <div class="variants">${colors.map(c => `<span class="variant-btn" onclick="selectVariant('','${c}')">${c}</span>`).join('')}</div>
+        
+        <label for="sizeSelect"><strong>Pilih Ukuran:</strong></label>
+        <select id="sizeSelect">
+          <option value="">-- Pilih Ukuran --</option>
+          ${sizes.map(s => `<option value="${s}" ${main.size === s ? 'selected' : ''}>${s}</option>`).join('')}
+        </select>
+
+        <label for="colorSelect"><strong>Pilih Warna:</strong></label>
+        <select id="colorSelect">
+          <option value="">-- Pilih Warna --</option>
+          ${colors.map(c => `<option value="${c}" ${main.color === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+
         ${main.description ? `<p>${main.description}</p>` : ''}
         <button onclick="goBack()">Kembali</button>
       </div>
     `;
 
     document.getElementById('main-img').addEventListener('click', () => {
-      const links = (main.additional_image_link || '')
-        .split(';').map(s=>s.trim()).filter(Boolean);
+      const links = (main.additional_image_link || '').split(';').map(s=>s.trim()).filter(Boolean);
       if (links.length) openLightbox(links);
     });
 
-    window.selectVariant = function(size, color) {
-      const found = groupItems.find(i => 
-        (size ? i.size === size : true) && (color ? i.color === color : true)
+    document.getElementById('sizeSelect').addEventListener('change', handleVariantChange);
+    document.getElementById('colorSelect').addEventListener('change', handleVariantChange);
+
+    function handleVariantChange() {
+      const size = document.getElementById('sizeSelect').value;
+      const color = document.getElementById('colorSelect').value;
+
+      const found = groupItems.find(i =>
+        (size ? i.size === size : true) &&
+        (color ? i.color === color : true)
       );
-      if (found) showDetail([found, ...groupItems]);
-      else alert('Varian tidak tersedia.');
-    };
+      if (found && (found.size !== main.size || found.color !== main.color)) {
+        showDetail([found, ...groupItems]);
+      }
+    }
 
     window.goBack = () => location.href = location.pathname;
   }
@@ -198,5 +201,3 @@
 
 </body>
 </html>
-
-ubah size dan color jadi dropdown atau select option
