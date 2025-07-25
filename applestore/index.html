@@ -161,9 +161,11 @@
 
     cont.innerHTML = `
       <div class="detail">
-        <h2>${main.name}</h2>
+        <button onclick="goBack()">Kembali</button>
+
         <img id="main-img" src="${main.image_link}" alt="Gambar Utama">
-        <p><strong>Harga:</strong> ${main.price}</p>
+        <h2>${main.title}</h2> 
+       <p><strong>Harga:</strong> ${main.price}</p>
 
         <label for="size-select"><strong>Varian Ukuran:</strong></label>
         <select id="size-select">
@@ -176,7 +178,6 @@
         </select>
 
         ${main.description ? `<p>${main.description}</p>` : ''}
-        <button onclick="goBack()">Kembali</button>
       </div>
     `;
 
