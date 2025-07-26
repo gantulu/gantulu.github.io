@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Produk Detail + Editor</title>
+
+  <!-- GrapesJS -->
   <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
   <script src="https://unpkg.com/grapesjs"></script>
+
   <style>
     * { box-sizing: border-box; }
     body {
@@ -13,7 +16,7 @@
       margin: 0 auto;
       padding: 10px;
       background: #f2f2f2;
-      max-width: 800px;
+      max-width: 900px;
     }
     .item, .detail {
       background: #fff;
@@ -49,7 +52,6 @@
       border: 1px solid #ccc;
     }
 
-    /* Lightbox */
     .lightbox-overlay {
       display: none;
       position: fixed;
@@ -87,8 +89,8 @@
       padding: 10px;
       cursor: pointer;
     }
-    .prev-btn { left: 10px; position: absolute; }
-    .next-btn { right: 10px; position: absolute; }
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
     .lightbox-close {
       position: absolute;
       top: 10px;
@@ -110,7 +112,7 @@
 </head>
 <body>
 
-<!-- Konten Produk -->
+<!-- Produk -->
 <div id="content"></div>
 
 <!-- Lightbox -->
@@ -123,7 +125,7 @@
   </div>
 </div>
 
-<!-- Editor GrapesJS -->
+<!-- Editor -->
 <h3>Edit Visual Halaman Ini:</h3>
 <div id="gjs"></div>
 
@@ -141,15 +143,14 @@
       if (groupId) {
         const group = data.filter(i => i.item_group_id === groupId);
         if (!group.length) {
-          return document.getElementById('content').innerHTML = '<p>Produk tidak ditemukan.</p>';
+          document.getElementById('content').innerHTML = '<p>Produk tidak ditemukan.</p>';
+          initEditor();
+        } else {
+          showDetail(group);
         }
-        showDetail(group);
       } else {
         showList(data);
       }
-
-      // Setelah konten dimuat, jalankan GrapesJS editor
-      initEditor();
     });
 
   function showList(data) {
@@ -158,17 +159,20 @@
       if (!unique.has(item.item_group_id)) unique.set(item.item_group_id, item);
     });
     const cont = document.getElementById('content');
+    cont.innerHTML = '';
     unique.forEach(item => {
       const div = document.createElement('div');
       div.className = 'item';
       div.innerHTML = `
-        <h3>${item.title}</h3>
-        <img src="${item.image_link}" alt="Gambar Produk">
-        <p><strong>Harga:</strong> ${item.price}</p>
+        <h3>${item.title || 'Tanpa Judul'}</h3>
+        <img src="${item.image_link || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="Gambar Produk">
+        <p><strong>Harga:</strong> ${item.price || 'Belum tersedia'}</p>
         <button onclick="location.search='?item_group_id=${item.item_group_id}'">Lihat Detail</button>
       `;
       cont.appendChild(div);
     });
+
+    initEditor();
   }
 
   function showDetail(groupItems) {
@@ -181,9 +185,9 @@
       <div class="detail">
         <button onclick="goBack()">Kembali</button>
 
-        <img id="main-img" src="${main.image_link}" alt="Gambar Utama">
-        <h2>${main.title}</h2> 
-        <p><strong>Harga:</strong> ${main.price}</p>
+        <img id="main-img" src="${main.image_link || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="Gambar Utama">
+        <h2>${main.title || 'Tanpa Judul'}</h2> 
+        <p><strong>Harga:</strong> ${main.price || 'Belum tersedia'}</p>
 
         <label for="size-select"><strong>Varian Ukuran:</strong></label>
         <select id="size-select">
@@ -201,7 +205,7 @@
 
     document.getElementById('main-img').addEventListener('click', () => {
       currentImages = (main.additional_image_link || '')
-        .split(';').map(s=>s.trim()).filter(Boolean);
+        .split(';').map(s => s.trim()).filter(Boolean);
       if (currentImages.length) {
         currentImageIndex = 0;
         openLightbox(currentImages);
@@ -219,6 +223,8 @@
       const color = document.getElementById('color-select').value;
       applyVariant(size, color, groupItems);
     });
+
+    initEditor();
   }
 
   function applyVariant(size, color, groupItems) {
