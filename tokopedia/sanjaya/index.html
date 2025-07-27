@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
+<html lang="id"><head>
   <meta charset="UTF-8">
   <title>Daftar Produk</title>
   <style>
@@ -30,7 +28,7 @@
 </head>
 <body>
   <h1>Daftar Produk</h1>
-  <div id="items-container"></div>
+  <div id="items-container"><div class="produk"><img src="https://cdn.prod.website-files.com/6886399a655c7482dcd9b8ce/68864e70f384dd4d61ee70d5_68864a2d6756b58458e79533_Gambar%2520WhatsApp%25202025-07-27%2520pukul%252022.46.03_574facf1.jpeg"><h3>Iphone 14</h3><p>Rp5.100.000</p><button>Edit Produk</button></div><div class="produk"><img src="https://cdn.prod.website-files.com/6886399a655c7482dcd9b8ce/68864e70c4a168e60b5a65a3_6886495be1e78161829cb0a2_Gambar%2520WhatsApp%25202025-07-27%2520pukul%252022.42.33_2941dee6.jpeg"><h3>IPhone 11 Pro Max</h3><p>Rp2.500.000</p><button>Edit Produk</button></div><div class="produk"><img src="https://cdn.prod.website-files.com/6886399a655c7482dcd9b8ce/68864e70690069d5cd1874b1_68864a92801227c0460fbd32_Gambar%2520WhatsApp%25202025-07-27%2520pukul%252022.48.41_883f5540.jpeg"><h3>iPhone 14</h3><p>Rp8.000.000</p><button>Edit Produk</button></div><div class="produk"><img src="https://cdn.prod.website-files.com/6886399a655c7482dcd9b8ce/68864e706a3b290a1fb6c9de_68864ac469e8f4233a6889b8_Gambar%2520WhatsApp%25202025-07-27%2520pukul%252022.48.57_c2272516.jpeg"><h3>iPhone 14</h3><p>Rp12.000.000</p><button>Edit Produk</button></div></div>
 
   <script>
     // Ganti URL API sesuai dengan koleksi kamu
@@ -61,7 +59,7 @@
           button.textContent = "Edit Produk";
           button.addEventListener("click", () => {
             const itemId = item.id;
-            window.location.href = `https://gantulu.github.io/tokopedia/sanjaya/item.html?itemID=${itemId}`;
+            window.location.href = `/item.html?itemID=${itemId}`;
           });
 
           div.appendChild(button);
@@ -72,5 +70,6 @@
         console.error("Gagal memuat data:", err);
       });
   </script>
-</body>
-</html>
+
+
+</body></html>
