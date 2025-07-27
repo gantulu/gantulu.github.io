@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Form Produk</title>
+  <script>
+    UPLOADCARE_PUBLIC_KEY = "4eb823b230059485ed06";
+  </script>
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+</head>
+<body>
+
+<h3>Form Produk & Upload Gambar</h3>
+
+<form id="upload-form">
+  <label>ID Item:</label><br>
+  <input type="text" id="itemID" name="itemID" readonly value="123456"><br><br>
+
+  <label>Nama Produk:</label><br>
+  <input type="text" id="name"><br><br>
+
+  <label>Deskripsi:</label><br>
+  <textarea id="deskripsi"></textarea><br><br>
+
+  <label>Harga:</label><br>
+  <input type="number" id="harga-2"><br><br>
+
+  <label>Kota:</label><br>
+  <input type="text" id="kota"><br><br>
+
+  <label>Pengirim:</label><br>
+  <input type="text" id="pengirim"><br><br>
+
+  <label>Penyimpanan Internal:</label><br>
+  <input type="text" id="penyimpanan-internal"><br><br>
+
+  <label>Varian Warna:</label><br>
+  <input type="text" id="variant-warna"><br><br>
+
+  <label>Rintisan:</label><br>
+  <input type="text" id="rintisan"><br><br>
+
+  <label>Gambar 1:</label><br>
+  <input type="file" id="img-1"><br><br>
+
+  <label>Gambar 2:</label><br>
+  <input type="file" id="img-2"><br><br>
+
+  <label>Gambar 3:</label><br>
+  <input type="file" id="img-3"><br><br>
+
+  <button type="submit">Kirim ke BuildShip</button>
+</form>
+
+<script>
+  const urls = { img1: "", img2: "", img3: "" };
+
+  function setupUpload(fileInputId, fieldKey) {
+    const input = document.getElementById(fileInputId);
+    input.addEventListener("change", () => {
+      const file = input.files[0];
+      if (!file) return;
+      const uploadcareFile = uploadcare.fileFrom("object", file);
+      uploadcareFile.done(info => {
+        urls[fieldKey] = info.cdnUrl;
+        console.log(`${fieldKey} uploaded:`, info.cdnUrl);
+      });
+    });
+  }
+
+  setupUpload("img-1", "img1");
+  setupUpload("img-2", "img2");
+  setupUpload("img-3", "img3");
+
+  document.getElementById("upload-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    if (!urls.img1 || !urls.img2 || !urls.img3) {
+      alert("Tunggu semua gambar selesai diupload!");
+      return;
+    }
+
+    const payload = {
+      itemID: document.getElementById("itemID").value,
+      name: document.getElementById("name").value,
+      deskripsi: document.getElementById("deskripsi").value,
+      "harga-2": document.getElementById("harga-2").value,
+      kota: document.getElementById("kota").value,
+      pengirim: document.getElementById("pengirim").value,
+      "penyimpanan-internal": document.getElementById("penyimpanan-internal").value,
+      "variant-warna": document.getElementById("variant-warna").value,
+      rintisan: document.getElementById("rintisan").value,
+      img1: urls.img1,
+      img2: urls.img2,
+      img3: urls.img3
+    };
+
+    fetch("https://8q3rs5.buildship.run/untitledFlow-3de0f1580c64", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert("Berhasil dikirim ke BuildShip");
+      console.log(data);
+    })
+    .catch(err => {
+      alert("Gagal kirim ke BuildShip");
+      console.error(err);
+    });
+  });
+</script>
+
+</body>
+</html>
