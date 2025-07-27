@@ -14,7 +14,7 @@
 
 <form id="upload-form">
   <label>ID Item:</label><br>
-  <input type="text" id="itemID" name="itemID" readonly value="123456"><br><br>
+  <input type="text" id="itemID" name="itemID" readonly><br><br>
 
   <label>Nama Produk:</label><br>
   <input type="text" id="name"><br><br>
@@ -23,7 +23,7 @@
   <textarea id="deskripsi"></textarea><br><br>
 
   <label>Harga:</label><br>
-  <input type="number" id="harga-2"><br><br>
+  <input type="text" id="harga-2"><br><br>
 
   <label>Kota:</label><br>
   <input type="text" id="kota"><br><br>
@@ -53,7 +53,32 @@
 </form>
 
 <script>
+  const sheetURL = "https://opensheet.elk.sh/1ERd6Ww_gAralYmGSgddVz8pSgtCAze8cU1PovcDQxqg/facebook%20feed";
+  const params = new URLSearchParams(window.location.search);
+  const itemID = params.get("itemID");
   const urls = { img1: "", img2: "", img3: "" };
+
+  // Isi itemID
+  if (itemID) {
+    document.getElementById("itemID").value = itemID;
+  }
+
+  // Ambil data dari Sheet dan isi form
+  fetch(sheetURL)
+    .then(res => res.json())
+    .then(data => {
+      const item = data.find(i => i.id === itemID);
+      if (!item) return;
+
+      document.getElementById("name").value = item.title || "";
+      document.getElementById("deskripsi").value = item.description || "";
+      document.getElementById("harga-2").value = item.price || "";
+      document.getElementById("kota").value = item.kota || "";
+      document.getElementById("pengirim").value = item.pengirim || "";
+      document.getElementById("penyimpanan-internal").value = item["penyimpanan-internal"] || "";
+      document.getElementById("variant-warna").value = item["variant-warna"] || "";
+      document.getElementById("rintisan").value = item.rintisan || "";
+    });
 
   function setupUpload(fileInputId, fieldKey) {
     const input = document.getElementById(fileInputId);
