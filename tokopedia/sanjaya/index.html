@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Daftar Produk</title>
+  <style>
+    .produk {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin: 10px;
+      padding: 15px;
+      width: 300px;
+      display: inline-block;
+      vertical-align: top;
+    }
+    .produk img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .produk button {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daftar Produk</h1>
+  <div id="items-container"></div>
+
+  <script>
+    // Ganti URL API sesuai dengan koleksi kamu
+    const API_URL = "https://api.apico.dev/v1/VlrUtH/collections/6886399d0d3a001ccdecb705/items";
+
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("items-container");
+
+        data.items.forEach(item => {
+          const div = document.createElement("div");
+          div.className = "produk";
+
+          const img = document.createElement("img");
+          img.src = item.fieldData?.["img1-2"]?.url || "";
+          div.appendChild(img);
+
+          const title = document.createElement("h3");
+          title.textContent = item.fieldData?.name || "Tanpa Nama";
+          div.appendChild(title);
+
+          const harga = document.createElement("p");
+          harga.textContent = item.fieldData?.harga || "Tanpa Harga";
+          div.appendChild(harga);
+
+          const button = document.createElement("button");
+          button.textContent = "Edit Produk";
+          button.addEventListener("click", () => {
+            const itemId = item.id;
+            window.location.href = `file:///C:/Users/mantap123/Desktop/New%20Text%20Document.html?itemID=${itemId}`;
+          });
+
+          div.appendChild(button);
+          container.appendChild(div);
+        });
+      })
+      .catch(err => {
+        console.error("Gagal memuat data:", err);
+      });
+  </script>
+</body>
+</html>
