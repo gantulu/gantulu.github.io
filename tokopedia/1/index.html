@@ -31,8 +31,8 @@
 
           itemDiv.innerHTML = `
             <input type="hidden" id="itemID${index}" name="itemID" value="${item.id}" />
-            <h3>${item.title}</h3>
-            <p>${item.description}</p>
+           <img src="${item.image_link}" </img>
+           <h3>${item.title}</h3>
             <p>Harga: ${item.price}</p>
             <button onclick="editItem('${item.id}')">Edit</button>
           `;
@@ -42,7 +42,7 @@
       });
 
     function editItem(id) {
-      window.location.href = `/item?itemID=${encodeURIComponent(id)}`;
+      window.location.href = `/item.html?itemID=${encodeURIComponent(id)}`;
     }
   </script>
 </body>
