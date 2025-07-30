@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit FieldData Form</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f0f0f0; }
+    form { background: #fff; padding: 20px; border-radius: 6px; max-width: 800px; margin: auto; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .form-group { margin-bottom: 12px; }
+    label { font-weight: bold; display: block; margin-bottom: 4px; }
+    input[type="text"], textarea { width: 100%; padding: 8px; }
+    input[type="checkbox"] { margin-right: 6px; }
+    button { padding: 10px 20px; background: #0077cc; color: white; border: none; border-radius: 4px; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <form id="fieldDataForm">
+    <h2>✏️ Edit FieldData</h2>
+
+    <!-- ITEM ID -->
+    <div class="form-group">
+      <label>Item ID</label>
+      <input id="itemId" name="itemId" type="text" placeholder="Masukkan ID item" value="688657ad4c783cec90535ae1">
+    </div>
+
+    <!-- Boolean fields -->
+    <div class="form-group"><label><input type="checkbox" name="spj"> SPJ</label></div>
+    <div class="form-group"><label><input type="checkbox" name="countdown"> Countdown</label></div>
+    <div class="form-group"><label><input type="checkbox" name="asuransi"> Asuransi</label></div>
+    <div class="form-group"><label><input type="checkbox" name="rekber"> Rekber</label></div>
+
+    <!-- Text fields -->
+    <div class="form-group"><label>Paket</label><input type="text" name="paket" value="iPhone 11 Pro"></div>
+    <div class="form-group"><label>Number</label><input type="text" name="number" value="5"></div>
+    <div class="form-group"><label>Name</label><input type="text" name="name" value="JD0571281057"></div>
+    <div class="form-group"><label>Biaya Kirim</label><input type="text" name="biaya-kirim" value="Rp47.000"></div>
+    <div class="form-group"><label>Total Tagihan</label><input type="text" name="total-tagihan-4" value="Rp1.557.000"></div>
+    <div class="form-group"><label>Jumlah Refund</label><input type="text" name="jumlah-refund" value="Rp1.550.500"></div>
+    <div class="form-group"><label>Nomor Penerima</label><input type="text" name="nomor-penerima" value="6282286390756"></div>
+    <div class="form-group"><label>Penerima</label><input type="text" name="penerima" value="Dafa Arifandi"></div>
+    <div class="form-group"><label>Nomor Pengirim</label><input type="text" name="nomor-pengirim" value="6285820215671"></div>
+    <div class="form-group"><label>Pengirim</label><input type="text" name="pengirim" value="Nila"></div>
+    <div class="form-group"><label>Alamat Penerima</label><textarea name="alamat-penerima">Sumatera Barat, Kab. Sijunjung...</textarea></div>
+    <div class="form-group"><label>Kota Pengirim</label><input type="text" name="kota-pengirim" value="Probolinggo, Jawa Barat"></div>
+    <div class="form-group"><label>BNI</label><input type="text" name="bni" value="2"></div>
+    <div class="form-group"><label>Fee Asuransi</label><input type="text" name="fee-asurnasi" value="Rp6.500"></div>
+    <div class="form-group"><label>Slug</label><input type="text" name="slug" value="jd0571281057"></div>
+    <div class="form-group"><label>Item ID 2</label><input type="text" name="itemid-2" value="688657ad4c783cec90535ae1"></div>
+    <div class="form-group"><label>Tagihan SPJ</label><input type="text" name="tagihan-spj" value="d"></div>
+    <div class="form-group"><label>Bank</label><input type="text" name="bank" value="d"></div>
+    <div class="form-group"><label>Fee</label><input type="text" name="fee" value="d"></div>
+    <div class="form-group"><label>Nama</label><input type="text" name="nama" value="d"></div>
+    <div class="form-group"><label>Nomor Rekening</label><input type="text" name="nomor-rekening" value="d"></div>
+    <div class="form-group"><label>Tagihan Asuransi</label><input type="text" name="tagihan-asuransi" value="d"></div>
+    <div class="form-group"><label>Tagihan Rekber</label><input type="text" name="tagihan-rekber" value="d"></div>
+    <div class="form-group"><label>Maps URL</label><input type="text" name="maps" value="https://www.google.com/maps/embed?..."></div>
+
+    <button type="submit">Kirim FieldData</button>
+  </form>
+
+  <script>
+    document.getElementById('fieldDataForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const data = new FormData(form);
+      const fieldData = {};
+      let itemId = data.get('itemId');
+
+      for (const [key, value] of data.entries()) {
+        if (["spj", "countdown", "asuransi", "rekber"].includes(key)) {
+          fieldData[key] = form.elements[key].checked;
+        } else if (key !== "itemId") {
+          fieldData[key] = value;
+        }
+      }
+
+      const payload = {
+        id: itemId,
+        isArchived: false,
+        isDraft: false,
+        fieldData
+      };
+
+      const response = await fetch("https://eu8ee3.buildship.run/untitl-effd406081e6", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await response.json();
+      console.log("Response:", result);
+      alert("🚀 Data berhasil dikirim!");
+    });
+  </script>
+
+</body>
+</html>
