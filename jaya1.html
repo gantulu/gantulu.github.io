@@ -1,0 +1,110 @@
+<head>
+  <meta charset="UTF-8">
+  <title>Form Produk ke BuildShip</title>
+  <!-- Uploadcare -->
+  <script>
+    UPLOADCARE_PUBLIC_KEY = "4eb823b230059485ed06";
+    UPLOADCARE_LOCALE = 'id';
+  </script>
+  <script src="https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js"></script>
+</head>
+<body>
+
+<form id="produk-form">
+  <label>itemId</label><br>
+  <input type="text" id="itemId" readonly><br><br>
+
+  <label>Nama Produk:</label><br>
+  <input type="text" id="name" required><br><br>
+
+  <label>Ukuran (Size):</label><br>
+  <input type="text" id="size"><br><br>
+
+  <label>Warna (Color):</label><br>
+  <input type="text" id="color"><br><br>
+
+  <label>Harga:</label><br>
+  <input type="text" id="harga"><br><br>
+
+  <label>Deskripsi:</label><br>
+  <textarea id="deskripsi"></textarea><br><br>
+
+  <label>Pengirim:</label><br>
+  <input type="text" id="pengirim"><br><br>
+
+  <label>Kota (City):</label><br>
+  <input type="text" id="city"><br><br>
+
+  <label>Rintisan:</label><br>
+  <input type="text" id="rintisan-2"><br><br>
+
+  <label>Gambar 1:</label><br>
+  <input type="hidden" role="uploadcare-uploader" id="img1-2" data-clearable><br><br>
+
+  <label>Gambar 2:</label><br>
+  <input type="hidden" role="uploadcare-uploader" id="img2-2" data-clearable><br><br>
+
+  <label>Gambar 3:</label><br>
+  <input type="hidden" role="uploadcare-uploader" id="img3-2" data-clearable><br><br>
+
+  <button type="submit">Kirim</button>
+</form>
+
+<script>
+  // Ambil itemId dari URL parameter
+  const params = new URLSearchParams(window.location.search);
+  const itemId = params.get("itemID");
+  document.getElementById("itemId").value = itemId || "";
+
+  const form = document.getElementById('produk-form');
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    try {
+      // Ambil file Uploadcare
+      const files = await Promise.all([
+        uploadcare.fileFrom('uploaded', document.getElementById('img1-2').value).promise(),
+        uploadcare.fileFrom('uploaded', document.getElementById('img2-2').value).promise(),
+        uploadcare.fileFrom('uploaded', document.getElementById('img3-2').value).promise()
+      ]);
+
+      // Ambil data dari input lainnya
+      const data = {
+        itemId: document.getElementById('itemId').value,
+        name: document.getElementById('name').value,
+        size: document.getElementById('size').value,
+        color: document.getElementById('color').value,
+        harga: document.getElementById('harga').value,
+        deskripsi: document.getElementById('deskripsi').value,
+        pengirim: document.getElementById('pengirim').value,
+        city: document.getElementById('city').value,
+        "rintisan-2": document.getElementById('rintisan-2').value,
+        "img1-2": { fileId: files[0].uuid, url: files[0].cdnUrl },
+        "img2-2": { fileId: files[1].uuid, url: files[1].cdnUrl },
+        "img3-2": { fileId: files[2].uuid, url: files[2].cdnUrl }
+      };
+
+      // Kirim ke BuildShip
+      const res = await fetch("https://6itdzf.buildship.run/tokopedia-76f11d703650", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        alert("Produk berhasil dikirim!");
+      } else {
+        alert("Gagal mengirim data.");
+      }
+
+    } catch (error) {
+      console.error(error);
+      alert("Terjadi kesalahan saat upload atau submit.");
+    }
+  });
+</script>
+
+</body>
+</html>
