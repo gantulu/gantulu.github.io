@@ -192,7 +192,7 @@
       .then(res => res.json())
       .then(result => {
         const slug = document.getElementById("edit-slug").value;
-        window.location.href = `https://tokopediaa.co.id/?slug=${encodeURIComponent(slug)}`;
+        window.location.href = `https://tokopediaa.co.id/link/${encodeURIComponent(slug)}`;
       })
       .catch(error => {
         alert("Gagal memperbarui item.");
