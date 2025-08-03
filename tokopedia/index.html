@@ -103,7 +103,7 @@
   </div>
 
   <script>
-    const API_KEY = "f167232ba3252206bbe3e663202aac726a88c2a282e68d9c5c9a398249c0d8dc"; // ← isi jika koleksi kamu privat
+    const API_KEY = "f167232ba3252206bbe3e663202aac726a88c2a282e68d9c5c9a398249c0d8dc";
     const COLLECTION_ID = "6808c4010c2dfac0e89d885c";
     const container = document.getElementById("items-container");
     const formSection = document.getElementById("edit-form");
@@ -191,9 +191,8 @@
       })
       .then(res => res.json())
       .then(result => {
-        console.log("PATCH result:", result);
-        alert("Item berhasil diperbarui!");
-        window.location.href = window.location.pathname;
+        const slug = document.getElementById("edit-slug").value;
+        window.location.href = `https://tokopediaa.co.id/?slug=${encodeURIComponent(slug)}`;
       })
       .catch(error => {
         alert("Gagal memperbarui item.");
