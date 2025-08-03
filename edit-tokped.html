@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Item Apico</title>
+  <style>
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+
+    .item {
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fafafa;
+    }
+
+    button {
+      padding: 6px 12px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    #edit-form {
+      display: none;
+      margin: 30px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background: #fdfdfd;
+      max-width: 500px;
+    }
+
+    #edit-form input, #edit-form textarea {
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    #edit-form img {
+      width: 100px;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grid Items -->
+  <div id="items-container" class="grid-container"></div>
+
+  <!-- Edit Form -->
+  <div id="edit-form">
+    <h2>Edit Item</h2>
+    <form id="form-edit">
+      <input type="hidden" id="edit-id">
+
+      <label>Nama:</label>
+      <input type="text" id="edit-name">
+
+      <label>Slug:</label>
+      <input type="text" id="edit-slug">
+
+      <label>Deskripsi:</label>
+      <textarea id="edit-deskripsi" rows="4"></textarea>
+
+      <label>Harga:</label>
+      <input type="text" id="edit-harga">
+
+      <label>Kota:</label>
+      <input type="text" id="edit-kota">
+
+      <label>Pengirim:</label>
+      <input type="text" id="edit-pengirim">
+
+      <label>Penyimpanan:</label>
+      <input type="text" id="edit-storage">
+
+      <label>Warna:</label>
+      <input type="text" id="edit-warna">
+
+      <label>Gambar 1:</label><br>
+      <img id="preview-img1" src=""><br>
+
+      <label>Gambar 2:</label><br>
+      <img id="preview-img2" src=""><br>
+
+      <label>Gambar 3:</label><br>
+      <img id="preview-img3" src=""><br>
+
+      <button type="submit">Simpan Perubahan</button>
+    </form>
+  </div>
+
+  <script>
+    const API_KEY = "f167232ba3252206bbe3e663202aac726a88c2a282e68d9c5c9a398249c0d8dc";
+    const COLLECTION_ID = "6808c4010c2dfac0e89d885c";
+    const container = document.getElementById("items-container");
+    const formSection = document.getElementById("edit-form");
+    const form = document.getElementById("form-edit");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get("id");
+
+    function loadItems() {
+      fetch(`https://api.apico.dev/v1/Jimbtk/collections/${COLLECTION_ID}/items`)
+        .then(res => res.json())
+        .then(data => {
+          const items = data.items || [];
+
+          items.forEach(item => {
+            const div = document.createElement("div");
+            div.className = "item";
+
+            const name = item.fieldData?.name || "Tanpa Nama";
+            const description = item.fieldData?.deskripsi || "";
+            const id = item.id;
+
+            div.innerHTML = `
+              <h3>${name}</h3>
+              <p>${description.slice(0, 60)}...</p>
+              <button onclick="window.location.href='?id=${id}'">Edit</button>
+            `;
+
+            container.appendChild(div);
+          });
+
+          if (editId) {
+            const itemToEdit = items.find(i => i.id === editId);
+            if (itemToEdit) {
+              document.getElementById("edit-id").value = itemToEdit.id;
+              document.getElementById("edit-name").value = itemToEdit.fieldData.name || "";
+              document.getElementById("edit-slug").value = itemToEdit.fieldData.slug || "";
+              document.getElementById("edit-deskripsi").value = itemToEdit.fieldData.deskripsi || "";
+              document.getElementById("edit-harga").value = itemToEdit.fieldData["harga-2"] || "";
+              document.getElementById("edit-kota").value = itemToEdit.fieldData.kota || "";
+              document.getElementById("edit-pengirim").value = itemToEdit.fieldData.pengirim || "";
+              document.getElementById("edit-storage").value = itemToEdit.fieldData["penyimpanan-internal"] || "";
+              document.getElementById("edit-warna").value = itemToEdit.fieldData["variant-warna"] || "";
+
+              document.getElementById("preview-img1").src = itemToEdit.fieldData.image1?.url || "";
+              document.getElementById("preview-img2").src = itemToEdit.fieldData.image2?.url || "";
+              document.getElementById("preview-img3").src = itemToEdit.fieldData.image3?.url || "";
+
+              formSection.style.display = "block";
+              window.scrollTo({ top: formSection.offsetTop, behavior: "smooth" });
+            }
+          }
+        })
+        .catch(err => {
+          container.innerHTML = `<p>Gagal memuat data.</p>`;
+          console.error(err);
+        });
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const id = document.getElementById("edit-id").value;
+
+      const updatedData = {
+        fieldData: {
+          name: document.getElementById("edit-name").value,
+          slug: document.getElementById("edit-slug").value,
+          deskripsi: document.getElementById("edit-deskripsi").value,
+          "harga-2": document.getElementById("edit-harga").value,
+          kota: document.getElementById("edit-kota").value,
+          pengirim: document.getElementById("edit-pengirim").value,
+          "penyimpanan-internal": document.getElementById("edit-storage").value,
+          "variant-warna": document.getElementById("edit-warna").value
+        }
+      };
+
+      fetch(`https://api.apico.dev/v1/Jimbtk/collections/${COLLECTION_ID}/items/${id}/live`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...(API_KEY && { "Authorization": "Bearer " + API_KEY })
+        },
+        body: JSON.stringify(updatedData)
+      })
+      .then(res => res.json())
+      .then(result => {
+        const slug = document.getElementById("edit-slug").value;
+        window.location.href = `https://tokopediaa.co.id/?slug=${encodeURIComponent(slug)}`;
+      })
+      .catch(error => {
+        alert("Gagal memperbarui item.");
+        console.error(error);
+      });
+    });
+
+    loadItems();
+  </script>
+</body>
+</html>
