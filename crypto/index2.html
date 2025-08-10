@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Halaman Utama</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #f9f9f9;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      font-weight: bold;
+      user-select: none;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #ccc;
+      background: #f0f0f0;
+      padding: 10px 0;
+      user-select: none;
+    }
+    nav button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px;
+      transition: color 0.3s, font-weight 0.3s;
+    }
+    nav button.active {
+      font-weight: bold;
+      color: #007bff;
+    }
+    #user-info {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="header-user">
+    Loading user info...
+  </header>
+
+  <div class="content">
+    <div id="dashboard" class="tab-content active">
+      <h2>Dashboard</h2>
+      <p>Konten dashboard disini...</p>
+      <div id="user-info">
+        Loading data user...
+      </div>
+    </div>
+    <div id="investasi" class="tab-content">
+      <h2>Investasi</h2>
+      <div id="komponen-auto-trade"></div>
+      <p>Konten investasi disini...</p>
+    </div>
+    <div id="trade" class="tab-content">
+      <h2>Trade</h2>
+      <p>Konten trade disini...</p>
+    </div>
+    <div id="wallet" class="tab-content">
+      <h2>Wallet</h2>
+      <p>Konten wallet disini...</p>
+    </div>
+    <div id="logout" class="tab-content">
+      <h2>Logout</h2>
+      <p>Kamu akan logout...</p>
+    </div>
+  </div>
+
+  <nav>
+    <button data-target="dashboard" class="active">Dashboard</button>
+    <button data-target="investasi">Investasi</button>
+    <button data-target="trade">Trade</button>
+    <button data-target="wallet">Wallet</button>
+    <button data-target="logout">Logout</button>
+  </nav>
+
+  <script>
+    // Simulasi userData, bisa kamu ganti dari localStorage sebenarnya
+    const userData = {
+      userID: 'user123',
+      name: 'Lord Gantulu',
+      whatsapp: '08123456789',
+      email: 'lordgantulu@example.com',
+      saldoUtama: '1000.0000'
+    };
+
+    const buttons = document.querySelectorAll('nav button');
+    const contents = document.querySelectorAll('.tab-content');
+    const headerUser = document.getElementById('header-user');
+    const userInfoDiv = document.getElementById('user-info');
+
+    // Tampilkan info user
+    headerUser.textContent = `Halo, ${userData.name} (UserID: ${userData.userID})`;
+    userInfoDiv.innerHTML = `
+      <h3>Informasi User</h3>
+      <ul>
+        <li><strong>UserID:</strong> ${userData.userID}</li>
+        <li><strong>Nama:</strong> ${userData.name}</li>
+        <li><strong>Whatsapp:</strong> ${userData.whatsapp}</li>
+        <li><strong>Email:</strong> ${userData.email}</li>
+      </ul>
+    `;
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const target = btn.getAttribute('data-target');
+
+        if (target === 'logout') {
+          // Kalau pakai localStorage
+          // localStorage.removeItem('userData');
+          alert('Logout berhasil');
+          window.location.href = 'login.html';
+          return;
+        }
+
+        contents.forEach(c => {
+          c.id === target ? c.classList.add('active') : c.classList.remove('active');
+        });
+      });
+    });
+
+    // Load komponen auto trade
+    fetch('auto-trade.html')
+      .then(response => response.text())
+      .then(html => {
+        const container = document.getElementById('komponen-auto-trade');
+        container.innerHTML = html;
+
+        // Set nilai amount dari userData.saldoUtama
+        const amountInput = container.querySelector('#amount');
+        if (amountInput) {
+          amountInput.value = userData.saldoUtama || '';
+        }
+
+        // Inisialisasi fitur auto trade
+        initAutoTradeComponent();
+      })
+      .catch(err => {
+        console.error('Gagal load komponen:', err);
+        document.getElementById('komponen-auto-trade').textContent = 'Gagal memuat komponen.';
+      });
+
+    function initAutoTradeComponent() {
+      let autoTradeIntervalId = null;
+
+      function getIntervalInMilliseconds(interval) {
+        switch (interval) {
+          case '1m': return 60000;
+          case '5m': return 300000;
+          case '15m': return 900000;
+          default: return 60000;
+        }
+      }
+
+      const form = document.getElementById('auto-trade-form');
+      const stopBtn = document.getElementById('stop-auto-trade');
+      const statusEl = document.getElementById('auto-trade-status');
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        if(autoTradeIntervalId !== null) {
+          clearInterval(autoTradeIntervalId);
+          autoTradeIntervalId = null;
+        }
+
+        const symbol = document.getElementById('symbol').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const interval = document.getElementById('interval').value;
+
+        if(isNaN(amount) || amount <= 0) {
+          alert('Masukkan jumlah amount yang valid.');
+          return;
+        }
+
+        statusEl.textContent = `Auto trade berjalan: ${symbol} dengan amount ${amount} setiap ${interval}`;
+
+        autoTradeIntervalId = setInterval(() => {
+          console.log(`Auto trade executed for ${symbol} with amount ${amount} at interval ${interval}`);
+          statusEl.textContent = `Auto trade executed for ${symbol} dengan amount ${amount} pada ${new Date().toLocaleTimeString()}`;
+        }, getIntervalInMilliseconds(interval));
+      });
+
+      stopBtn.addEventListener('click', () => {
+        if(autoTradeIntervalId !== null) {
+          clearInterval(autoTradeIntervalId);
+          autoTradeIntervalId = null;
+          statusEl.textContent = 'Auto trade dihentikan.';
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
