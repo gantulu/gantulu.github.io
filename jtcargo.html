@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lacak Informasi - J&T Cargo</title>
+  <style>
+    /* Reset dan dasar */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    /* Header */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid #eee;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 32px;
+    }
+    .header-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    /* Hero Section */
+    .hero {
+      background-color: #0db14b; /* hijau khas J&T */
+      color: white;
+      padding: 40px 20px;
+      font-weight: 700;
+    }
+    .hero h1 {
+      font-size: 2rem;
+      margin: 0 0 8px 0;
+      text-transform: lowercase;
+    }
+    .hero p {
+      margin: 0;
+      font-weight: 400;
+      font-size: 1.1rem;
+    }
+    /* Tab menu */
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin: 20px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px 0;
+      cursor: pointer;
+      font-weight: 600;
+      border-bottom: 3px solid transparent;
+      transition: border-color 0.3s ease;
+      color: #0db14b;
+    }
+    .tab.active {
+      border-color: #0db14b;
+      font-weight: 700;
+    }
+    /* Form Area */
+    .form-container {
+      max-width: 480px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #0db14b;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    input[type="radio"] {
+      accent-color: #0db14b;
+      cursor: pointer;
+      width: 18px;
+      height: 18px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px 0 0 4px;
+      font-size: 16px;
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: #0db14b;
+    }
+    button.search-btn {
+      background-color: #0db14b;
+      border: none;
+      color: white;
+      padding: 0 16px;
+      border-radius: 0 4px 4px 0;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s ease;
+    }
+    button.search-btn:hover {
+      background-color: #0a8c3a;
+    }
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 20px 0;
+      font-size: 14px;
+      color: #888;
+      border-top: 1px solid #eee;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <!-- Ganti dengan file logo J&T Cargo yang valid -->
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/J&T_Express_logo.svg/1200px-J&T_Express_logo.svg.png" alt="J&T Cargo Logo" />
+    </div>
+    <div class="header-icons">
+      <span title="User">&#128100;</span>
+      <span title="Menu">&#9776;</span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>lacak informasi</h1>
+    <p>Lacak paket dan outlet</p>
+  </section>
+
+  <nav class="tabs">
+    <div class="tab active" data-tab="paket">Informasi paket</div>
+    <div class="tab" data-tab="outlet">Lacak outlet</div>
+    <div class="tab" data-tab="ongkir">Cek Ongkir</div>
+  </nav>
+
+  <section class="form-container">
+    <form id="cekForm">
+      <div class="radio-group">
+        <label>
+          <input type="radio" name="cekType" value="waybill" checked />
+          Nomor waybill
+        </label>
+        <label>
+          <input type="radio" name="cekType" value="order" />
+          Nomor order pelanggan
+        </label>
+      </div>
+      <div style="display: flex;">
+        <input
+          type="text"
+          id="inputNomor"
+          name="nomor"
+          placeholder="Masukin AWB"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" class="search-btn" title="Cari">
+          🔍
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <footer>
+    © 2021 Global J&T Cargo All Rights Reserved
+  </footer>
+
+  <script>
+    // Tab switching logic (tampilan tab hanya placeholder)
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        // Bisa dikembangkan untuk menampilkan konten tab berbeda
+        alert(`Tab "${tab.textContent}" belum aktif (placeholder)`);
+      });
+    });
+
+    // Form submit (contoh hanya alert)
+    document.getElementById('cekForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const nomor = document.getElementById('inputNomor').value.trim();
+      if (!nomor) {
+        alert('Mohon masukkan nomor resi/order');
+        return;
+      }
+      const tipe = document.querySelector('input[name="cekType"]:checked').value;
+      alert(`Cek ${tipe} dengan nomor: ${nomor}\nFitur cek belum diimplementasikan.`);
+      // Di sini nanti bisa tambahkan request API dan tampilkan hasilnya
+    });
+  </script>
+</body>
+</html>
