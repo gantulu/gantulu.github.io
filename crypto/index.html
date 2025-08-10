@@ -147,6 +147,69 @@
         });
       });
     });
+        // Load file komponen auto-trade.html dan masukkan ke dalam div
+    fetch('auto-trade.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('komponen-auto-trade').innerHTML = html;
+
+        // Setelah konten dimasukkan, bind event dan fungsi JS komponen
+        initAutoTradeComponent();
+      })
+      .catch(err => {
+        console.error('Gagal load komponen:', err);
+        document.getElementById('komponen-auto-trade').textContent = 'Gagal memuat komponen.';
+      });
+
+    function initAutoTradeComponent() {
+      let autoTradeIntervalId = null;
+
+      function getIntervalInMilliseconds(interval) {
+        switch (interval) {
+          case '1m': return 60000;
+          case '5m': return 300000;
+          case '15m': return 900000;
+          default: return 60000;
+        }
+      }
+
+      const form = document.getElementById('auto-trade-form');
+      const stopBtn = document.getElementById('stop-auto-trade');
+      const statusEl = document.getElementById('auto-trade-status');
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        if(autoTradeIntervalId !== null) {
+          clearInterval(autoTradeIntervalId);
+          autoTradeIntervalId = null;
+        }
+
+        const symbol = document.getElementById('symbol').value;
+        const amount = parseFloat(document.getElementById('amount').value);
+        const interval = document.getElementById('interval').value;
+
+        if(isNaN(amount) || amount <= 0) {
+          alert('Masukkan jumlah amount yang valid.');
+          return;
+        }
+
+        statusEl.textContent = `Auto trade berjalan: ${symbol} dengan amount ${amount} setiap ${interval}`;
+
+        autoTradeIntervalId = setInterval(() => {
+          console.log(`Auto trade executed for ${symbol} with amount ${amount} at interval ${interval}`);
+          statusEl.textContent = `Auto trade executed for ${symbol} dengan amount ${amount} pada ${new Date().toLocaleTimeString()}`;
+        }, getIntervalInMilliseconds(interval));
+      });
+
+      stopBtn.addEventListener('click', () => {
+        if(autoTradeIntervalId !== null) {
+          clearInterval(autoTradeIntervalId);
+          autoTradeIntervalId = null;
+          statusEl.textContent = 'Auto trade dihentikan.';
+        }
+      });
+    }
   </script>
 
 </body>
