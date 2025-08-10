@@ -1,44 +1,49 @@
-    const form = document.getElementById('login-form');
-    const errorMsg = document.getElementById('error-msg');
+    const apiUrl = 'https://api.apico.dev/v1/ox3cG1/collections/689820f71092605423fc2136/items';
+
+    const form = document.getElementById('loginForm');
+    const errorMsg = document.getElementById('errorMsg');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      errorMsg.style.display = 'none';
+      errorMsg.textContent = '';
 
       const userInput = document.getElementById('userInput').value.trim().toLowerCase();
-      const password = document.getElementById('password').value;
-
-      if (!userInput || !password) {
-        errorMsg.textContent = 'Harap isi slug/email dan password.';
-        errorMsg.style.display = 'block';
-        return;
-      }
+      const passInput = document.getElementById('passInput').value;
 
       try {
-        const response = await fetch('https://api.apico.dev/v1/ox3cG1/collections/689820f71092605423fc2136/items');
-        if (!response.ok) throw new Error('Gagal mengambil data dari server');
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('Gagal mengambil data pengguna.');
+
         const data = await response.json();
 
+        // Cari user berdasarkan slug atau email
         const user = data.items.find(item => {
           const fd = item.fieldData;
-          return (fd.slug.toLowerCase() === userInput || (fd.email && fd.email.toLowerCase() === userInput))
-                 && fd.pass === password;
+          return (fd.slug && fd.slug.toLowerCase() === userInput) || (fd.email && fd.email.toLowerCase() === userInput);
         });
 
-        if (user) {
-          // Simpan id dan fieldData sekaligus
-          const userToStore = {
-            id: user.id,
-            ...user.fieldData
-          };
-          localStorage.setItem('userData', JSON.stringify(userToStore));
-          window.location.href = '/';
-        } else {
-          errorMsg.textContent = 'Slug/email atau password salah.';
-          errorMsg.style.display = 'block';
+        if (!user) {
+          errorMsg.textContent = 'User tidak ditemukan.';
+          return;
         }
-      } catch (err) {
-        errorMsg.textContent = 'Terjadi kesalahan: ' + err.message;
-        errorMsg.style.display = 'block';
+
+        // Cek password
+        if (user.fieldData.pass !== passInput) {
+          errorMsg.textContent = 'Password salah.';
+          return;
+        }
+
+        // Login berhasil: simpan id dan fieldData
+        const userData = {
+          id: user.id,
+          ...user.fieldData
+        };
+
+        localStorage.setItem('userData', JSON.stringify(userData));
+
+        // Redirect ke halaman utama
+        window.location.href = '/';
+      } catch (error) {
+        errorMsg.textContent = 'Terjadi kesalahan: ' + error.message;
       }
     });
