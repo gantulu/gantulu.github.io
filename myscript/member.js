@@ -30,7 +30,7 @@
         // Simpan data user lengkap ke localStorage
         localStorage.setItem('userData', JSON.stringify(user.fieldData));
 
-        // Tunggu 1 detik lalu redirect ke index.html
+        // Tunggu 1 detik lalu redirect ke index
         setTimeout(() => {
           window.location.href = '/';
         }, 1000);
