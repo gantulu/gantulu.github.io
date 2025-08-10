@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login & Daftar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    .tabs {
+      display: flex;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #333;
+      border-bottom: none;
+      background: #eee;
+      transition: background 0.3s;
+    }
+    .tab.active {
+      background: white;
+      font-weight: bold;
+      border-bottom: 1px solid white;
+    }
+    .tab-content {
+      border: 1px solid #333;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .tab-content > form > div {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .message {
+      margin-top: 12px;
+      font-weight: bold;
+      min-height: 18px;
+      color: green;
+    }
+    .message.error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="tabs">
+    <div id="tab-login" class="tab active">Login</div>
+    <div id="tab-daftar" class="tab">Daftar</div>
+  </div>
+
+  <div id="login" class="tab-content">
+    <form id="form-login" autocomplete="off">
+      <div>
+        <label for="login-userid-email">UserID atau Email</label>
+        <input type="text" id="login-userid-email" name="userid_email" required />
+      </div>
+      <div>
+        <label for="login-pass">Password</label>
+        <input type="password" id="login-pass" name="pass" required />
+      </div>
+      <button type="submit">Login</button>
+      <div id="login-message" class="message"></div>
+    </form>
+  </div>
+
+  <div id="daftar" class="tab-content" style="display:none;">
+    <form id="form-daftar" autocomplete="off">
+      <div>
+        <label for="daftar-userid">UserID</label>
+        <input type="text" id="daftar-userid" name="userid" readonly />
+      </div>
+      <div>
+        <label for="daftar-name">Name</label>
+        <input type="text" id="daftar-name" name="name" required />
+      </div>
+      <div>
+        <label for="daftar-whatsapp">Whatsapp</label>
+        <input type="text" id="daftar-whatsapp" name="whatsapp" required />
+      </div>
+      <div>
+        <label for="daftar-email">Email</label>
+        <input type="email" id="daftar-email" name="email" required />
+      </div>
+      <div>
+        <label for="daftar-pass">Password</label>
+        <input type="password" id="daftar-pass" name="pass" required />
+      </div>
+      <button type="submit">Daftar</button>
+      <div id="daftar-message" class="message"></div>
+    </form>
+  </div>
+
+<script>
+  // Tab switcher
+  const tabLogin = document.getElementById('tab-login');
+  const tabDaftar = document.getElementById('tab-daftar');
+  const divLogin = document.getElementById('login');
+  const divDaftar = document.getElementById('daftar');
+
+  tabLogin.onclick = () => {
+    tabLogin.classList.add('active');
+    tabDaftar.classList.remove('active');
+    divLogin.style.display = 'block';
+    divDaftar.style.display = 'none';
+  };
+  tabDaftar.onclick = () => {
+    tabDaftar.classList.add('active');
+    tabLogin.classList.remove('active');
+    divDaftar.style.display = 'block';
+    divLogin.style.display = 'none';
+  };
+
+  // Fungsi generate UserID unik berdasarkan nama
+  function generateUserID(name) {
+    let userIDBase = name.toLowerCase().replace(/\s+/g, '');
+    if (!userIDBase) {
+      document.getElementById('daftar-userid').value = '';
+      return;
+    }
+    fetch('https://api.apico.dev/v1/OEKmRt/1XSvYd-t98BwhZg5hE8llZNw3t1xBRYXAGYsEPz2kWEA/values/Sheet1')
+      .then(res => res.json())
+      .then(data => {
+        const rows = data.values || [];
+        const existingUserIDs = rows.map(row => row[0]);
+        let userID = userIDBase;
+        let counter = 1;
+        while (existingUserIDs.includes(userID)) {
+          userID = `${userIDBase}${counter}`;
+          counter++;
+        }
+        document.getElementById('daftar-userid').value = userID;
+      });
+  }
+
+  // Generate UserID saat input name berubah
+  document.getElementById('daftar-name').addEventListener('input', e => {
+    generateUserID(e.target.value);
+  });
+
+  // Submit form daftar
+  const formDaftar = document.getElementById('form-daftar');
+  const daftarMessage = document.getElementById('daftar-message');
+
+  formDaftar.addEventListener('submit', e => {
+    e.preventDefault();
+    const userID = document.getElementById('daftar-userid').value;
+    const name = document.getElementById('daftar-name').value.trim();
+    const whatsapp = document.getElementById('daftar-whatsapp').value.trim();
+    const email = document.getElementById('daftar-email').value.trim();
+    const pass = document.getElementById('daftar-pass').value.trim();
+
+    daftarMessage.textContent = "";
+    daftarMessage.classList.remove('error');
+    daftarMessage.textContent = "Loading...";
+
+    const options = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        values: [[userID, name, whatsapp, email, pass]]
+      })
+    };
+
+    fetch('https://api.apico.dev/v1/OEKmRt/1XSvYd-t98BwhZg5hE8llZNw3t1xBRYXAGYsEPz2kWEA/values/Sheet1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS&includeValuesInResponse=true', options)
+      .then(res => {
+        if (!res.ok) throw new Error("Gagal daftar");
+        return res.json();
+      })
+      .then(data => {
+        daftarMessage.textContent = "Pendaftaran berhasil!";
+
+        // Tampilkan popup info user
+        const popup = window.open('', '_blank', 'width=400,height=300');
+        popup.document.write(`
+          <h2>Registrasi Berhasil!</h2>
+          <p><strong>User ID:</strong> ${userID}</p>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Password:</strong> ${pass}</p>
+          <button onclick="window.close()">Close</button>
+        `);
+        popup.document.head.insertAdjacentHTML('beforeend', `
+          <style>body { font-family: Arial, sans-serif; padding: 20px; }</style>
+        `);
+
+        // Simpan userData lalu redirect ke index setelah 2 detik
+        localStorage.setItem('userData', JSON.stringify({userID, name, whatsapp, email, pass}));
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+      })
+      .catch(err => {
+        daftarMessage.textContent = "Error pendaftaran: " + err.message;
+        daftarMessage.classList.add('error');
+      });
+  });
+
+  // Submit form login
+  const formLogin = document.getElementById('form-login');
+  const loginMessage = document.getElementById('login-message');
+
+  formLogin.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const useridEmail = formLogin['userid_email'].value.trim();
+    const pass = formLogin.pass.value.trim();
+
+    loginMessage.textContent = "";
+    loginMessage.classList.remove('error');
+    loginMessage.textContent = "Memeriksa...";
+
+    fetch('https://api.apico.dev/v1/OEKmRt/1XSvYd-t98BwhZg5hE8llZNw3t1xBRYXAGYsEPz2kWEA/values/Sheet1', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer 9aed1af912ad0243c06f8a73173efb7ea0cf57be8d9c5ddb414dfaa433b86963'
+      }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Gagal mengambil data user");
+      return res.json();
+    })
+    .then(data => {
+      const rows = data.values || [];
+
+      // Cari user cocok
+      const user = rows.find(row => {
+        const [userID, name, whatsapp, email, password] = row;
+        return (userID === useridEmail || email === useridEmail) && password === pass;
+      });
+
+      if (user) {
+        loginMessage.textContent = "Login berhasil! Mengalihkan...";
+        const userData = {
+          userID: user[0],
+          name: user[1],
+          whatsapp: user[2],
+          email: user[3],
+          pass: user[4]
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setTimeout(() => {
+          window.location.href = '/crypto/index.html';
+        }, 1000);
+      } else {
+        loginMessage.textContent = "UserID/Email atau password salah.";
+        loginMessage.classList.add('error');
+      }
+    })
+    .catch(err => {
+      loginMessage.textContent = "Error login: " + err.message;
+      loginMessage.classList.add('error');
+    });
+  });
+</script>
+
+</body>
+</html>
