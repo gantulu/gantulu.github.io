@@ -2,7 +2,7 @@
   const userDataJSON = localStorage.getItem('userData');
   if (!userDataJSON) {
     // Kalau tidak ada data user, redirect ke login
-    window.location.href = 'login.html';
+    window.location.href = '/member';
   } else {
     const userData = JSON.parse(userDataJSON);
     document.getElementById('welcome').textContent = `Selamat datang, ${userData.name || 'User'}!`;
