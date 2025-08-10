@@ -32,7 +32,7 @@
 
         // Tunggu 1 detik lalu redirect ke index.html
         setTimeout(() => {
-          window.location.href = 'index.html';
+          window.location.href = '/';
         }, 1000);
       } else {
         showMessage('Login gagal: slug/email atau password salah.', 'red');
