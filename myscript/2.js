@@ -1,26 +1,37 @@
-const SHEET_API = "https://api.apico.dev/v1/OEKmRt/1XSvYd-t98BwhZg5hE8llZNw3t1xBRYXAGYsEPz2kWEA/values/Sheet1";
-const BEARER_TOKEN = "9aed1af912ad0243c06f8a73173efb7ea0cf57be8d9c5ddb414dfaa433b86963";
+  const userDetailsDiv = document.getElementById("userDetails");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-form.onsubmit = async function(e) {
-  e.preventDefault();
-  errorMsg.style.display = "none";
-  submitBtn.disabled = true;
-  submitBtn.textContent = "Logging in...";
+  function renderUserData() {
+    const userDataStr = localStorage.getItem("userData");
 
-  const userInput = form.user.value.trim();
-  const passInput = form.pass.value;
+    if (!userDataStr) {
+      userDetailsDiv.innerHTML = `<p>Anda belum login. <a href="login.html" class="login-link">Klik di sini untuk login</a></p>`;
+      logoutBtn.style.display = "none";
+      return;
+    }
 
-  try {
-    const res = await fetch(SHEET_API, {
-      headers: {
-        "Authorization": `Bearer ${BEARER_TOKEN}`
-      }
-    });
-    const data = await res.json();
+    const userData = JSON.parse(userDataStr);
 
-    // lanjutkan seperti biasa...
-  } catch (err) {
-    // error handling
+    userDetailsDiv.innerHTML = `
+      <p><strong>UserID:</strong> ${userData.userID}</p>
+      <p><strong>Nama:</strong> ${userData.name}</p>
+      <p><strong>Email:</strong> ${userData.email}</p>
+      <p><strong>WhatsApp:</strong> ${userData.whatsapp}</p>
+      <p><strong>Bank:</strong> ${userData.bank}</p>
+      <p><strong>Nomor Rekening:</strong> ${userData.nomorRekening}</p>
+      <p><strong>Saldo Utama:</strong> ${userData.saldoUtama}</p>
+      <p><strong>Saldo Trading:</strong> ${userData.saldoTrading}</p>
+      <p><strong>Plan:</strong> ${userData.plan}</p>
+      <p><strong>Durasi:</strong> ${userData.durasi}</p>
+    `;
+
+    logoutBtn.style.display = "block";
   }
-  // reset button
-};
+
+  logoutBtn.addEventListener("click", () => {
+    localStorage.removeItem("userData");
+    localStorage.removeItem("userID");
+    window.location.href = "login.html";
+  });
+
+  renderUserData();
