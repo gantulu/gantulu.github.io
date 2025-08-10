@@ -1,11 +1,153 @@
-<link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
-<script src="https://unpkg.com/grapesjs"></script>
-<div id="gjs" style="height:0px; overflow:hidden"></div>
-<script>
-  const editor = grapesjs.init({
-    container: '#gjs',
-    fromElement: true,
-    height: '700px',
-    width: 'auto',
-  });
-</script>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Halaman Utama</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: #f9f9f9;
+    }
+    header {
+      background: #007bff;
+      color: white;
+      padding: 10px 20px;
+      font-weight: bold;
+      user-select: none;
+    }
+    .content {
+      flex: 1;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      overflow-y: auto;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+    nav {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #ccc;
+      background: #f0f0f0;
+      padding: 10px 0;
+      user-select: none;
+    }
+    nav button {
+      background: none;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 10px;
+      transition: color 0.3s, font-weight 0.3s;
+    }
+    nav button.active {
+      font-weight: bold;
+      color: #007bff;
+    }
+    #user-info {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background: #f9f9f9;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <header id="header-user">
+    Loading user info...
+  </header>
+
+  <div class="content">
+    <div id="dashboard" class="tab-content active">
+      <h2>Dashboard</h2>
+      <p>Konten dashboard disini...</p>
+      <div id="user-info">
+        Loading data user...
+      </div>
+    </div>
+    <div id="investasi" class="tab-content">
+      <h2>Investasi</h2>
+      <p>Konten investasi disini...</p>
+    </div>
+    <div id="trade" class="tab-content">
+      <h2>Trade</h2>
+      <p>Konten trade disini...</p>
+    </div>
+    <div id="wallet" class="tab-content">
+      <h2>Wallet</h2>
+      <p>Konten wallet disini...</p>
+    </div>
+    <div id="logout" class="tab-content">
+      <h2>Logout</h2>
+      <p>Kamu akan logout...</p>
+    </div>
+  </div>
+
+  <nav>
+    <button data-target="dashboard" class="active">Dashboard</button>
+    <button data-target="investasi">Investasi</button>
+    <button data-target="trade">Trade</button>
+    <button data-target="wallet">Wallet</button>
+    <button data-target="logout">Logout</button>
+  </nav>
+
+  <script>
+    const buttons = document.querySelectorAll('nav button');
+    const contents = document.querySelectorAll('.tab-content');
+    const headerUser = document.getElementById('header-user');
+    const userInfoDiv = document.getElementById('user-info');
+
+    // Ambil userData dari localStorage
+    const userDataJSON = localStorage.getItem('userData');
+    if (!userDataJSON) {
+      // Jika tidak ada userData, redirect ke login
+      window.location.href = 'login.html';
+    } else {
+      const userData = JSON.parse(userDataJSON);
+      headerUser.textContent = `Halo, ${userData.name} (UserID: ${userData.userID})`;
+
+      // Tampilkan userData di div dashboard #user-info
+      userInfoDiv.innerHTML = `
+        <h3>Informasi User</h3>
+        <ul>
+          <li><strong>UserID:</strong> ${userData.userID}</li>
+          <li><strong>Nama:</strong> ${userData.name}</li>
+          <li><strong>Whatsapp:</strong> ${userData.whatsapp}</li>
+          <li><strong>Email:</strong> ${userData.email}</li>
+        </ul>
+      `;
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const target = btn.getAttribute('data-target');
+
+        if (target === 'logout') {
+          localStorage.removeItem('userData');
+          window.location.href = '/crypto/login.html';
+          return;
+        }
+
+        contents.forEach(c => {
+          c.id === target ? c.classList.add('active') : c.classList.remove('active');
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
