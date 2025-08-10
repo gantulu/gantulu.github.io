@@ -13,5 +13,5 @@
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
     localStorage.removeItem('userData');
-    window.location.href = 'login.html';
+    window.location.href = '/member';
   });
