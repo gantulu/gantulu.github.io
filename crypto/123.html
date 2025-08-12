@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deposit</title>
+<style>
+  :root{
+    --bg:#0f1726;
+    --card:#182233;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+    --gold:#fbbf24;
+    --soft:#0b1220;
+  }
+
+  body{
+    margin:0;
+    font-family: Inter, sans-serif;
+    background:linear-gradient(180deg,#0d1422 0%, #0b1220 100%);
+    color:#e6eef8;
+    padding:16px;
+  }
+  .wrap{
+    max-width:420px;
+    margin:auto;
+  }
+  .chart-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;
+    padding:14px;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  }
+  h2{
+    margin-top:0;
+    font-size:18px;
+    font-weight:600;
+  }
+  label{
+    display:block;
+    margin-top:12px;
+    font-size:14px;
+    color:var(--muted);
+  }
+  select, button{
+    width:100%;
+    padding:10px;
+    margin-top:6px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.05);
+    font-size:15px;
+    background:var(--soft);
+    color:white;
+  }
+  button{
+    background:var(--accent);
+    font-weight:600;
+    border:none;
+    cursor:pointer;
+  }
+  button:disabled{
+    background:#334155;
+    cursor:not-allowed;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="chart-card">
+    <h2>Deposit</h2>
+
+    <label for="plan">Pilih Plan</label>
+    <select id="plan">
+      <option value="">-- Pilih Plan --</option>
+      <option value="bronze">Bronze</option>
+      <option value="silver">Silver</option>
+      <option value="gold">Gold</option>
+    </select>
+
+    <label for="amount">Pilih Nominal</label>
+    <select id="amount" disabled>
+      <option value="">-- Pilih Nominal --</option>
+    </select>
+
+    <button id="submitBtn" disabled>Lanjutkan</button>
+  </div>
+
+</div>
+
+<script>
+const planSelect = document.getElementById('plan');
+const amountSelect = document.getElementById('amount');
+const submitBtn = document.getElementById('submitBtn');
+
+const planOptions = {
+    bronze: [500, 1000, 1500, 2000, 2500],
+    silver: [3000, 3500, 4000, 4500, 5000],
+    gold: [6000, 7000, 8000, 9000, 10000]
+};
+
+planSelect.addEventListener('change', function() {
+    const plan = this.value;
+    amountSelect.innerHTML = '<option value="">-- Pilih Nominal --</option>';
+    
+    if(plan && planOptions[plan]) {
+        planOptions[plan].forEach(value => {
+            let option = document.createElement('option');
+            option.value = value;
+            option.textContent = `Rp ${value.toLocaleString()}`;
+            amountSelect.appendChild(option);
+        });
+        amountSelect.disabled = false;
+    } else {
+        amountSelect.disabled = true;
+    }
+    submitBtn.disabled = true;
+});
+
+amountSelect.addEventListener('change', function() {
+    submitBtn.disabled = !this.value;
+});
+
+submitBtn.addEventListener('click', function() {
+    const plan = planSelect.value;
+    const amount = amountSelect.value;
+    alert(`Anda memilih Plan: ${plan.toUpperCase()} dengan nominal Rp ${parseInt(amount).toLocaleString()}`);
+});
+</script>
+</body>
+</html>
