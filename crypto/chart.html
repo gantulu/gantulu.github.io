@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Crypto Mobile UI - Demo</title>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  :root{
+    --bg:#0f1726;
+    --card:#182233;
+    --muted:#94a3b8;
+    --accent:#60a5fa;
+    --gold:#fbbf24;
+    --soft:#0b1220;
+    --glass: rgba(255,255,255,0.03);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    min-height:100%;
+    background:linear-gradient(180deg,#0d1422 0%, #0b1220 100%);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:#e6eef8;
+    padding:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Container */
+  .wrap{
+    max-width:420px;
+    margin:0 auto;
+  }
+
+  /* Top tabs (LTC BTC ETH) */
+  .tabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    align-items:center;
+  }
+  .tab{
+    flex:1;
+    padding:8px 10px;
+    border-radius:999px;
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .tab.active{
+    background:linear-gradient(90deg, rgba(96,165,250,0.12), rgba(251,191,36,0.06));
+    color:#fff;
+    box-shadow: 0 6px 18px rgba(96,165,250,0.06), inset 0 -2px 8px rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .tab .dot{
+    display:inline-block;
+    width:8px;height:8px;border-radius:50%;
+    margin-right:8px;
+    vertical-align:middle;
+    background:linear-gradient(180deg,var(--gold), #ffb84d);
+    box-shadow:0 2px 8px rgba(251,191,36,0.2);
+  }
+
+  /* Price cards row */
+  .top-row{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:12px;
+  }
+  .price-card{
+    flex:1;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:12px;
+    box-shadow: 0 6px 16px rgba(2,6,23,0.6);
+  }
+  .price-card h3{
+    font-size:18px;
+    margin:0 0 6px 0;
+    letter-spacing: -0.4px;
+  }
+  .price-card small{
+    display:block;
+    color:var(--muted);
+    font-size:12px;
+  }
+
+  /* timeframe pills */
+  .timeframe{
+    display:flex;
+    gap:8px;
+    margin:10px 0 6px;
+  }
+  .tf{
+    padding:6px 10px;
+    border-radius:8px;
+    font-size:12px;
+    background:transparent;
+    color:var(--muted);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  .tf.active{
+    background:linear-gradient(90deg, rgba(96,165,250,0.12), rgba(96,165,250,0.06));
+    color:#fff;
+    font-weight:600;
+  }
+
+  /* Main chart card */
+  .chart-card{
+    margin-top:6px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;
+    padding:14px;
+    position:relative;
+    overflow:visible;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  }
+  .chart-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:8px;
+  }
+  .chart-header .title{
+    font-weight:600;
+    font-size:15px;
+  }
+  .chart-header .percent{
+    font-size:13px;
+    color:var(--muted);
+  }
+
+  /* Chart canvas responsive */
+  .chart-wrap{
+    width:100%;
+  }
+  canvas{
+    display:block;
+    width:100% !important;
+    height:180px !important;
+  }
+
+  /* mini cards row */
+  .mini-row{
+    display:flex;
+    gap:10px;
+    margin-top:12px;
+  }
+  .mini{
+    flex:1;
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:12px;
+    padding:10px;
+    font-size:13px;
+  }
+  .mini .label{ color:var(--muted); font-size:12px; margin-bottom:6px;}
+  .mini .value{ font-weight:700; font-size:15px; margin-bottom:8px; display:flex; align-items:center; gap:8px;}
+  .trend-up{ color:#34d399; font-size:13px}
+  .trend-down{ color:#fb7185; font-size:13px}
+
+  /* small mini canvas */
+  .mini canvas{
+    height:60px !important;
+    width:100% !important;
+  }
+
+  /* footer spacing for mobile */
+  .spacer{ height:36px }
+
+  /* small responsive tweaks */
+  @media (max-width:360px){
+    body{padding:12px}
+    canvas{height:150px !important}
+    .chart-card{padding:12px}
+    .price-card h3{font-size:16px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist" aria-label="Cryptocurrency tabs">
+      <button class="tab" data-coin="ltc"><span class="dot" style="background:#7dd3fc"></span>LTC</button>
+      <button class="tab active" data-coin="btc"><span class="dot" style="background:linear-gradient(180deg,#fbbf24,#ffb84d)"></span>BTC</button>
+      <button class="tab" data-coin="eth"><span class="dot" style="background:#f0abfc"></span>ETH</button>
+    </div>
+
+    <!-- Prices -->
+    <div class="top-row">
+      <div class="price-card" id="leftPrice">
+        <h3 id="leftAmount">$24,46</h3>
+        <small id="leftLabel">Lorem</small>
+      </div>
+
+      <div style="width:10px"></div>
+
+      <div class="price-card" id="rightPrice">
+        <h3 id="rightAmount">$34,30</h3>
+        <small id="rightLabel">Ipsum</small>
+      </div>
+    </div>
+
+    <!-- timeframe pills -->
+    <div class="timeframe" role="group" aria-label="Timeframe">
+      <button class="tf">1D</button>
+      <button class="tf">1W</button>
+      <button class="tf active">1M</button>
+      <button class="tf">3M</button>
+      <button class="tf">1Y</button>
+    </div>
+
+    <!-- Chart card -->
+    <div class="chart-card" aria-hidden="false">
+      <div class="chart-header">
+        <div class="title">Litecoin</div>
+        <div class="percent">17%</div>
+      </div>
+
+      <div class="chart-wrap">
+        <canvas id="mainChart" aria-label="Litecoin price chart"></canvas>
+      </div>
+    </div>
+
+    <!-- mini cards -->
+    <div class="mini-row">
+      <div class="mini">
+        <div class="label">Litecoin</div>
+        <div class="value"><span>$183.7</span> <span class="trend-up">▲ 3.2%</span></div>
+        <canvas id="mini1"></canvas>
+      </div>
+
+      <div class="mini">
+        <div class="label">Ripple</div>
+        <div class="value"><span>$0.8602</span> <span class="trend-down">▼ 1.1%</span></div>
+        <canvas id="mini2"></canvas>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+  </div>
+
+<script>
+/* ---------- Sample data (you can replace with real API data) ---------- */
+const months = ['Mar','Apr','May','Jun','Jul','Aug','Sep'];
+const dataLitecoin = [120,140,125,180,155,200,190]; // main chart
+const miniLTC = [60,80,75,95,88,110,105];
+const miniXRP = [15,18,17,22,20,21,19];
+
+/* ---------- Chart.js global config ---------- */
+const globalOptions = {
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: 'rgba(10,14,22,0.95)',
+      titleColor: '#fff',
+      bodyColor: '#fff',
+      padding:8,
+      cornerRadius:6
+    }
+  },
+  scales: {
+    x: {
+      grid: { display:false, drawBorder:false },
+      ticks: { color: '#9fb0d6', font: { size:11 } }
+    },
+    y: {
+      grid: { color:'rgba(255,255,255,0.03)', drawBorder:false },
+      ticks: { color: '#7f98b8', font: { size:11 }, beginAtZero:false }
+    }
+  }
+};
+
+/* ---------- Main Litecoin chart (line with glow) ---------- */
+const ctxMain = document.getElementById('mainChart').getContext('2d');
+const gradient = ctxMain.createLinearGradient(0,0,0,300);
+gradient.addColorStop(0, 'rgba(96,165,250,0.22)');
+gradient.addColorStop(1, 'rgba(96,165,250,0.02)');
+
+const mainChart = new Chart(ctxMain, {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Litecoin',
+      data: dataLitecoin,
+      tension: 0.36,
+      borderWidth: 2.8,
+      borderColor: '#7dd3fc',
+      pointRadius: 3,
+      pointBackgroundColor: '#7dd3fc',
+      fill: true,
+      backgroundColor: gradient,
+      pointHoverRadius:5
+    }]
+  },
+  options: {
+    ...globalOptions,
+    interaction: { intersect:false, mode:'index' },
+    scales: {
+      x: globalOptions.scales.x,
+      y: globalOptions.scales.y
+    },
+    elements: {
+      line: {
+        borderJoinStyle: 'round'
+      }
+    }
+  }
+});
+
+/* ---------- Mini charts (sparkline style) ---------- */
+function createMini(id, data, color) {
+  const ctx = document.getElementById(id).getContext('2d');
+  const g = ctx.createLinearGradient(0,0,0,80);
+  g.addColorStop(0, color.replace('1)', '0.18)'));
+  g.addColorStop(1, color.replace('1)', '0.02)'));
+
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [{
+        data: data,
+        tension: 0.35,
+        borderWidth:2,
+        borderColor: color,
+        pointRadius:0,
+        fill:true,
+        backgroundColor: g
+      }]
+    },
+    options: {
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{enabled:false}},
+      scales:{
+        x:{display:false},
+        y:{display:false}
+      }
+    }
+  });
+}
+
+createMini('mini1', miniLTC, 'rgba(125,211,252,1)');
+createMini('mini2', miniXRP, 'rgba(148,163,184,1)');
+
+/* ---------- Simple interactivity for tabs/timeframe (UI only) ---------- */
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // fake update prices/labels when clicking different coins
+    const coin = btn.dataset.coin || 'btc';
+    if(coin==='btc'){
+      document.getElementById('leftAmount').textContent = '$24,46';
+      document.getElementById('rightAmount').textContent = '$34,30';
+      document.getElementById('leftLabel').textContent = 'Lorem';
+      document.getElementById('rightLabel').textContent = 'Ipsum';
+    } else if(coin==='ltc'){
+      document.getElementById('leftAmount').textContent = '$10,83';
+      document.getElementById('rightAmount').textContent = '$12,15';
+      document.getElementById('leftLabel').textContent = 'Lite';
+      document.getElementById('rightLabel').textContent = 'Small';
+    } else {
+      document.getElementById('leftAmount').textContent = '$300,12';
+      document.getElementById('rightAmount').textContent = '$320,99';
+      document.getElementById('leftLabel').textContent = 'Eth';
+      document.getElementById('rightLabel').textContent = 'Market';
+    }
+  });
+});
+
+/* timeframe UI */
+document.querySelectorAll('.tf').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tf').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // In production: reload chart data per timeframe via API
+  });
+});
+</script>
+</body>
+</html>
