@@ -1,75 +1,150 @@
+<!DOCTYPE html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Daftar Produk</title>
+  <title>Manajemen Produk</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 30px;
+    }
     .produk {
       border: 1px solid #ccc;
-      border-radius: 10px;
-      margin: 10px;
       padding: 15px;
-      width: 300px;
+      margin: 10px;
+      width: 350px;
       display: inline-block;
       vertical-align: top;
+      background: #f9f9f9;
     }
     .produk img {
-      width: 100%;
-      border-radius: 8px;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 10px;
     }
-    .produk button {
+    #form-editor {
+      border: 2px solid #333;
+      padding: 20px;
+      margin-top: 40px;
+      background: #eef;
+    }
+    input[type="text"] {
+      width: 95%;
+      padding: 6px;
+      margin-top: 4px;
+    }
+    button {
+      padding: 10px 20px;
       margin-top: 10px;
-      padding: 8px 12px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 6px;
       cursor: pointer;
     }
   </style>
 </head>
 <body>
   <h1>Daftar Produk</h1>
-  <div id="items-container">
+  <div id="daftar-produk"></div>
+
+  <h2>Edit Produk</h2>
+  <div id="form-editor">
+    <form id="edit-form">
+      <input type="hidden" id="edit-id">
+      <div id="form-fields"></div>
+      <button type="submit">Simpan Perubahan</button>
+    </form>
+  </div>
 
   <script>
-    // Ganti URL API sesuai dengan koleksi kamu
-    const API_URL = "https://api.apico.dev/v1/VlrUtH/collections/6886399d0d3a001ccdecb705/items";
+    const bearerToken = 'c281cba39024ed47e1d5d2cc2f280774a152eafbbc16baa787d4a4ace9d0be86';
+    const apiBase = 'https://api.apico.dev/v1/tYRRpC/collections/6886399d0d3a001ccdecb705/items';
+    let allItems = [];
 
-    fetch(API_URL)
+    // Fetch semua data produk
+    fetch(apiBase, {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + bearerToken
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      allItems = data.items;
+      const container = document.getElementById('daftar-produk');
+
+      allItems.forEach(item => {
+        const fieldData = item.fieldData;
+        const div = document.createElement('div');
+        div.className = 'produk';
+
+        let content = '';
+
+        for (const key in fieldData) {
+          const value = fieldData[key];
+          if (typeof value === 'object' && value !== null && value.url) {
+            content += `<p><strong>${key}:</strong><br><img src="${value.url}" alt="${key}"></p>`;
+          } else {
+            content += `<p><strong>${key}:</strong> ${value}</p>`;
+          }
+        }
+
+        content += `<button onclick="editItem('${item.id}')">Edit</button>`;
+        div.innerHTML = content;
+        container.appendChild(div);
+      });
+    })
+    .catch(err => console.error('Gagal mengambil data:', err));
+
+    // Fungsi isi form editor
+    function editItem(id) {
+      const item = allItems.find(i => i.id === id);
+      const fieldData = item.fieldData;
+      const formFieldsDiv = document.getElementById('form-fields');
+
+      document.getElementById('edit-id').value = id;
+      formFieldsDiv.innerHTML = '';
+
+      for (const key in fieldData) {
+        const value = fieldData[key];
+        if (typeof value === 'object' && value !== null && value.url) continue;
+
+        formFieldsDiv.innerHTML += `
+          <label><strong>${key}</strong><br>
+          <input type="text" name="${key}" value="${value || ''}" /></label><br><br>
+        `;
+      }
+
+      document.getElementById('form-editor').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // PATCH data ke API
+    document.getElementById('edit-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const id = document.getElementById('edit-id').value;
+      const formData = new FormData(e.target);
+      const updatedFieldData = {};
+
+      formData.forEach((value, key) => {
+        updatedFieldData[key] = value;
+      });
+
+      fetch(`${apiBase}/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'Bearer ' + bearerToken,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fieldData: updatedFieldData })
+      })
       .then(res => res.json())
-      .then(data => {
-        const container = document.getElementById("items-container");
-
-        data.items.forEach(item => {
-          const div = document.createElement("div");
-          div.className = "produk";
-
-          const img = document.createElement("img");
-          img.src = item.fieldData?.["img1-2"]?.url || "";
-          div.appendChild(img);
-
-          const title = document.createElement("h3");
-          title.textContent = item.fieldData?.name || "Tanpa Nama";
-          div.appendChild(title);
-
-          const harga = document.createElement("p");
-          harga.textContent = item.fieldData?.harga || "Tanpa Harga";
-          div.appendChild(harga);
-
-          const button = document.createElement("button");
-          button.textContent = "Edit Produk";
-          button.addEventListener("click", () => {
-            const itemId = item.id;
-            window.location.href = `/jaya1.html?itemID=${itemId}`;
-          });
-
-          div.appendChild(button);
-          container.appendChild(div);
-        });
+      .then(res => {
+        alert('Produk berhasil diperbarui!');
+        location.reload(); // Reload untuk melihat update
       })
       .catch(err => {
-        console.error("Gagal memuat data:", err);
+        console.error('Gagal memperbarui data:', err);
+        alert('Terjadi kesalahan saat mengupdate.');
       });
+    });
   </script>
-
-
 </body>
+</html>
