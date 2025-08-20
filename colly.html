@@ -1,0 +1,287 @@
+<html lang="id"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 10px auto;
+      padding: 4px;
+      background-color: #f9f9f9;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      text-align: center;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    button svg {
+      fill: white;
+      width: 18px;
+      height: 18px;
+    }
+
+    #tampilkanHasil {
+      display: none;
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    #tampilkanHasil p {
+      margin: 5px 0;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .sectionGrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px 20px;
+      margin-bottom: 20px;
+    }
+
+    .status-box {
+      border-left: 4px solid #4CAF50;
+      padding-left: 10px;
+      margin-bottom: 15px;
+      background-color: #f0fff0;
+    }
+
+    #notFound {
+      color: red;
+      font-weight: bold;
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    /* Flow process styling with arrow shapes */
+    .flow-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 0;
+      margin-bottom: 20px;
+    }
+    .arrow.steps {
+      position: relative;
+      background-color: #00994d;
+      color: white;
+      padding: 15px 40px 15px 20px;
+      font-weight: bold;
+      flex-shrink: 0;
+      cursor: default;
+      font-size: 12px;
+      clip-path: polygon(
+        0 0,
+        calc(100% - 20px) 0,
+        100% 50%,
+        calc(100% - 20px) 100%,
+        0 100%,
+        20px 50%
+      );
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .arrow.steps:last-child {
+      margin-right: 0;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        0 100%,
+        20px 50%
+      );
+    }
+
+    .grey {
+      background-color: #c0c0c0;
+      color: #666;
+      padding: 15px 40px 15px 20px;
+      font-weight: bold;
+      flex-shrink: 0;
+      position: relative;
+      font-size: 12px;
+      clip-path: polygon(
+        0 0,
+        calc(100% - 20px) 0,
+        100% 50%,
+        calc(100% - 20px) 100%,
+        0 100%,
+        20px 50%
+      );
+      margin-right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+    }
+    .grey:last-child {
+      margin-right: 0;
+      clip-path: polygon(
+        0 0,
+        100% 0,
+        100% 100%,
+        0 100%,
+        20px 50%
+      );
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Cek Resi J&amp;T Cargo</h2>
+
+  <form id="formResi">
+    <input type="text" id="inputResi" placeholder="Masukkan No Resi" required="">
+    <button type="submit" aria-label="Cari resi">
+      <!-- Search icon SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 001.48-5.34C15.15 5.53 12.62 3 9.5 3S3.85 5.53 3.85 8.39 6.38 13.78 9.5 13.78c1.61 0 3.09-.66 4.16-1.73l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 12c-1.93 0-3.5-1.57-3.5-3.5S7.57 5 9.5 5 13 6.57 13 8.5 11.43 12 9.5 12z"></path>
+      </svg>
+    </button>
+  </form>
+
+  <div id="tampilkanHasil" style="display: block;">
+    <img src="https://gantulu.github.io/fjkdvdf.jpg"><!-- Flow process di sini, di atas semua section -->
+    
+
+    <div class="sectionGrid">
+      <p><strong>Metode Layanan:</strong> <span id="MetodeLayanan">FastTrack</span></p>
+      <p><strong>Berat:</strong> <span id="Berat_kg">16</span> kg</p>
+      <p><strong>Volume:</strong> <span id="Volume_m3">0.001</span> m³</p>
+      <p><strong>Jumlah Koli:</strong> <span id="JumlahKoli">1</span></p>
+      <p><strong>Waktu Pick Up:</strong> <span id="WaktuPickUp">2025-08-20</span></p>
+      <p><strong>Waktu Pengiriman:</strong> <span id="WaktuPengiriman">2025-08-20</span></p>
+    </div>
+
+    <div class="section">
+      <p><strong>NO RESI:</strong> <span id="NoResi">929393939dd</span></p>
+      <p><strong>ASURANSI:</strong> <span id="Asuransi"></span></p>
+      <p><strong>SPJ:</strong> <span id="SPJ">3227000</span></p>
+    </div>
+
+    <div class="section">
+      <p><strong>PENGIRIM:</strong> <span id="PengirimNama">Suradi</span></p>
+      <p><strong>Kota Pengirim:</strong> <span id="PengirimKota">Karangnyar</span></p>
+      <p><strong>No Telp:</strong> <span id="PengirimNoTelp">82396682858</span></p>
+    </div>
+
+    <div class="section">
+      <p><strong>PENERIMA:</strong> <span id="PenerimaNama">TEDONG</span></p>
+      <p><strong>Alamat:</strong> <span id="PenerimaAlamat">Jln Mangga,  Sudirman,  Jalan Papupa Lima</span></p>
+      <p><strong>No Telp:</strong> <span id="PenerimaNoTelp">922872889</span></p>
+    </div>
+
+    <div class="section">
+      <h4>Status Pengiriman</h4>
+      <div class="status-box">
+        <p><strong><span id="Status">Sudah di ambil</span></strong></p>
+        <p><span id="TanggalWaktu">19/08/2025 12:56:00</span></p>
+        <p><span id="Lokasi">Kota karangnyar (KRG015A)</span></p>
+        <p><span id="Detail">Kuri J&amp;T Cargo Feri Andriansyah (82122010022) sudah ambil paket</span></p>
+      </div>
+
+      <div class="status-box">
+        <p><strong><span id="Status2"></span></strong></p>
+        <p><span id="TanggalWaktu2"></span></p>
+        <p><span id="Lokasi2"></span></p>
+        <p><span id="Detail2">Kuri J&amp;T Cargo TAUFIK SURYA SUMANTRI  (08978644474) sudah ambil paket</span></p>
+      </div>
+    </div>
+  </div>
+
+  <p id="notFound" style="display: none;">No Resi tidak ditemukan.</p>
+
+  <script>
+    document.getElementById('formResi').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const noResiInput = document.getElementById('inputResi').value.trim();
+      cariResi(noResiInput);
+    });
+
+    async function cariResi(noResiInput) {
+      const url = 'https://opensheet.elk.sh/1j3Sq13q0g4qtu3n4_HNLOO6FYCyBpToZU7iAIo0yZvM/jntcargo';
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        const hasil = data.find(item => item.NoResi === noResiInput);
+
+        if (hasil) {
+          document.getElementById('notFound').style.display = 'none';
+          document.getElementById('tampilkanHasil').style.display = 'block';
+
+          if (hasil.PenerimaAlamat) {
+            hasil.PenerimaAlamat = hasil.PenerimaAlamat.replace(/\t/g, ', ');
+          }
+
+          for (const key in hasil) {
+            const el = document.getElementById(key);
+            if (el) el.textContent = hasil[key];
+          }
+        } else {
+          document.getElementById('notFound').style.display = 'block';
+          document.getElementById('tampilkanHasil').style.display = 'none';
+          kosongkanField();
+        }
+
+      } catch (error) {
+        console.error("Gagal mengambil data:", error);
+        alert("Terjadi kesalahan saat mengambil data.");
+      }
+    }
+
+    function kosongkanField() {
+      const fieldIds = [
+        "NoResi", "Asuransi", "SPJ", "PengirimNama", "PengirimKota", "PengirimNoTelp",
+        "PenerimaNama", "PenerimaAlamat", "PenerimaNoTelp", "MetodeLayanan", "Berat_kg",
+        "Volume_m3", "JumlahKoli", "WaktuPickUp", "WaktuPengiriman", "Status",
+        "TanggalWaktu", "Lokasi", "Detail", "Status2", "TanggalWaktu2", "Lokasi2", "Detail2"
+      ];
+      fieldIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "";
+      });
+    }
+  </script>
+
+
+
+</body></html>
