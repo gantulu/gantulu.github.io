@@ -1,6 +1,9 @@
-<html lang="id"><head>
+<!DOCTYPE html>
+<html lang="id">
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cek Resi J&T Cargo</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -87,80 +90,6 @@
       text-align: center;
       margin-top: 20px;
     }
-
-    /* Flow process styling with arrow shapes */
-    .flow-container {
-      display: flex;
-      overflow-x: auto;
-      gap: 0;
-      margin-bottom: 20px;
-    }
-    .arrow.steps {
-      position: relative;
-      background-color: #00994d;
-      color: white;
-      padding: 15px 40px 15px 20px;
-      font-weight: bold;
-      flex-shrink: 0;
-      cursor: default;
-      font-size: 12px;
-      clip-path: polygon(
-        0 0,
-        calc(100% - 20px) 0,
-        100% 50%,
-        calc(100% - 20px) 100%,
-        0 100%,
-        20px 50%
-      );
-      margin-right: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    }
-    .arrow.steps:last-child {
-      margin-right: 0;
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% 100%,
-        0 100%,
-        20px 50%
-      );
-    }
-
-    .grey {
-      background-color: #c0c0c0;
-      color: #666;
-      padding: 15px 40px 15px 20px;
-      font-weight: bold;
-      flex-shrink: 0;
-      position: relative;
-      font-size: 12px;
-      clip-path: polygon(
-        0 0,
-        calc(100% - 20px) 0,
-        100% 50%,
-        calc(100% - 20px) 100%,
-        0 100%,
-        20px 50%
-      );
-      margin-right: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-    }
-    .grey:last-child {
-      margin-right: 0;
-      clip-path: polygon(
-        0 0,
-        100% 0,
-        100% 100%,
-        0 100%,
-        20px 50%
-      );
-    }
   </style>
 </head>
 <body>
@@ -168,7 +97,7 @@
   <h2>Cek Resi J&amp;T Cargo</h2>
 
   <form id="formResi">
-    <input type="text" id="inputResi" placeholder="Masukkan No Resi" required="">
+    <input type="text" id="inputResi" placeholder="Masukkan No Resi" required>
     <button type="submit" aria-label="Cari resi">
       <!-- Search icon SVG -->
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -177,56 +106,60 @@
     </button>
   </form>
 
-  <div id="tampilkanHasil" style="display: block;">
-    <img src="https://gantulu.github.io/fjkdvdf.jpg"><!-- Flow process di sini, di atas semua section -->
-    
+  <div id="tampilkanHasil">
+    <!-- Flow process diganti dengan gambar -->
+    <div style="text-align:center; margin-bottom:20px;">
+      <img src="https://gantulu.github.io/fjkdvdf.jpg" 
+           alt="Flow Tracking" 
+           style="max-width:100%; height:auto; border-radius:6px;">
+    </div>
 
     <div class="sectionGrid">
-      <p><strong>Metode Layanan:</strong> <span id="MetodeLayanan">FastTrack</span></p>
-      <p><strong>Berat:</strong> <span id="Berat_kg">16</span> kg</p>
-      <p><strong>Volume:</strong> <span id="Volume_m3">0.001</span> m³</p>
-      <p><strong>Jumlah Koli:</strong> <span id="JumlahKoli">1</span></p>
-      <p><strong>Waktu Pick Up:</strong> <span id="WaktuPickUp">2025-08-20</span></p>
-      <p><strong>Waktu Pengiriman:</strong> <span id="WaktuPengiriman">2025-08-20</span></p>
+      <p><strong>Metode Layanan:</strong> <span id="MetodeLayanan"></span></p>
+      <p><strong>Berat:</strong> <span id="Berat_kg"></span> kg</p>
+      <p><strong>Volume:</strong> <span id="Volume_m3"></span> m³</p>
+      <p><strong>Jumlah Koli:</strong> <span id="JumlahKoli"></span></p>
+      <p><strong>Waktu Pick Up:</strong> <span id="WaktuPickUp"></span></p>
+      <p><strong>Waktu Pengiriman:</strong> <span id="WaktuPengiriman"></span></p>
     </div>
 
     <div class="section">
-      <p><strong>NO RESI:</strong> <span id="NoResi">929393939dd</span></p>
+      <p><strong>NO RESI:</strong> <span id="NoResi"></span></p>
       <p><strong>ASURANSI:</strong> <span id="Asuransi"></span></p>
-      <p><strong>SPJ:</strong> <span id="SPJ">3227000</span></p>
+      <p><strong>SPJ:</strong> <span id="SPJ"></span></p>
     </div>
 
     <div class="section">
-      <p><strong>PENGIRIM:</strong> <span id="PengirimNama">Suradi</span></p>
-      <p><strong>Kota Pengirim:</strong> <span id="PengirimKota">Karangnyar</span></p>
-      <p><strong>No Telp:</strong> <span id="PengirimNoTelp">82396682858</span></p>
+      <p><strong>PENGIRIM:</strong> <span id="PengirimNama"></span></p>
+      <p><strong>Kota Pengirim:</strong> <span id="PengirimKota"></span></p>
+      <p><strong>No Telp:</strong> <span id="PengirimNoTelp"></span></p>
     </div>
 
     <div class="section">
-      <p><strong>PENERIMA:</strong> <span id="PenerimaNama">TEDONG</span></p>
-      <p><strong>Alamat:</strong> <span id="PenerimaAlamat">Jln Mangga,  Sudirman,  Jalan Papupa Lima</span></p>
-      <p><strong>No Telp:</strong> <span id="PenerimaNoTelp">922872889</span></p>
+      <p><strong>PENERIMA:</strong> <span id="PenerimaNama"></span></p>
+      <p><strong>Alamat:</strong> <span id="PenerimaAlamat"></span></p>
+      <p><strong>No Telp:</strong> <span id="PenerimaNoTelp"></span></p>
     </div>
 
     <div class="section">
       <h4>Status Pengiriman</h4>
       <div class="status-box">
-        <p><strong><span id="Status">Sudah di ambil</span></strong></p>
-        <p><span id="TanggalWaktu">19/08/2025 12:56:00</span></p>
-        <p><span id="Lokasi">Kota karangnyar (KRG015A)</span></p>
-        <p><span id="Detail">Kuri J&amp;T Cargo Feri Andriansyah (82122010022) sudah ambil paket</span></p>
+        <p><strong><span id="Status"></span></strong></p>
+        <p><span id="TanggalWaktu"></span></p>
+        <p><span id="Lokasi"></span></p>
+        <p><span id="Detail"></span></p>
       </div>
 
       <div class="status-box">
         <p><strong><span id="Status2"></span></strong></p>
         <p><span id="TanggalWaktu2"></span></p>
         <p><span id="Lokasi2"></span></p>
-        <p><span id="Detail2">Kuri J&amp;T Cargo TAUFIK SURYA SUMANTRI  (08978644474) sudah ambil paket</span></p>
+        <p><span id="Detail2"></span></p>
       </div>
     </div>
   </div>
 
-  <p id="notFound" style="display: none;">No Resi tidak ditemukan.</p>
+  <p id="notFound">No Resi tidak ditemukan.</p>
 
   <script>
     document.getElementById('formResi').addEventListener('submit', function(e) {
@@ -282,6 +215,5 @@
     }
   </script>
 
-
-
-</body></html>
+</body>
+</html>
