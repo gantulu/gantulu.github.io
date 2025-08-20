@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard Final</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="page">
+  <div class="box">
+    <input id="useridValue3" value="689f92c15c9b099c58c0dc55" class="hidden">
+
+    <div class="field">
+      <label for="saldo" class="label">Saldo Manual</label>
+      <input id="saldo" type="number" value="500000" class="input">
+    </div>
+
+    <div class="section">
+      <p class="label">Income Total</p>
+      <p id="incomeTotal" class="value-lg">Rp 0</p>
+    </div>
+
+    <div class="section">
+      <p class="label">Saldo Total</p>
+      <p id="saldoTotal" class="value-xl">Rp 0</p>
+    </div>
+
+    <div class="section">
+      <p><span class="label">Tanggal Mulai:</span> <span id="dateStart">-</span></p>
+      <p><span class="label">Berakhir dalam:</span> <span id="countdown">--:--:--</span></p>
+    </div>
+
+    <div class="progress-wrap">
+      <div id="progressBar" class="progress"></div>
+    </div>
+
+    <canvas id="cryptoChart" class="chart"></canvas>
+    <div id="cryptoList" class="coin-list"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
