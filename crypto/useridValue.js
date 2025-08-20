@@ -7,16 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  // Set value input dengan id=useridValue
-  const userIdInput = document.getElementById("useridValue");
-  if (userIdInput) {
-    userIdInput.value = userId;
-  }
-
-  // Set value input dengan id=useridValue2
-  const userIdInput2 = document.getElementById("useridValue2");
-  if (userIdInput2) {
-    userIdInput2.value = userId;
+  // Isi input useridValue1 sampai useridValue5
+  for (let i = 1; i <= 5; i++) {
+    const input = document.getElementById(`useridValue${i}`);
+    if (input) {
+      input.value = userId;
+    }
   }
 
   // Logout button (cek dulu apakah ada di halaman)
