@@ -6,7 +6,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const fileInput = document.getElementById('getimageurl');
 const urlInput = document.getElementById('imageurl');
-const userIdInput = document.getElementById('useridValue');
+const userIdInput = document.getElementById('useridValue1');
 
 fileInput.addEventListener('change', async () => {
   if (!fileInput.files.length) {
