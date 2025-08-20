@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    select, input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      width: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #hasil {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+<body>
+
+
+<label for="asal">Kota Asal:</label>
+<select id="asal">
+  <option value="Jakarta">Jakarta</option>
+  <option value="Surabaya">Surabaya</option>
+  <option value="Bandung">Bandung</option>
+  <option value="Karanganyar">Karanganyar</option>
+</select>
+
+<label for="tujuan">Kota Tujuan:</label>
+<select id="tujuan">
+  <option value="Jakarta">Jakarta</option>
+  <option value="Surabaya">Surabaya</option>
+  <option value="Bandung">Bandung</option>
+  <option value="Karanganyar">Karanganyar</option>
+</select>
+
+<label for="berat">Berat (dalam Kg):</label>
+<input type="number" id="berat" min="1" value="1">
+
+<button onclick="cekOngkir()">Cek Ongkir</button>
+
+<div id="hasil"></div>
+
+<script>
+  const tarifDasarPerKm = 2000; // Rupiah per km per kg (dummy)
+  const jarakKota = {
+    "Jakarta-Karanganyar": 540,
+    "Jakarta-Bandung": 150,
+    "Jakarta-Surabaya": 780,
+    "Bandung-Karanganyar": 370,
+    "Surabaya-Karanganyar": 270,
+    "Bandung-Surabaya": 720,
+    "Karanganyar-Karanganyar": 0,
+    "Jakarta-Jakarta": 0,
+    "Surabaya-Surabaya": 0,
+    "Bandung-Bandung": 0
+  };
+
+  function cekOngkir() {
+    const asal = document.getElementById('asal').value;
+    const tujuan = document.getElementById('tujuan').value;
+    const berat = parseFloat(document.getElementById('berat').value);
+
+    if (!berat || berat <= 0) {
+      alert("Berat harus lebih dari 0");
+      return;
+    }
+
+    let key = `${asal}-${tujuan}`;
+    let keyReversed = `${tujuan}-${asal}`;
+
+    let jarak = jarakKota[key] ?? jarakKota[keyReversed];
+
+    if (jarak === undefined) {
+      jarak = 500; // default jarak dummy
+    }
+
+    const ongkir = jarak * berat * tarifDasarPerKm;
+
+    document.getElementById('hasil').innerHTML = `
+      <h3>Hasil Perhitungan:</h3>
+      <p><strong>Asal:</strong> ${asal}</p>
+      <p><strong>Tujuan:</strong> ${tujuan}</p>
+      <p><strong>Jarak (estimasi):</strong> ${jarak} km</p>
+      <p><strong>Berat:</strong> ${berat} kg</p>
+      <p><strong>Ongkir:</strong> Rp ${ongkir.toLocaleString()}</p>
+    `;
+  }
+</script>
+
+</body>
+</html>
