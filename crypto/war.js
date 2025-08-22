@@ -1,93 +1,108 @@
-    const API_URL = "https://api.apico.dev/v1/tfHpYQ/collections/689e1ae27ac7d1569bff9886/items";
-    const TOKEN = "a7def046547dc8deac583832c1985c6430bd7b74efc630d80597b707d7be0352";
+    const rupiah = new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0
+    });
 
-    // Data awal
-    let saldo = 500000;
-    let minincome = 6500000;
-    let maxincome = 7000000;
-    let date = new Date().toISOString();  
-    let dateend = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString(); // 3 jam ke depan
+    const ctx = document.getElementById("saldoChart").getContext("2d");
 
-    // Ambil userId dari localStorage
-    const userId = localStorage.getItem("userId"); 
-    if (!userId) {
-      document.getElementById("status").innerText = "userId tidak ditemukan di localStorage";
-      throw new Error("userId missing in localStorage");
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, "rgba(96, 165, 250, 0.5)");
+    gradient.addColorStop(1, "rgba(96, 165, 250, 0)");
+
+    const saldoChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: [],
+        datasets: [{
+          label: "Saldo Update",
+          data: [],
+          borderColor: "#60a5fa",
+          backgroundColor: gradient,
+          borderWidth: 2,
+          fill: true,
+          tension: 0.3,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        animation: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            grid: { color: "rgba(255,255,255,0.05)" },
+            ticks: { color: "#9ca3af" }
+          },
+          y: {
+            grid: { color: "rgba(255,255,255,0.05)" },
+            ticks: {
+              color: "#9ca3af",
+              callback: function(value) {
+                return rupiah.format(value);
+              }
+            }
+          }
+        }
+      }
+    });
+
+    let time = 0;
+    let firstValue = null;
+    let saldoInterval, countdownInterval;
+
+    function updateRandomSaldo() {
+      const minincome = parseInt(document.getElementById("minincome").value);
+      const maxincome = parseInt(document.getElementById("maxincome").value);
+
+      const randomValue = Math.floor(Math.random() * (maxincome - minincome + 1)) + minincome;
+      document.getElementById("saldoUpdate").value = rupiah.format(randomValue);
+
+      if (firstValue === null) firstValue = randomValue;
+
+      saldoChart.data.labels.push(time + "s");
+      saldoChart.data.datasets[0].data.push(randomValue);
+      time++;
+
+      if (saldoChart.data.labels.length > 30) {
+        saldoChart.data.labels.shift();
+        saldoChart.data.datasets[0].data.shift();
+      }
+
+      saldoChart.update();
+
+      const percentChange = ((randomValue - firstValue) / firstValue) * 100;
+      const percentElem = document.getElementById("percentChange");
+
+      percentElem.textContent = (percentChange >= 0 ? "+" : "") + percentChange.toFixed(2) + "%";
+      percentElem.style.color = percentChange >= 0 ? "#22c55e" : "#ef4444";
     }
 
-    function formatRupiah(num) {
-      return "Rp" + Math.floor(num).toLocaleString("id-ID");
-    }
-
-    function updateCountdownAndProgress() {
+    function updateCountdown() {
+      const dateendStr = document.getElementById("dateendValue").value;
+      const endTime = new Date(dateendStr).getTime();
       const now = new Date().getTime();
-      const start = new Date(date).getTime();
-      const end = new Date(dateend).getTime();
-      let diff = end - now;
+      let diff = endTime - now;
 
       if (diff <= 0) {
-        document.getElementById("countdown").innerText = "Sesi sudah berakhir";
-        document.getElementById("progressBar").style.width = "100%";
-        document.getElementById("progressBar").innerText = "100%";
-        return false;
+        document.getElementById("dateend").value = "Selesai";
+        clearInterval(saldoInterval);
+        clearInterval(countdownInterval);
+        return;
       }
 
-      let hours = Math.floor(diff / (1000 * 60 * 60));
-      let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      let seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      document.getElementById("countdown").innerText =
-        `Hitung mundur: ${hours}j ${minutes}m ${seconds}d`;
-
-      // Progress %
-      let total = end - start;
-      let progress = ((now - start) / total) * 100;
-      if (progress > 100) progress = 100;
-
-      document.getElementById("progressBar").style.width = progress.toFixed(2) + "%";
-      document.getElementById("progressBar").innerText = progress.toFixed(1) + "%";
-
-      return true;
+      document.getElementById("dateend").value =
+        String(hours).padStart(2, "0") + ":" +
+        String(minutes).padStart(2, "0") + ":" +
+        String(seconds).padStart(2, "0");
     }
 
-    async function updateSaldo() {
-      if (!updateCountdownAndProgress()) return; // stop kalau sesi habis
+    saldoInterval = setInterval(updateRandomSaldo, 1000);
+    countdownInterval = setInterval(updateCountdown, 1000);
 
-      // Random naik/turun
-      let naikPerDetik = Math.random() * ((maxincome / 10800) - (minincome / 10800)) + (minincome / 10800);
-      let turun = -(minincome / 2);
-
-      // 70% kemungkinan naik, 30% turun
-      let change = Math.random() < 0.7 ? naikPerDetik : turun;
-      saldo += change;
-      if (saldo < 0) saldo = 0;
-
-      document.getElementById("saldoShow").innerText = formatRupiah(saldo);
-
-      try {
-        let res = await fetch(`${API_URL}/${userId}/live`, {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${TOKEN}`
-          },
-          body: JSON.stringify({
-            saldo: Math.floor(saldo),
-            date,
-            dateend,
-            minincome,
-            maxincome
-          })
-        });
-
-        let data = await res.json();
-        document.getElementById("status").innerText = `Update saldo berhasil`;
-        console.log("Updated:", data);
-      } catch (err) {
-        console.error("Error:", err);
-        document.getElementById("status").innerText = "Gagal update API";
-      }
-    }
-
-    // Jalankan tiap detik
-    setInterval(updateSaldo, 1000);
+    updateRandomSaldo();
+    updateCountdown();
