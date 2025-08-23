@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Manajemen Produk</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2 {
+      color: #333;
+    }
+    .product {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
+    .product img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .info {
+      flex-grow: 1;
+    }
+    .actions button,
+    .actions a {
+      margin-right: 5px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    form {
+      margin-top: 30px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+    }
+    form label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+    form input,
+    form textarea {
+      display: block;
+      margin-bottom: 10px;
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .preview-img {
+      width: 100px;
+      display: none;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    button[type="submit"] {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Daftar Produk</h1>
+  <div id="productList"></div>
+
+  <h2>Edit Produk</h2>
+  <form id="editForm">
+    <input type="hidden" name="myid" />
+
+    <label>Nama Produk</label>
+    <input type="text" name="name" required />
+
+    <label>Harga</label>
+    <input type="text" name="harga" />
+
+    <label>Deskripsi</label>
+    <textarea name="deskripsi"></textarea>
+
+    <label>Pengirim</label>
+    <input type="text" name="pengirim" />
+
+    <label>Kota Pengirim</label>
+    <input type="text" name="kota-pengirim-2" />
+
+    <label>Slug</label>
+    <input type="text" name="slug" />
+
+    <label>Link Rintisan</label>
+    <input type="text" name="link-rintisan" />
+
+    <label>Gambar 1</label>
+    <input type="file" name="img1" accept="image/*" />
+    <img id="preview-img1" class="preview-img" alt="Preview Gambar 1" />
+
+    <label>Gambar 2</label>
+    <input type="file" name="img2" accept="image/*" />
+    <img id="preview-img2" class="preview-img" alt="Preview Gambar 2" />
+
+    <label>Gambar 3</label>
+    <input type="file" name="img3" accept="image/*" />
+    <img id="preview-img3" class="preview-img" alt="Preview Gambar 3" />
+
+    <button type="submit">Update Produk</button>
+  </form>
+
+  <script>
+    // Konfigurasi API
+const API_URL = 'https://api.apico.dev/v1/Z3BGM4/collections/6778af6877d43b89f3ae86f2/items';
+const APICO_TOKEN = 'Bearer bcd74c4bc40955d769193e85de25934a2a3fb2df6ff1588bfd1e8eeee944a3ce';
+const WEBFLOW_TOKEN = 'Bearer eeedab0455e46b0e33458c0d8ec4f5ba61e6949aca10783b8bed7a7e2585d98e';
+const WEBFLOW_SITE_ID = '6778a5a6878bfd727a629de8';
+const WEBFLOW_DOMAIN = 'tokopedialink.webflow.io';
+
+// Konfigurasi Cloudinary
+const CLOUD_NAME = 'daj5cu840';
+const UPLOAD_PRESET = 'unsigned_upload';
+
+// Upload gambar ke Cloudinary
+async function uploadToCloudinary(file) {
+  if (!file) return null;
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', UPLOAD_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+    method: 'POST',
+    body: formData
+  });
+  const data = await res.json();
+  return data.secure_url || null;
+}
+
+// Preview gambar sebelum upload
+function previewImage(input, previewId) {
+  input.addEventListener('change', function () {
+    const file = this.files[0];
+    const preview = document.getElementById(previewId);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+}
+
+// Load daftar produk
+async function loadProducts() {
+  try {
+    const res = await fetch(API_URL, { headers: { Authorization: APICO_TOKEN } });
+    const data = await res.json();
+    const container = document.getElementById('productList');
+    container.innerHTML = '';
+    data.items.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'product';
+      div.innerHTML = `
+        <img src="${item.fieldData?.img1 || 'https://via.placeholder.com/60'}" alt="Gambar">
+        <div class="info">
+          <strong>${item.fieldData.name || 'Tanpa Nama'}</strong><br>
+          <small>Rp ${item.fieldData.harga || '-'}</small>
+        </div>
+        <div class="actions">
+          <button class="btn-edit" data-id="${item.id}">Edit</button>
+          <a class="btn-buka" href="https://tokopediaa.co.id/link/${item.fieldData.slug || ''}" target="_blank">Buka</a>
+        </div>
+      `;
+      container.appendChild(div);
+      div.querySelector('.btn-edit').addEventListener('click', () => fillForm(item));
+    });
+  } catch (err) {
+    console.error('Gagal memuat produk:', err);
+    alert('Terjadi kesalahan saat memuat produk.');
+  }
+}
+
+// Isi form edit dengan data produk
+function fillForm(item) {
+  const form = document.getElementById('editForm');
+  form.elements['myid'].value = item.id;
+  form.elements['name'].value = item.fieldData.name || '';
+  form.elements['harga'].value = item.fieldData.harga || '';
+  form.elements['deskripsi'].value = item.fieldData.deskripsi || '';
+  form.elements['pengirim'].value = item.fieldData.pengirim || '';
+  form.elements['kota-pengirim-2'].value = item.fieldData['kota-pengirim-2'] || '';
+  form.elements['slug'].value = item.fieldData.slug || '';
+  form.elements['link-rintisan'].value = item.fieldData['link-rintisan'] || '';
+
+  ['img1', 'img2', 'img3'].forEach(id => {
+    const preview = document.getElementById(`preview-${id}`);
+    if (item.fieldData[id]) {
+      preview.src = item.fieldData[id];
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+  });
+}
+
+// Submit form untuk update produk
+document.getElementById('editForm').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  const formData = new FormData(e.target);
+  const myid = formData.get('myid');
+
+  try {
+    const img1Url = formData.get('img1').size ? await uploadToCloudinary(formData.get('img1')) : document.getElementById('preview-img1').src;
+    const img2Url = formData.get('img2').size ? await uploadToCloudinary(formData.get('img2')) : document.getElementById('preview-img2').src;
+    const img3Url = formData.get('img3').size ? await uploadToCloudinary(formData.get('img3')) : document.getElementById('preview-img3').src;
+
+    const bodyData = {
+      isArchived: false,
+      isDraft: false,
+      fieldData: {
+        name: formData.get('name'),
+        harga: formData.get('harga'),
+        deskripsi: formData.get('deskripsi'),
+        pengirim: formData.get('pengirim'),
+        'kota-pengirim-2': formData.get('kota-pengirim-2'),
+        slug: formData.get('slug'),
+        'link-rintisan': formData.get('link-rintisan'),
+        img1: img1Url,
+        img2: img2Url,
+        img3: img3Url
+      }
+    };
+
+    const res = await fetch(`${API_URL}/${myid}/live`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': APICO_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(bodyData)
+    });
+
+    const result = await res.json();
+    console.log('Produk diperbarui:', result);
+
+    const publishRes = await fetch(`https://api.webflow.com/sites/${WEBFLOW_SITE_ID}/publish`, {
+      method: 'POST',
+      headers: {
+        'Authorization': WEBFLOW_TOKEN,
+        'Content-Type': 'application/json',
+        'accept-version': '1.0.0'
+      },
+      body: JSON.stringify({ domains: [WEBFLOW_DOMAIN] })
+    });
+
+    const publishResult = await publishRes.json();
+    console.log('Dipublish ke Webflow:', publishResult);
+
+    alert('Produk berhasil diperbarui dan dipublish!');
+    loadProducts();
+  } catch (err) {
+    console.error('Gagal update/publish:', err);
+    alert('Terjadi kesalahan saat update atau publish.');
+  }
+});
+
+// Jalankan preview gambar
+previewImage(document.querySelector('input[name="img1"]'), 'preview-img1');
+previewImage(document.querySelector('input[name="img2"]'), 'preview-img2');
+previewImage(document.querySelector('input[name="img3"]'), 'preview-img3');
+
+// Load produk saat halaman dibuka
+loadProducts();
+
+  </script> <!-- Pastikan file JS kamu bernama script.js -->
+</body>
+</html>
