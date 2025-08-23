@@ -100,7 +100,7 @@
     <input type="text" name="kota-pengirim-2" />
 
     <label>Slug</label>
-    <input type="text" name="slug" />
+    <input type="text" name="slug" readonly/>
 
     <label>Link Rintisan</label>
     <input type="text" name="link-rintisan" />
@@ -180,7 +180,7 @@ async function loadProducts() {
         </div>
         <div class="actions">
           <button class="btn-edit" data-id="${item.id}">Edit</button>
-          <a class="btn-buka" href="https://tokopediaa.co.id/link/${item.fieldData.slug || ''}" target="_blank">Buka</a>
+          <a class="btn-buka" href="https://tokopediaa.store/link/${item.fieldData.slug || ''}" target="_blank">Buka</a>
         </div>
       `;
       container.appendChild(div);
