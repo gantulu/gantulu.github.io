@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Edit Item - PATCH Example</title>
+  <style>
+    body { font-family: sans-serif; }
+    .item-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .item {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 300px;
+      display: flex;
+      flex-direction: column;
+    }
+    .item img {
+      width: 100%;
+      border-radius: 5px;
+      object-fit: cover;
+      height: 180px;
+    }
+    .btn-edit {
+      background-color: #ffc107;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #333;
+      align-self: flex-start;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal.active {
+      display: flex;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      max-width: 90%;
+      position: relative;
+    }
+    .btn-close {
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    .status-message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Daftar Item</h1>
+  <div class="item-container" id="items"></div>
+
+  <!-- Modal Edit -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <button class="btn-close" id="closeModal">&times;</button>
+      <h2>Edit Gambar</h2>
+      <form id="editForm">
+        <input type="hidden" id="editItemId" />
+        <label for="imgFile">Upload Gambar Baru:</label>
+        <input type="file" id="imgFile" accept="image/*" />
+        <label for="imageUrl">Image 1 URL:</label>
+        <input type="text" id="imageUrl" name="imageUrl" required readonly />
+        <button type="submit">Submit Update</button>
+        <div class="status-message" id="statusMessage"></div>
+      </form>
+    </div>
+  </div>
+<script>
+    const apiBaseUrl = "https://api.apico.dev/v1/NLFDB4/collections/6778af6877d43b89f3ae86f2/items";
+    const apiToken = "60e2a8b96ce6a0905697599a1fbadde45e3ce567cd64715746b191d65460e265";
+
+    const CLOUD_NAME = "dx1uvh6hz";
+    const UPLOAD_PRESET = "tokopedia";
+
+    const itemsContainer = document.getElementById("items");
+    const modal = document.getElementById("editModal");
+    const closeModalBtn = document.getElementById("closeModal");
+    const editForm = document.getElementById("editForm");
+    const editItemIdInput = document.getElementById("editItemId");
+    const imageUrlInput = document.getElementById("imageUrl");
+    const imgFile = document.getElementById("imgFile");
+    const statusMessage = document.getElementById("statusMessage");
+
+    // 1. Fetch dan render item
+    fetch(apiBaseUrl)
+      .then(res => res.json())
+      .then(data => {
+        data.items.forEach(item => {
+          const fd = item.fieldData;
+          const { name, harga, pengirim, deskripsi, "kota-pengirim-2": kota, image1 } = fd;
+
+          const imgUrl = image1.url || "";
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item");
+
+          itemDiv.innerHTML = `
+            <img src="${imgUrl}" alt="${name}" />
+            <h3>${name}</h3>
+            <p><strong>Harga:</strong> ${harga}</p>
+            <p><strong>Pengirim:</strong> ${pengirim} (${kota})</p>
+            <p>${deskripsi.slice(0, 100)}...</p>
+            <button class="btn-edit" data-id="${item.id}" data-img="${imgUrl}">Edit</button>
+          `;
+
+          itemsContainer.appendChild(itemDiv);
+        });
+
+        // Tambahkan event edit
+        document.querySelectorAll(".btn-edit").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            const id = e.currentTarget.dataset.id;
+            const imgUrl = e.currentTarget.dataset.img;
+
+            editItemIdInput.value = id;
+            imageUrlInput.value = imgUrl;
+            imgFile.value = "";
+            statusMessage.textContent = "";
+            modal.classList.add("active");
+          });
+        });
+      })
+      .catch(err => {
+        itemsContainer.innerHTML = "<p>Gagal memuat data.</p>";
+        console.error("Error fetching data:", err);
+      });
+
+
+
+    // 2. Upload ke Cloudinary saat file dipilih
+    imgFile.addEventListener("change", async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      statusMessage.textContent = "⏳ Uploading ke Cloudinary...";
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", UPLOAD_PRESET);
+
+      try {
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`, {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.secure_url) {
+          imageUrlInput.value = data.secure_url;
+          statusMessage.textContent = "✅ Upload berhasil!";
+          statusMessage.style.color = "green";
+        } else {
+          throw new Error("❌ Upload gagal.");
+        }
+      } catch (err) {
+        console.error(err);
+        statusMessage.textContent = "⚠️ Gagal upload gambar.";
+        statusMessage.style.color = "red";
+      }
+    });
+
+    // 3. PATCH ke server
+    editForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const itemId = editItemIdInput.value;
+      const newImageUrl = imageUrlInput.value.trim();
+
+      if (!newImageUrl) {
+        statusMessage.textContent = "❌ URL gambar harus diisi!";
+        statusMessage.style.color = "red";
+        return;
+      }
+
+      statusMessage.textContent = "⏳ Mengirim update...";
+      statusMessage.style.color = "black";
+
+      const patchBody = {
+        isArchived: false,
+        isDraft: false,
+        fieldData: {
+          image1: {
+            fileId: "",
+            url: newImageUrl,
+            alt: null
+          }
+        }
+      };
+
+      try {
+        const response = await fetch(`${apiBaseUrl}/${itemId}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiToken}`
+          },
+          body: JSON.stringify(patchBody),
+        });
+
+        if (!response.ok) {
+          throw new Error("Gagal update. Status: " + response.status);
+        }
+
+        statusMessage.textContent = "✅ Berhasil update!";
+        statusMessage.style.color = "green";
+
+        // Update gambar langsung di tampilan
+        const imgTag = document.querySelector(`.btn-edit[data-id="${itemId}"]`).parentNode.querySelector("img");
+        if (imgTag) imgTag.src = newImageUrl;
+
+        // Tutup modal otomatis
+        setTimeout(() => {
+          modal.classList.remove("active");
+        }, 1500);
+
+      } catch (err) {
+        console.error(err);
+        statusMessage.textContent = "❌ Gagal mengupdate data.";
+        statusMessage.style.color = "red";
+      }
+    });
+
+    // 4. Tutup modal
+    closeModalBtn.addEventListener("click", () => {
+      modal.classList.remove("active");
+    });
+</script>
+
+
+</body>
+</html>
