@@ -1,0 +1,43 @@
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Form Alamat</title>
+<style>
+  select, input { display: block; margin: 10px 0; padding: 5px; width: 250px; }
+</style>
+</head>
+<body>
+
+<h2>Form Alamat</h2>
+<form id="alamatForm">
+
+  <label>Provinsi</label>
+  <select id="pilih-provinsi">
+    <option value="">--Pilih Provinsi--</option>
+  </select>
+  <input type="text" id="provinsi" placeholder="Provinsi" readonly>
+
+  <label>Kabupaten/Kota</label>
+  <select id="pilih-kabupaten">
+    <option value="">--Pilih Kabupaten--</option>
+  </select>
+  <input type="text" id="kabupaten" placeholder="Kabupaten/Kota" readonly>
+
+  <label>Kecamatan</label>
+  <select id="pilih-kecamatan">
+    <option value="">--Pilih Kecamatan--</option>
+  </select>
+  <input type="text" id="kecamatan" placeholder="Kecamatan" readonly>
+
+  <label>Kelurahan/Desa</label>
+  <select id="pilih-kelurahan">
+    <option value="">--Pilih Kelurahan--</option>
+  </select>
+  <input type="text" id="kelurahan" placeholder="Kelurahan/Desa" readonly>
+
+  <label>Kode Pos</label>
+  <input type="text" id="kodepos" placeholder="Kode Pos" readonly>
+
+</form>
+
+<script src="address.js"></script>
