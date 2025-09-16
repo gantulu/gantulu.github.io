@@ -1,107 +1,113 @@
 const baseAPI = "https://alamat.thecloudalert.com/api";
 
-// Elemen
-const prov = document.getElementById("provinsi");
-const kab = document.getElementById("kabupaten");
-const kec = document.getElementById("kecamatan");
-const kel = document.getElementById("kelurahan");
-const kodeposInput = document.getElementById("kodepos");
-
-// Load provinsi
-fetch(`${baseAPI}/provinsi/get/`)
-  .then(r => r.json())
-  .then(json => {
-    if (json.status === 200) {
-      json.result.forEach(p => {
-        const opt = document.createElement("option");
-        opt.value = p.id;
-        opt.textContent = p.text;
-        prov.appendChild(opt);
-      });
-    }
+// Fungsi ambil provinsi
+async function loadProvinsi() {
+  const res = await fetch(`${baseAPI}/provinsi/get/`);
+  const data = await res.json();
+  const select = document.getElementById('pilih-provinsi');
+  data.result.forEach(p => {
+    const option = document.createElement('option');
+    option.value = p.id;
+    option.textContent = p.text;
+    select.appendChild(option);
   });
+}
 
-// Saat provinsi dipilih → load kabupaten/kota
-prov.addEventListener("change", () => {
-  kab.innerHTML = `<option value="">-- Pilih Kabupaten/Kota --</option>`;
-  kec.innerHTML = `<option value="">-- Pilih Kecamatan --</option>`;
-  kel.innerHTML = `<option value="">-- Pilih Kelurahan / Desa --</option>`;
-  kodeposInput.value = "";
+// Fungsi ambil kabupaten
+async function loadKabupaten(provId) {
+  const res = await fetch(`${baseAPI}/kabkota/get/?d_provinsi_id=${provId}`);
+  const data = await res.json();
+  const select = document.getElementById('pilih-kabupaten');
+  select.innerHTML = '<option value="">--Pilih Kabupaten--</option>';
+  data.result.forEach(k => {
+    const option = document.createElement('option');
+    option.value = k.id;
+    option.textContent = k.text;
+    select.appendChild(option);
+  });
+}
 
-  if (!prov.value) return;
+// Fungsi ambil kecamatan
+async function loadKecamatan(kabId) {
+  const res = await fetch(`${baseAPI}/kecamatan/get/?d_kabkota_id=${kabId}`);
+  const data = await res.json();
+  const select = document.getElementById('pilih-kecamatan');
+  select.innerHTML = '<option value="">--Pilih Kecamatan--</option>';
+  data.result.forEach(kec => {
+    const option = document.createElement('option');
+    option.value = kec.id;
+    option.textContent = kec.text;
+    select.appendChild(option);
+  });
+}
 
-  fetch(`${baseAPI}/kabkota/get/?d_provinsi_id=${prov.value}`)
-    .then(r => r.json())
-    .then(json => {
-      if (json.status === 200) {
-        json.result.forEach(kabObj => {
-          const opt = document.createElement("option");
-          opt.value = kabObj.id;
-          opt.textContent = kabObj.text;
-          kab.appendChild(opt);
-        });
-      }
-    });
+// Fungsi ambil kelurahan
+async function loadKelurahan(kecId) {
+  const res = await fetch(`${baseAPI}/kelurahan/get/?d_kecamatan_id=${kecId}`);
+  const data = await res.json();
+  const select = document.getElementById('pilih-kelurahan');
+  select.innerHTML = '<option value="">--Pilih Kelurahan--</option>';
+  data.result.forEach(kel => {
+    const option = document.createElement('option');
+    option.value = kel.text;
+    option.textContent = kel.text;
+    select.appendChild(option);
+  });
+}
+
+// Fungsi ambil kode pos
+async function loadKodepos(kabId, kecId) {
+  const res = await fetch(`${baseAPI}/kodepos/get/?d_kabkota_id=${kabId}&d_kecamatan_id=${kecId}`);
+  const data = await res.json();
+  if (data.result.length > 0) {
+    // Ambil kode pos pertama
+    document.getElementById('kodepos').value = data.result[0].text;
+  } else {
+    document.getElementById('kodepos').value = '';
+  }
+}
+
+// Event listener
+document.getElementById('pilih-provinsi').addEventListener('change', function() {
+  const provId = this.value;
+  document.getElementById('provinsi').value = this.options[this.selectedIndex].text;
+  loadKabupaten(provId);
+
+  // Reset level bawah
+  document.getElementById('kabupaten').value = '';
+  document.getElementById('kecamatan').value = '';
+  document.getElementById('kelurahan').value = '';
+  document.getElementById('kodepos').value = '';
+  document.getElementById('pilih-kecamatan').innerHTML = '<option value="">--Pilih Kecamatan--</option>';
+  document.getElementById('pilih-kelurahan').innerHTML = '<option value="">--Pilih Kelurahan--</option>';
 });
 
-// Saat kabupaten dipilih → load kecamatan
-kab.addEventListener("change", () => {
-  kec.innerHTML = `<option value="">-- Pilih Kecamatan --</option>`;
-  kel.innerHTML = `<option value="">-- Pilih Kelurahan / Desa --</option>`;
-  kodeposInput.value = "";
+document.getElementById('pilih-kabupaten').addEventListener('change', function() {
+  const kabId = this.value;
+  document.getElementById('kabupaten').value = this.options[this.selectedIndex].text;
+  loadKecamatan(kabId);
 
-  if (!kab.value) return;
-
-  fetch(`${baseAPI}/kecamatan/get/?d_kabkota_id=${kab.value}`)
-    .then(r => r.json())
-    .then(json => {
-      if (json.status === 200) {
-        json.result.forEach(kecObj => {
-          const opt = document.createElement("option");
-          opt.value = kecObj.id;
-          opt.textContent = kecObj.text;
-          kec.appendChild(opt);
-        });
-      }
-    });
+  // Reset level bawah
+  document.getElementById('kecamatan').value = '';
+  document.getElementById('kelurahan').value = '';
+  document.getElementById('kodepos').value = '';
+  document.getElementById('pilih-kelurahan').innerHTML = '<option value="">--Pilih Kelurahan--</option>';
 });
 
-// Saat kecamatan dipilih → load kelurahan/desa
-kec.addEventListener("change", () => {
-  kel.innerHTML = `<option value="">-- Pilih Kelurahan / Desa --</option>`;
-  kodeposInput.value = "";
+document.getElementById('pilih-kecamatan').addEventListener('change', function() {
+  const kecId = this.value;
+  const kabId = document.getElementById('pilih-kabupaten').value;
+  document.getElementById('kecamatan').value = this.options[this.selectedIndex].text;
+  loadKelurahan(kecId);
+  loadKodepos(kabId, kecId);
 
-  if (!kec.value) return;
-
-  fetch(`${baseAPI}/kelurahan/get/?d_kecamatan_id=${kec.value}`)
-    .then(r => r.json())
-    .then(json => {
-      if (json.status === 200) {
-        json.result.forEach(kelObj => {
-          const opt = document.createElement("option");
-          opt.value = kelObj.id;
-          opt.textContent = kelObj.text;
-          kel.appendChild(opt);
-        });
-      }
-    });
+  document.getElementById('kelurahan').value = '';
 });
 
-// Saat kelurahan/desa dipilih → load kodepos
-kel.addEventListener("change", () => {
-  kodeposInput.value = "";
-
-  if (!kel.value || !kab.value) return;
-
-  // Menggunakan endpoint kodepos berdasarkan kub/kota + kecamatan
-  fetch(`${baseAPI}/kodepos/get/?d_kabkota_id=${kab.value}&d_kecamatan_id=${kec.value}`)
-    .then(r => r.json())
-    .then(json => {
-      if (json.status === 200 && json.result.length > 0) {
-        // Bisa ada beberapa kodepos, ambil yang pertama
-        kodeposInput.value = json.result[0].text;
-      } else {
-        kodeposInput.value = "Kode pos tidak ditemukan";
-      }
-    });
+document.getElementById('pilih-kelurahan').addEventListener('change', function() {
+  document.getElementById('kelurahan').value = this.value;
+  // Kode pos tetap otomatis dari loadKodepos()
 });
+
+// Load provinsi saat halaman dibuka
+loadProvinsi();
