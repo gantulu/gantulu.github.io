@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Kiriman - Edit Terstruktur</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 30px;
+    }
+
+    .items-container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .item-card {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .edit-form {
+      display: none;
+      margin-top: 15px;
+    }
+
+    .field-label {
+      font-weight: bold;
+      display: block;
+      margin-top: 10px;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .edit-btn, .save-btn {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: white;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .edit-btn:hover, .save-btn:hover {
+      background-color: #0056b3;
+    }
+
+    details {
+      background: #f9f9f9;
+      padding: 10px 15px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    summary::marker {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>📦 Daftar Kiriman - Edit Data Terstruktur</h2>
+  <div id="itemsContainer" class="items-container">Memuat data...</div>
+
+  <script>
+    const apiUrl = 'https://api.apico.dev/v1/wETbrb/collections/68867aebad2c5c0d1399ff85/items';
+    const token = 'c97576a28e200da2d9e431a8ddc6198b367b43768db11c77473c4d9defe05bc5';
+
+    const fieldTemplate = {
+      "paket": "",
+      "name": "",
+      "biaya-kirim": "",
+      "asuransi": "",
+      "nomor-penerima": "",
+      "penerima": "",
+      "kota-pengirim": "",
+      "nomor-pengirim": "",
+      "pengirim": "",
+      "alamat-lengkap-penerima": "",
+      "slug": "",
+      "subtotal-pembayaran": "",
+      "jumlah-refund": "",
+      "maps-3": "",
+      "tedong-nama-rekening": "",
+      "tedong-bank": "",
+      "tedong-nomor-rekening": "",
+      "spj": ""
+    };
+
+    // Kelompok field
+    const fieldGroups = {
+      "Informasi Pengirim": ["pengirim", "nomor-pengirim", "kota-pengirim"],
+      "Informasi Penerima & Tedong": [
+        "penerima", "nomor-penerima", "alamat-lengkap-penerima",
+        "tedong-nama-rekening", "tedong-bank", "tedong-nomor-rekening"
+      ],
+      "Informasi Lainnya": ["paket", "name", "slug", "maps-3"],
+      "Informasi Pembayaran": [
+        "biaya-kirim", "asuransi", "subtotal-pembayaran", "jumlah-refund", "spj"
+      ]
+    };
+
+    const container = document.getElementById('itemsContainer');
+
+    fetch(apiUrl, {
+      headers: {
+        'Authorization': token
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      const items = data.items;
+      container.innerHTML = '';
+
+      items.forEach(item => {
+        const f = { ...fieldTemplate, ...item.fieldData };
+
+        const div = document.createElement('div');
+        div.className = 'item-card';
+
+        // Display data
+        let displayHTML = '';
+        for (const key in f) {
+          displayHTML += `<strong>${key}:</strong> ${f[key] || ''}<br>`;
+        }
+
+        // Form edit
+        let formHTML = '';
+        for (const group in fieldGroups) {
+          formHTML += `<details><summary>${group}</summary>`;
+
+          fieldGroups[group].forEach(key => {
+            const value = f[key] || '';
+            formHTML += `
+              <label class="field-label" for="${key}">${key}</label>
+              <input class="field-input" id="${key}" name="${key}" type="text" value="${value}">
+            `;
+          });
+
+          formHTML += `</details>`;
+        }
+
+        div.innerHTML = `
+          <div class="item-display">${displayHTML}</div>
+          <button class="edit-btn">Edit</button>
+          <form class="edit-form">
+            ${formHTML}
+            <button type="button" class="save-btn">Simpan</button>
+          </form>
+        `;
+
+        const editBtn = div.querySelector('.edit-btn');
+        const form = div.querySelector('.edit-form');
+        const saveBtn = div.querySelector('.save-btn');
+
+        // Toggle collapse/expand form
+        editBtn.addEventListener('click', () => {
+          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Save handler
+        saveBtn.addEventListener('click', () => {
+          const inputs = form.querySelectorAll('input');
+          const updatedFieldData = {};
+
+          inputs.forEach(input => {
+            updatedFieldData[input.name] = input.value;
+          });
+
+          fetch(`${apiUrl}/${item.id}/live`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': token
+            },
+            body: JSON.stringify({ fieldData: updatedFieldData })
+          })
+          .then(res => res.json())
+          .then(response => {
+            alert('✅ Data berhasil disimpan!');
+            location.reload();
+          })
+          .catch(err => {
+            alert('❌ Gagal menyimpan data!');
+            console.error(err);
+          });
+        });
+
+        container.appendChild(div);
+      });
+    })
+    .catch(error => {
+      container.innerHTML = `<p style="color:red;">Gagal memuat data: ${error.message}</p>`;
+    });
+  </script>
+
+</body>
+</html>
