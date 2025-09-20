@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Produk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #editProduk { display: none; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800 p-4">
+  <h2 class="text-xl font-bold mb-4">Filter Produk</h2>
+  <label class="block mb-4">Pilih Brand:
+    <select id="brandFilter" onchange="loadProduk()" class="border rounded p-2 w-full">
+      <option value="">-- Semua Brand --</option>
+    </select>
+  </label>
+
+  <label class="block mb-6">Pilih Gender:
+    <select id="genderFilter" onchange="loadProduk()" class="border rounded p-2 w-full">
+      <option value="">-- Semua Gender --</option>
+    </select>
+  </label>
+
+  <h2 class="text-xl font-bold mb-4">Daftar Produk</h2>
+  <div id="listProduk" class="grid grid-cols-2 gap-4"></div>
+
+  <h2 class="text-xl font-bold mb-4">Edit Produk</h2>
+  <div id="editProduk" class="space-y-4">Klik tombol Edit pada produk untuk mengubah.</div>
+
+  <script>
+    const SHEET_ID = "1qNCnRVvBxqfQZ0d7K5AU5iaM913I2VxGwkJYXj5eFxg";
+    const SHEET_NAME = "Produk";
+    const OPEN_SHEET_URL = `https://opensheet.elk.sh/${SHEET_ID}/${SHEET_NAME}`;
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzUUA7KFLATziRHNuCnXhjbxc1g3OIZ1abId8moT7NB5qo2UnIKjo6RamymXPMrhgny8g/exec";
+
+    let allData = [];
+
+    async function loadProduk() {
+      if (allData.length === 0) {
+        const res = await fetch(OPEN_SHEET_URL);
+        allData = await res.json();
+        isiFilterBrand(allData);
+        isiFilterGender(allData);
+      }
+
+      const selectedBrand = document.getElementById("brandFilter").value;
+      const selectedGender = document.getElementById("genderFilter").value;
+
+      let filteredData = allData;
+      if (selectedBrand) filteredData = filteredData.filter(p => p.brand === selectedBrand);
+      if (selectedGender) filteredData = filteredData.filter(p => p.gender === selectedGender);
+
+      // Grouping by item_group_id
+      const groups = {};
+      filteredData.forEach(p => {
+        if (!groups[p.item_group_id]) groups[p.item_group_id] = [];
+        groups[p.item_group_id].push(p);
+      });
+
+      const listEl = document.getElementById("listProduk");
+      listEl.innerHTML = "";
+
+      Object.keys(groups).forEach(groupId => {
+        const variants = groups[groupId];
+        const div = document.createElement("div");
+        div.className = "border rounded-lg p-4 bg-white shadow";
+
+        // show color text + small swatch (swatch uses color value as background; if value isn't a valid color it won't display)
+        const colorText = variants[0].color || '';
+        const swatch = `<span class=\"inline-block w-4 h-4 rounded-full mr-2\" style=\"background:${colorText};border:1px solid rgba(0,0,0,0.08)\"></span>`;
+
+        div.innerHTML = `
+          <strong class="text-lg">${variants[0].title}</strong><br>
+          <span class="text-sm text-gray-600">${variants[0].gender}</span><br>
+          <span class=\"text-sm text-gray-700\">${colorText}</span><br>
+          <img src="${variants[0].image_link}" alt="${variants[0].title}" class="w-32 h-32 object-contain my-2"><br>
+          <button onclick="editGroup('${groupId}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Edit Semua Varian</button>
+        `;
+        listEl.appendChild(div);
+      });
+
+      document.getElementById("listProduk").style.display = "grid";
+      document.getElementById("editProduk").style.display = "none";
+    }
+
+    function isiFilterBrand(data) {
+      const brands = [...new Set(data.map(p => p.brand).filter(Boolean))];
+      const filterEl = document.getElementById("brandFilter");
+      filterEl.innerHTML = '<option value="">-- Semua Brand --</option>';
+      brands.forEach(b => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        filterEl.appendChild(opt);
+      });
+    }
+
+    function isiFilterGender(data) {
+      const genders = [...new Set(data.map(p => p.gender).filter(Boolean))];
+      const filterEl = document.getElementById("genderFilter");
+      filterEl.innerHTML = '<option value="">-- Semua Gender --</option>';
+      genders.forEach(g => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        filterEl.appendChild(opt);
+      });
+    }
+
+    async function editGroup(itemGroupId) {
+      const variants = allData.filter(p => p.item_group_id === itemGroupId);
+      const formEl = document.getElementById("editProduk");
+
+      formEl.innerHTML = `
+        <form onsubmit="return saveGroup(event)" class="space-y-6">
+          ${variants.map((produk, idx) => `
+            <div class="variant border-dashed border-2 border-gray-300 rounded-lg p-4">
+              <h4 class="font-semibold mb-2">Varian ${idx + 1} (Color: ${produk.color})</h4>
+              <img src="${produk.image_link}" alt="${produk.title}" class="w-32 h-32 object-contain mb-2">
+              <label class="block mb-2">
+                <span class="text-sm font-medium">image_link</span><br>
+                <input type="text" name="${produk.id}__image_link" value="${produk.image_link}" class="border rounded p-2 w-full">
+              </label>
+              <label class="block mb-2">
+                <span class="text-sm font-medium">additional_image_link</span><br>
+                <div id="addImgs_${produk.id}" class="space-y-2">
+                  <div class="flex flex-wrap gap-2 mb-2">
+                    ${produk.additional_image_link.split(',').filter(v => v.trim() !== '').map(link => `
+                      <img src="${link.trim()}" class="w-16 h-16 object-contain border">
+                    `).join('')}
+                  </div>
+                  <input type="text" name="${produk.id}__additional_image_link" value="${produk.additional_image_link}" class="border rounded p-2 w-full">
+                  <button type="button" onclick="tambahInputTambahan('${produk.id}','additional_image_link')" class="bg-blue-500 text-white px-2 py-1 rounded">(+)</button>
+                </div>
+              </label>
+            </div>
+          `).join("")}
+          <div class="flex gap-4">
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">Simpan Semua Perubahan</button>
+            <button type="button" onclick="tutupEdit()" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Tutup</button>
+          </div>
+        </form>
+      `;
+
+      document.getElementById("listProduk").style.display = "none";
+      document.getElementById("editProduk").style.display = "block";
+    }
+
+    function tambahInputTambahan(id, field) {
+      const container = document.getElementById(`addImgs_${id}`);
+      const input = document.createElement("input");
+      input.type = "text";
+      input.name = `${id}__${field}`;
+      input.className = "border rounded p-2 w-full";
+      container.insertBefore(input, container.lastElementChild);
+    }
+
+    function tutupEdit() {
+      document.getElementById("editProduk").style.display = "none";
+      document.getElementById("listProduk").style.display = "grid";
+    }
+
+    async function saveGroup(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const updates = {};
+
+      formData.forEach((val, key) => {
+        const [id, field] = key.split("__");
+        if (!updates[id]) updates[id] = {};
+        if (field === 'additional_image_link') {
+          if (!updates[id][field]) updates[id][field] = [];
+          updates[id][field].push(val);
+        } else {
+          updates[id][field] = val;
+        }
+      });
+
+      for (let id in updates) {
+        if (updates[id].additional_image_link) {
+          updates[id].additional_image_link = updates[id].additional_image_link.filter(v => v.trim() !== "").join(", ");
+        }
+        updates[id].id = id;
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify(updates[id]),
+        });
+      }
+
+      alert("Semua varian berhasil diperbarui!");
+
+      allData = [];
+      await loadProduk();
+      tutupEdit();
+    }
+
+    loadProduk();
+  </script>
+</body>
+</html>
