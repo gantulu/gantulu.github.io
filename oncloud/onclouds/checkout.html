@@ -3,7 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <title>Checkout - Oncloud</title>
+  <meta name="viewport" 
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* shimmer skeleton */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+    .skeleton::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -150px;
+      height: 100%; width: 150px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+
+    /* responsif font dan padding */
+    body {
+      font-size: 15px;
+    }
+    @media (max-width: 360px) {
+      body { font-size: 14px; }
+      h1, h2, h3 { font-size: 1rem; }
+      button, input { font-size: 14px; }
+    }
+    @media (min-width: 400px) {
+      body { font-size: 16px; }
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
 
@@ -16,13 +50,14 @@
   <!-- Detail Produk -->
   <section class="p-4 bg-white mt-2 rounded-lg shadow-sm max-w-md mx-auto">
     <div class="flex gap-4">
-      <img id="productImage" src="" alt="Produk" class="w-28 h-28 object-cover rounded border">
+      <div id="imageSkeleton" class="w-24 h-24 rounded skeleton"></div>
+      <img id="productImage" src="" alt="Produk" class="w-24 h-24 object-cover rounded border hidden">
       <div class="flex flex-col justify-between">
-        <h2 id="productTitle" class="font-semibold text-lg">Produk</h2>
-        <p id="productGender" class="text-sm text-gray-500">Gender: -</p>
-        <p id="productColor" class="text-sm">Warna: -</p>
-        <p id="productSize" class="text-sm">Size: -</p>
-        <p id="productPrice" class="text-pink-600 font-bold text-lg">Rp0</p>
+        <h2 id="productTitle" class="font-semibold text-base skeleton h-5 w-40"></h2>
+        <p id="productGender" class="text-sm text-gray-500 skeleton h-3 w-24"></p>
+        <p id="productColor" class="text-sm skeleton h-3 w-20"></p>
+        <p id="productSize" class="text-sm skeleton h-3 w-16"></p>
+        <p id="productPrice" class="text-pink-600 font-bold text-base skeleton h-4 w-24"></p>
       </div>
     </div>
   </section>
@@ -30,12 +65,18 @@
   <!-- Form Checkout -->
   <section class="p-4 bg-white mt-4 rounded-lg shadow-sm max-w-md mx-auto">
     <h3 class="font-semibold mb-3">Data Pembeli</h3>
-    <form class="flex flex-col gap-3">
-      <input type="text" placeholder="Nama Lengkap" class="border rounded-lg p-2">
-      <input type="text" placeholder="Alamat Lengkap" class="border rounded-lg p-2">
-      <input type="text" placeholder="Nomor HP / WhatsApp" class="border rounded-lg p-2">
-      <button type="submit" class="bg-blue-600 text-white py-3 rounded-lg font-semibold">
-        Konfirmasi Pesanan
+    <form id="checkoutForm" class="flex flex-col gap-3">
+      <input id="buyerName" type="text" placeholder="Nama Lengkap" class="border rounded-lg p-2 w-full">
+      <input id="buyerAddress" type="text" placeholder="Alamat Lengkap" class="border rounded-lg p-2 w-full">
+      <input id="buyerPhone" type="text" placeholder="Nomor HP / WhatsApp" class="border rounded-lg p-2 w-full">
+      <button id="submitBtn" type="submit" 
+        class="bg-blue-600 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2 active:scale-95 transition">
+        <span id="btnText">Konfirmasi Pesanan</span>
+        <svg id="btnSpinner" class="animate-spin h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" 
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
       </button>
     </form>
   </section>
@@ -51,19 +92,59 @@
       const color = params.get("color");
       const size = params.get("size");
 
-      if (image) document.getElementById("productImage").src = image;
-      if (title) document.getElementById("productTitle").innerText = title;
-      if (gender) document.getElementById("productGender").innerText = "Gender: " + gender;
-      if (color) document.getElementById("productColor").innerText = "Warna: " + color;
-      if (size) document.getElementById("productSize").innerText = "Size: " + size;
+      if (image) {
+        document.getElementById("productImage").src = image;
+        document.getElementById("imageSkeleton").classList.add("hidden");
+        document.getElementById("productImage").classList.remove("hidden");
+      }
+      if (title) {
+        document.getElementById("productTitle").innerText = title;
+        document.getElementById("productTitle").classList.remove("skeleton");
+      }
+      if (gender) {
+        document.getElementById("productGender").innerText = "Gender: " + gender;
+        document.getElementById("productGender").classList.remove("skeleton");
+      }
+      if (color) {
+        document.getElementById("productColor").innerText = "Warna: " + color;
+        document.getElementById("productColor").classList.remove("skeleton");
+      }
+      if (size) {
+        document.getElementById("productSize").innerText = "Size: " + size;
+        document.getElementById("productSize").classList.remove("skeleton");
+      }
       if (sale_price) {
         document.getElementById("productPrice").innerText = 
           "Rp" + Number(sale_price).toLocaleString("id-ID");
+        document.getElementById("productPrice").classList.remove("skeleton");
       }
     }
 
+    document.getElementById("checkoutForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("buyerName").value.trim();
+      const address = document.getElementById("buyerAddress").value.trim();
+      const phone = document.getElementById("buyerPhone").value.trim();
+
+      if (!name || !address || !phone) {
+        alert("Harap lengkapi semua data pembeli.");
+        return;
+      }
+
+      document.getElementById("btnText").innerText = "Memproses...";
+      document.getElementById("btnSpinner").classList.remove("hidden");
+      document.getElementById("submitBtn").disabled = true;
+
+      setTimeout(() => {
+        alert("Pesanan berhasil dikonfirmasi!\n\nNama: " + name + "\nAlamat: " + address + "\nNo HP: " + phone);
+        document.getElementById("btnText").innerText = "Konfirmasi Pesanan";
+        document.getElementById("btnSpinner").classList.add("hidden");
+        document.getElementById("submitBtn").disabled = false;
+      }, 1500);
+    });
+
     loadCheckoutData();
   </script>
-
 </body>
 </html>
