@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkout - Oncloud</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 border-b bg-white">
+    <h1 class="text-lg font-bold">Checkout</h1>
+    <a href="javascript:history.back()" class="text-blue-600 text-sm">← Kembali</a>
+  </header>
+
+  <!-- Detail Produk -->
+  <section class="p-4 bg-white mt-2 rounded-lg shadow-sm max-w-md mx-auto">
+    <div class="flex gap-4">
+      <img id="productImage" src="" alt="Produk" class="w-28 h-28 object-cover rounded border">
+      <div class="flex flex-col justify-between">
+        <h2 id="productTitle" class="font-semibold text-lg">Produk</h2>
+        <p id="productGender" class="text-sm text-gray-500">Gender: -</p>
+        <p id="productColor" class="text-sm">Warna: -</p>
+        <p id="productSize" class="text-sm">Size: -</p>
+        <p id="productPrice" class="text-pink-600 font-bold text-lg">Rp0</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form Checkout -->
+  <section class="p-4 bg-white mt-4 rounded-lg shadow-sm max-w-md mx-auto">
+    <h3 class="font-semibold mb-3">Data Pembeli</h3>
+    <form class="flex flex-col gap-3">
+      <input type="text" placeholder="Nama Lengkap" class="border rounded-lg p-2">
+      <input type="text" placeholder="Alamat Lengkap" class="border rounded-lg p-2">
+      <input type="text" placeholder="Nomor HP / WhatsApp" class="border rounded-lg p-2">
+      <button type="submit" class="bg-blue-600 text-white py-3 rounded-lg font-semibold">
+        Konfirmasi Pesanan
+      </button>
+    </form>
+  </section>
+
+  <script>
+    function loadCheckoutData() {
+      const params = new URLSearchParams(window.location.search);
+
+      const image = params.get("image_link");
+      const title = params.get("title");
+      const gender = params.get("gender");
+      const sale_price = params.get("sale_price");
+      const color = params.get("color");
+      const size = params.get("size");
+
+      if (image) document.getElementById("productImage").src = image;
+      if (title) document.getElementById("productTitle").innerText = title;
+      if (gender) document.getElementById("productGender").innerText = "Gender: " + gender;
+      if (color) document.getElementById("productColor").innerText = "Warna: " + color;
+      if (size) document.getElementById("productSize").innerText = "Size: " + size;
+      if (sale_price) {
+        document.getElementById("productPrice").innerText = 
+          "Rp" + Number(sale_price).toLocaleString("id-ID");
+      }
+    }
+
+    loadCheckoutData();
+  </script>
+
+</body>
+</html>
