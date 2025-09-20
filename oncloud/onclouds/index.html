@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Wireframe - Semua produk (Mobile)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card-img {
+      background-size: cover;
+      background-position: center;
+    }
+    .rounded-soft { border-radius: 14px; }
+    .btn-filter { @apply px-3 py-2 bg-white rounded-full shadow-sm text-sm; }
+    .btn-filter-active { @apply bg-black text-white; }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="mx-auto p-4" style="max-width:500px;">
+    <!-- Header -->
+    <header class="flex items-center gap-3 mb-3">
+      <button aria-label="back" class="p-2 rounded-full bg-white shadow-sm">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="text-gray-700"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="flex-1">
+        <div class="text-sm font-medium">oncloudstore.id <span class="text-xs text-gray-400">• Lihat toko</span></div>
+        <div class="text-xs text-gray-500">Semua produk</div>
+      </div>
+      <button class="p-2 rounded-md">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-gray-600"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="2"/></svg>
+      </button>
+      <button class="p-2 rounded-md">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="text-gray-600"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </header>
+
+    <!-- Filters -->
+    <div class="flex gap-2 items-center mb-4 flex-wrap">
+      <button id="filterBrandToggle" class="btn-filter">Filter Brand</button>
+      <button id="filterGenderToggle" class="btn-filter">Filter Gender</button>
+      <button id="filterSortToggle" class="btn-filter">Urutkan</button>
+    </div>
+
+    <!-- Brand filter list -->
+    <div id="brandFilter" class="hidden mb-4 flex flex-wrap gap-2"></div>
+    <!-- Gender filter list -->
+    <div id="genderFilter" class="hidden mb-4 flex flex-wrap gap-2"></div>
+    <!-- Sort filter list -->
+    <div id="sortFilter" class="hidden mb-4 flex flex-wrap gap-2"></div>
+
+    <!-- Grid of products -->
+    <section id="productGrid" class="grid grid-cols-2 gap-3"></section>
+  </div>
+
+  <script>
+    let allProducts = [];
+    let selectedBrand = null;
+    let selectedGender = null;
+    let selectedSort = null;
+
+    async function loadProducts() {
+      const res = await fetch("https://opensheet.elk.sh/1Q0AFC9pzYSgZn6aeaRihKN113sMG72NKakTaDTSxtk8/Sheet1");
+      const data = await res.json();
+
+      allProducts = data.map(row => {
+        const get = (k) => row[k] ?? row[k.toLowerCase()] ?? row[k.replace(/\s+/g,'_')] ?? '';
+        return {
+          id: get('id'),
+          item_group_id: get('item_group_id'),
+          title: get('title'),
+          description: get('description'),
+          availability: get('availability') || 'in stock',
+          condition: get('condition') || 'new',
+          size: get('size'),
+          price: parseInt(get('price') || '0'),
+          discount: get('discount'),
+          sale_price: parseInt(get('sale_price') || get('price') || '0'),
+          color: get('color'),
+          image_link: get('image_link'),
+          additional_image_link: get('additional_image_link'),
+          brand: get('brand'),
+          gender: get('gender'),
+          quantity_to_sell_on_facebook: get('quantity_to_sell_on_facebook'),
+          link: get('link')
+        };
+      });
+
+      renderBrandFilter();
+      renderGenderFilter();
+      renderSortFilter();
+      renderProducts();
+    }
+
+    function renderBrandFilter() {
+      const brands = [...new Set(allProducts.map(p => p.brand).filter(Boolean))];
+      const container = document.getElementById("brandFilter");
+      container.innerHTML = "";
+      brands.forEach(brand => {
+        const btn = document.createElement("button");
+        btn.className = `px-3 py-1 border rounded-full text-sm ${selectedBrand === brand ? 'bg-black text-white' : 'bg-white'}`;
+        btn.textContent = brand;
+        btn.onclick = () => {
+          selectedBrand = (selectedBrand === brand) ? null : brand;
+          updateBrandToggleText();
+          renderBrandFilter();
+          renderProducts();
+        };
+        container.appendChild(btn);
+      });
+      updateBrandToggleText();
+    }
+
+    function renderGenderFilter() {
+      const genders = [...new Set(allProducts.map(p => p.gender).filter(Boolean))];
+      const container = document.getElementById("genderFilter");
+      container.innerHTML = "";
+      genders.forEach(gender => {
+        const btn = document.createElement("button");
+        btn.className = `px-3 py-1 border rounded-full text-sm ${selectedGender === gender ? 'bg-black text-white' : 'bg-white'}`;
+        btn.textContent = gender;
+        btn.onclick = () => {
+          selectedGender = (selectedGender === gender) ? null : gender;
+          renderGenderFilter();
+          renderProducts();
+        };
+        container.appendChild(btn);
+      });
+      updateGenderToggleText();
+    }
+
+    function renderSortFilter() {
+      const options = [
+        { key: 'lowToHigh', label: 'Harga Terendah' },
+        { key: 'highToLow', label: 'Harga Tertinggi' }
+      ];
+      const container = document.getElementById("sortFilter");
+      container.innerHTML = "";
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = `px-3 py-1 border rounded-full text-sm ${selectedSort === opt.key ? 'bg-black text-white' : 'bg-white'}`;
+        btn.textContent = opt.label;
+        btn.onclick = () => {
+          selectedSort = (selectedSort === opt.key) ? null : opt.key;
+          renderSortFilter();
+          renderProducts();
+        };
+        container.appendChild(btn);
+      });
+      updateSortToggleText();
+    }
+
+    function updateBrandToggleText() {
+      const btn = document.getElementById("filterBrandToggle");
+      btn.textContent = selectedBrand ? selectedBrand : "Filter Brand";
+    }
+
+    function updateGenderToggleText() {
+      const btn = document.getElementById("filterGenderToggle");
+      btn.textContent = selectedGender ? selectedGender : "Filter Gender";
+    }
+
+    function updateSortToggleText() {
+      const btn = document.getElementById("filterSortToggle");
+      btn.textContent = selectedSort === 'lowToHigh' ? "Harga Terendah" : selectedSort === 'highToLow' ? "Harga Tertinggi" : "Urutkan";
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = "";
+      let products = allProducts;
+      if (selectedBrand) {
+        products = products.filter(p => p.brand === selectedBrand);
+      }
+      if (selectedGender) {
+        products = products.filter(p => p.gender === selectedGender);
+      }
+
+      if (selectedSort === 'lowToHigh') {
+        products = [...products].sort((a,b) => a.sale_price - b.sale_price);
+      } else if (selectedSort === 'highToLow') {
+        products = [...products].sort((a,b) => b.sale_price - a.sale_price);
+      }
+
+      products.forEach(item => {
+        const article = document.createElement("article");
+        article.className = "bg-white rounded-soft shadow-sm overflow-hidden relative cursor-pointer";
+        article.onclick = () => {
+          window.location.href = `/produk.html?itmid=${item.item_group_id}`;
+        };
+
+        const imgDiv = document.createElement("div");
+        imgDiv.className = "h-28 card-img";
+        imgDiv.style.backgroundImage = `url('${item.image_link}')`;
+        article.appendChild(imgDiv);
+
+        const content = document.createElement("div");
+        content.className = "p-3";
+        content.innerHTML = `
+          <h3 class='text-sm font-medium'>${item.title} ${item.color ? '- ' + item.color : ''}</h3>
+          <div class='mt-1 flex justify-between items-center'>
+            <span class='text-xs text-gray-400 line-through'>Rp ${item.price.toLocaleString()}</span>
+            <span class='text-sm font-semibold text-gray-800'>Rp ${item.sale_price.toLocaleString()}</span>
+          </div>
+          <div class='mt-1 text-xs text-gray-500'>${item.gender ? item.gender : ''} ${item.size ? ' | ' + item.size : ''}</div>`;
+        article.appendChild(content);
+
+        if (item.discount) {
+          const badge = document.createElement("span");
+          badge.className = "absolute left-2 top-2 bg-yellow-300 text-xs px-2 py-1 rounded";
+          badge.textContent = `Diskon ${item.discount}`;
+          article.appendChild(badge);
+        }
+
+        const bookmarkBtn = document.createElement("button");
+        bookmarkBtn.className = "absolute right-2 bottom-2 p-2 rounded bg-white shadow text-gray-500";
+        bookmarkBtn.innerHTML = `<svg width='16' height='16' viewBox='0 0 24 24' fill='none'><path d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z' stroke='currentColor' stroke-width='1.2' stroke-linecap='round' stroke-linejoin='round'/></svg>`;
+        article.appendChild(bookmarkBtn);
+
+        grid.appendChild(article);
+      });
+    }
+
+    document.getElementById("filterBrandToggle").onclick = () => {
+      document.getElementById("brandFilter").classList.toggle("hidden");
+    };
+
+    document.getElementById("filterGenderToggle").onclick = () => {
+      document.getElementById("genderFilter").classList.toggle("hidden");
+    };
+
+    document.getElementById("filterSortToggle").onclick = () => {
+      document.getElementById("sortFilter").classList.toggle("hidden");
+    };
+
+    loadProducts();
+  </script>
+</body>
+</html>
