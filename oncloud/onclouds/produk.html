@@ -3,14 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <title>Detail Produk - Oncloud</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+    maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* shimmer animation */
+    .skeleton {
+      position: relative;
+      overflow: hidden;
+      background: #e5e7eb;
+    }
+    .skeleton::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -150px;
+      height: 100%; width: 150px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      animation: shimmer 1.2s infinite;
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 text-[15px] leading-relaxed md:text-base">
 
   <!-- Header -->
-  <header class="flex items-center justify-between p-4 border-b bg-white">
-    <div class="text-sm font-semibold">oncloudstore.id</div>
-    <div class="flex gap-3">
+  <header class="flex items-center justify-between p-4 md:p-6 border-b bg-white">
+    <div class="text-base md:text-lg font-semibold">oncloudstore.id</div>
+    <div class="flex gap-4 text-lg md:text-xl">
       <button>🔍</button>
       <button>☰</button>
     </div>
@@ -18,49 +39,66 @@
 
   <!-- Gambar Produk -->
   <section class="flex justify-center bg-white">
-    <img id="mainImage" src="https://via.placeholder.com/400" alt="Produk" class="w-72 h-72 object-cover transition">
+    <div id="imageSkeleton" class="w-80 h-80 md:w-96 md:h-96 skeleton rounded"></div>
+    <img id="mainImage" src="" alt="Produk" 
+         class="w-80 h-80 md:w-96 md:h-96 object-cover transition hidden" />
   </section>
 
   <!-- Nama, Gender & Harga -->
-  <section class="p-4 bg-white border-b">
-    <h1 id="productTitle" class="text-lg font-bold">Loading...</h1>
-    <p id="productGender" class="text-sm text-gray-500 mt-1">Gender: -</p>
-    <div class="flex items-center gap-2 mt-1">
-      <span id="productPrice" class="line-through text-gray-400 text-sm">Rp0</span>
-      <span id="productSalePrice" class="text-pink-600 font-bold text-lg">Rp0</span>
-      <span id="productDiscount" class="text-green-600 text-sm"></span>
+  <section class="p-5 md:p-6 bg-white border-b">
+    <h1 id="productTitle" class="text-xl md:text-2xl font-bold skeleton h-6 w-48 mb-3"></h1>
+    <p id="productGender" class="text-sm md:text-base text-gray-500 mt-2 skeleton h-4 w-32"></p>
+    <div class="flex items-center gap-2 mt-3">
+      <span id="productPrice" class="skeleton h-4 w-16"></span>
+      <span id="productSalePrice" class="skeleton h-5 w-20"></span>
+      <span id="productDiscount" class="skeleton h-4 w-10"></span>
     </div>
   </section>
 
   <!-- Variant Warna -->
-  <section class="p-4 bg-white border-b">
-    <p id="variantLabel" class="text-sm text-gray-500 mb-2">Varian Warna:</p>
-    <div id="variantList" class="flex gap-2"></div>
+  <section class="p-5 md:p-6 bg-white border-b">
+    <p id="variantLabel" class="text-sm md:text-base text-gray-500 mb-3">Varian Warna:</p>
+    <div id="variantList" class="flex gap-3">
+      <div class="w-12 h-12 rounded skeleton"></div>
+      <div class="w-12 h-12 rounded skeleton"></div>
+      <div class="w-12 h-12 rounded skeleton"></div>
+    </div>
   </section>
 
   <!-- Variant Size -->
-  <section class="p-4 bg-white border-b">
-    <p id="sizeLabel" class="text-sm text-gray-500 mb-2">Varian Size:</p>
-    <div id="sizeList" class="flex flex-wrap gap-2"></div>
+  <section class="p-5 md:p-6 bg-white border-b">
+    <p id="sizeLabel" class="text-sm md:text-base text-gray-500 mb-3">Varian Size:</p>
+    <div id="sizeList" class="flex flex-wrap gap-3">
+      <div class="px-6 py-2 rounded-full skeleton"></div>
+      <div class="px-6 py-2 rounded-full skeleton"></div>
+      <div class="px-6 py-2 rounded-full skeleton"></div>
+    </div>
   </section>
 
   <!-- Tombol CTA -->
-  <section class="p-4 bg-white border-b">
-    <a id="productLink" href="#" class="block w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-center">
+  <section class="p-5 md:p-6 bg-white border-b">
+    <div id="ctaSkeleton" class="w-full py-4 rounded-xl skeleton"></div>
+    <a id="productLink" href="#"
+       class="hidden block w-full bg-blue-600 text-white py-4 md:py-5 rounded-xl font-semibold text-lg md:text-xl text-center shadow hover:bg-blue-700 transition">
       Checkout Sekarang
     </a>
   </section>
 
   <!-- Info Produk -->
-  <section class="p-4 bg-white border-b">
-    <h2 class="font-semibold mb-2">Info produk</h2>
-    <p id="productDesc" class="text-sm text-gray-600">Loading...</p>
+  <section class="p-5 md:p-6 bg-white border-b">
+    <h2 class="font-semibold text-lg md:text-xl mb-3">Info produk</h2>
+    <p id="productDesc" class="skeleton h-16 w-full"></p>
   </section>
 
   <!-- Sebelumnya Dilihat -->
-  <section class="p-4 bg-white border-b">
-    <h2 class="font-semibold mb-2">Sebelumnya dilihat</h2>
-    <div id="relatedProducts" class="grid grid-cols-2 gap-4"></div>
+  <section class="p-5 md:p-6 bg-white border-b">
+    <h2 class="font-semibold text-lg md:text-xl mb-3">Sebelumnya dilihat</h2>
+    <div id="relatedProducts" class="grid grid-cols-2 gap-4">
+      <div class="h-40 rounded skeleton"></div>
+      <div class="h-40 rounded skeleton"></div>
+      <div class="h-40 rounded skeleton"></div>
+      <div class="h-40 rounded skeleton"></div>
+    </div>
   </section>
 
   <script>
@@ -141,6 +179,20 @@
         // Produk terkait
         const related = data.filter(item => item.item_group_id !== groupId);
         renderRelatedProducts(related.slice(0, 4));
+
+        // Hapus skeleton setelah data siap
+        document.getElementById("imageSkeleton").classList.add("hidden");
+        document.getElementById("mainImage").classList.remove("hidden");
+
+        document.getElementById("ctaSkeleton").classList.add("hidden");
+        document.getElementById("productLink").classList.remove("hidden");
+
+        document.getElementById("productTitle").classList.remove("skeleton");
+        document.getElementById("productGender").classList.remove("skeleton");
+        document.getElementById("productPrice").classList.remove("skeleton");
+        document.getElementById("productSalePrice").classList.remove("skeleton");
+        document.getElementById("productDiscount").classList.remove("skeleton");
+        document.getElementById("productDesc").classList.remove("skeleton");
       }
     }
 
@@ -196,6 +248,5 @@
 
     loadProduct();
   </script>
-
 </body>
 </html>
