@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Detail Produk - Oncloud</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 border-b bg-white">
+    <div class="text-sm font-semibold">oncloudstore.id</div>
+    <div class="flex gap-3">
+      <button>🔍</button>
+      <button>☰</button>
+    </div>
+  </header>
+
+  <!-- Gambar Produk -->
+  <section class="flex justify-center bg-white">
+    <img id="mainImage" src="https://via.placeholder.com/400" alt="Produk" class="w-72 h-72 object-cover transition">
+  </section>
+
+  <!-- Nama, Gender & Harga -->
+  <section class="p-4 bg-white border-b">
+    <h1 id="productTitle" class="text-lg font-bold">Loading...</h1>
+    <p id="productGender" class="text-sm text-gray-500 mt-1">Gender: -</p>
+    <div class="flex items-center gap-2 mt-1">
+      <span id="productPrice" class="line-through text-gray-400 text-sm">Rp0</span>
+      <span id="productSalePrice" class="text-pink-600 font-bold text-lg">Rp0</span>
+      <span id="productDiscount" class="text-green-600 text-sm"></span>
+    </div>
+  </section>
+
+  <!-- Variant Warna -->
+  <section class="p-4 bg-white border-b">
+    <p id="variantLabel" class="text-sm text-gray-500 mb-2">Varian Warna:</p>
+    <div id="variantList" class="flex gap-2"></div>
+  </section>
+
+  <!-- Variant Size -->
+  <section class="p-4 bg-white border-b">
+    <p id="sizeLabel" class="text-sm text-gray-500 mb-2">Varian Size:</p>
+    <div id="sizeList" class="flex flex-wrap gap-2"></div>
+  </section>
+
+  <!-- Tombol CTA -->
+  <section class="p-4 bg-white border-b">
+    <a id="productLink" href="#" class="block w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-center">
+      Checkout Sekarang
+    </a>
+  </section>
+
+  <!-- Info Produk -->
+  <section class="p-4 bg-white border-b">
+    <h2 class="font-semibold mb-2">Info produk</h2>
+    <p id="productDesc" class="text-sm text-gray-600">Loading...</p>
+  </section>
+
+  <!-- Sebelumnya Dilihat -->
+  <section class="p-4 bg-white border-b">
+    <h2 class="font-semibold mb-2">Sebelumnya dilihat</h2>
+    <div id="relatedProducts" class="grid grid-cols-2 gap-4"></div>
+  </section>
+
+  <script>
+    const sheetUrl = "https://opensheet.elk.sh/1Q0AFC9pzYSgZn6aeaRihKN113sMG72NKakTaDTSxtk8/Sheet1";
+
+    const sizeOptions = [
+      "40","40.5","41","42","42.5","43","44","44.5",
+      "45","46","47","47.5","48","48.5","49","50"
+    ];
+
+    let selectedProduct = null;
+    let selectedSize = sizeOptions[0];
+
+    async function loadProduct() {
+      const res = await fetch(sheetUrl);
+      const data = await res.json();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const groupId = urlParams.get("itmid");
+
+      const variants = data.filter(item => item.item_group_id === groupId);
+
+      if (variants.length > 0) {
+        selectedProduct = variants[0];
+        updateProduct(selectedProduct);
+
+        // Varian Warna
+        const variantList = document.getElementById("variantList");
+        variantList.innerHTML = "";
+        variants.forEach((v, index) => {
+          const thumb = document.createElement("div");
+          thumb.className = "w-12 h-12 border rounded overflow-hidden cursor-pointer";
+          thumb.innerHTML = `<img src="${v.image_link}" alt="${v.color}" class="w-full h-full object-cover">`;
+
+          if (index === 0) thumb.classList.add("border-blue-500");
+
+          thumb.addEventListener("click", () => {
+            selectedProduct = v;
+            updateProduct(v);
+
+            document.querySelectorAll("#variantList div").forEach(el => {
+              el.classList.remove("border-blue-500");
+              el.classList.add("border");
+            });
+            thumb.classList.add("border-blue-500");
+          });
+
+          variantList.appendChild(thumb);
+        });
+
+        // Varian Size
+        const sizeList = document.getElementById("sizeList");
+        sizeList.innerHTML = "";
+        sizeOptions.forEach((size, idx) => {
+          const btn = document.createElement("button");
+          btn.className = "px-3 py-1 border rounded-full text-sm cursor-pointer hover:bg-gray-100 bg-white text-gray-800";
+          btn.innerText = size;
+
+          if (idx === 0) {
+            btn.classList.add("bg-blue-600", "text-white");
+            document.getElementById("sizeLabel").innerText = "Varian Size: " + size;
+          }
+
+          btn.addEventListener("click", () => {
+            selectedSize = size;
+            document.querySelectorAll("#sizeList button").forEach(b => {
+              b.classList.remove("bg-blue-600", "text-white");
+              b.classList.add("bg-white", "text-gray-800");
+            });
+            btn.classList.add("bg-blue-600", "text-white");
+            document.getElementById("sizeLabel").innerText = "Varian Size: " + size;
+            updateCTA();
+          });
+
+          sizeList.appendChild(btn);
+        });
+
+        // Produk terkait
+        const related = data.filter(item => item.item_group_id !== groupId);
+        renderRelatedProducts(related.slice(0, 4));
+      }
+    }
+
+    function updateProduct(v) {
+      const price = "Rp" + Number(v.price).toLocaleString("id-ID");
+      const sale = "Rp" + Number(v.sale_price).toLocaleString("id-ID");
+
+      document.getElementById("mainImage").src = v.image_link;
+      document.getElementById("productTitle").innerText = v.title;
+      document.getElementById("productGender").innerText = "Gender: " + (v.gender || "-");
+      document.getElementById("productPrice").innerText = price;
+      document.getElementById("productSalePrice").innerText = sale;
+      document.getElementById("productDiscount").innerText = v.discount ? "(" + v.discount + ")" : "";
+      document.getElementById("productDesc").innerText = v.description;
+      document.getElementById("variantLabel").innerText = "Varian Warna: " + v.color;
+
+      updateCTA();
+    }
+
+    function updateCTA() {
+      if (selectedProduct) {
+        const params = new URLSearchParams({
+          image_link: selectedProduct.image_link,
+          title: selectedProduct.title,
+          gender: selectedProduct.gender,
+          sale_price: selectedProduct.sale_price,
+          color: selectedProduct.color,
+          size: selectedSize
+        });
+
+        document.getElementById("productLink").href = "/checkout.html?" + params.toString();
+      }
+    }
+
+    function renderRelatedProducts(products) {
+      const container = document.getElementById("relatedProducts");
+      container.innerHTML = "";
+      products.forEach(p => {
+        const card = document.createElement("a");
+        card.href = `produk.html?itmid=${p.item_group_id}`;
+        card.className = "block border rounded-lg overflow-hidden bg-white shadow-sm hover:shadow-md transition";
+
+        card.innerHTML = `
+          <img src="${p.image_link}" alt="${p.title}" class="w-full h-32 object-cover">
+          <div class="p-2">
+            <h3 class="text-sm font-semibold truncate">${p.title}</h3>
+            <p class="text-pink-600 text-sm font-bold">Rp${Number(p.sale_price).toLocaleString("id-ID")}</p>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    loadProduct();
+  </script>
+
+</body>
+</html>
