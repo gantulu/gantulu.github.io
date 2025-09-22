@@ -74,44 +74,54 @@
 
 <script>
 const API_URL = 'https://api.apico.dev/v1/wy2u0v/collections/68b327d9f1de8a0e3f730c33/items';
-const API_TOKEN = '553b7adf682af84253c93d719c2b7b3ad21e3bf90bc5d77c662bbe5f321d942e'; // Ganti ke token milikmu
-
-const CLOUDINARY_UPLOAD_PRESET = 'webflow'; // Ganti!
-const CLOUDINARY_CLOUD_NAME = 'daj5cu840'; // Ganti!
+const API_TOKEN = '553b7adf682af84253c93d719c2b7b3ad21e3bf90bc5d77c662bbe5f321d942e';
+const CLOUDINARY_UPLOAD_PRESET = 'webflow';
+const CLOUDINARY_CLOUD_NAME = 'daj5cu840';
 
 const productsContainer = document.getElementById('productsContainer');
 const popup = document.getElementById('editPopup');
 const editForm = document.getElementById('editForm');
 let currentItem = null;
 
-// Load Produk
+// Load Produk dan tampilkan hanya wsnr = yes
 fetch(API_URL)
   .then(res => res.json())
   .then(data => {
     data.items.forEach(item => {
+      if (!item.fieldData.ws || item.fieldData.ws !== "iya") return; // tampilkan hanya wsnr=yes
+
       const card = document.createElement('div');
       card.className = 'card';
+
+      const imgSrc = item.fieldData.img1?.url || '';
+      const name = item.fieldData.name || '';
+      const price = item.fieldData.price || '';
+      const size = item.fieldData.size || '';
+      const color = item.fieldData.color || '';
+      const slug = item.fieldData.slug || '';
+
       card.innerHTML = `
-        <img src="${item.fieldData.img1?.url || ''}" alt="${item.fieldData.name}">
+        <img src="${imgSrc}" alt="${name}">
         <div class="card-content">
-          <h3>${item.fieldData.name}</h3>
-          <p>Harga: ${item.fieldData.price}</p>
-          <p>Ukuran: ${item.fieldData.size}</p>
-          <p>Warna: ${item.fieldData.color}</p>
+          <h3>${name}</h3>
+          <p>Harga: ${price}</p>
+          <p>Ukuran: ${size}</p>
+          <p>Warna: ${color}</p>
         </div>
         <div style="display: flex; justify-content: space-between; gap: 10px; margin: 10px;">
-         <button onclick='openPopup(${JSON.stringify(item)})'>Edit</button>
-         <a href="https://tokopediaa.co.id/links/${item.fieldData.slug}" target="_blank">
-         <button style="background: #28a745;">Open</button>
-         </a>
+          <button class='edit-btn'>Edit</button>
+          <a href="https://tokopediaa.co.id/links/${slug}" target="_blank">
+            <button style="background: #28a745;">Open</button>
+          </a>
         </div>
       `;
       productsContainer.appendChild(card);
+
+      card.querySelector('.edit-btn').addEventListener('click', () => openPopup(item));
     });
   })
   .catch(console.error);
 
-// Open Popup
 function openPopup(item) {
   currentItem = item;
   editForm.id.value = item.id;
@@ -129,12 +139,10 @@ function openPopup(item) {
   popup.style.display = 'flex';
 }
 
-// Close Popup
 function closePopup() {
   popup.style.display = 'none';
 }
 
-// Upload to Cloudinary
 function uploadToCloudinary(file, callback) {
   const formData = new FormData();
   formData.append("file", file);
@@ -149,36 +157,18 @@ function uploadToCloudinary(file, callback) {
   .catch(err => callback(err));
 }
 
-// File upload listeners
-editForm.img1file.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    uploadToCloudinary(file, (err, url) => {
-      if (!err) editForm.img1.value = url;
-      else alert("Upload Gambar 1 gagal.");
-    });
-  }
-});
-editForm.img2file.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    uploadToCloudinary(file, (err, url) => {
-      if (!err) editForm.img2.value = url;
-      else alert("Upload Gambar 2 gagal.");
-    });
-  }
-});
-editForm.img3file.addEventListener("change", function () {
-  const file = this.files[0];
-  if (file) {
-    uploadToCloudinary(file, (err, url) => {
-      if (!err) editForm.img3.value = url;
-      else alert("Upload Gambar 3 gagal.");
-    });
-  }
+['img1file','img2file','img3file'].forEach(name => {
+  editForm[name].addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      uploadToCloudinary(file, (err, url) => {
+        if (!err) editForm[name.replace('file','')].value = url;
+        else alert(`Upload ${name} gagal.`);
+      });
+    }
+  });
 });
 
-// Form Submit
 editForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const updatedItem = {
