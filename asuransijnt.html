@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J&T Asuransi Pengiriman</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #007bff;
+            --secondary: #28a745;
+            --accent: #ffc107;
+            --dark: #343a40;
+            --light: #f8f9fa;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .logo i {
+            color: #ffc107;
+        }
+        
+        .nav-item {
+            margin: 0 5px;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+            font-weight: 500;
+            border-radius: 20px;
+            padding: 8px 15px;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white !important;
+        }
+        
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: none;
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.4);
+        }
+        
+        .feature-box {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .feature-box i {
+            font-size: 2.5rem;
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        
+        .feature-box h5 {
+            color: #343a40;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card h3 {
+            font-weight: 700;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .benefit-item i {
+            font-size: 1.5rem;
+            color: #28a745;
+            margin-right: 15px;
+        }
+        
+        .footer {
+            background: #343a40;
+            color: white;
+            padding: 20px 0;
+            margin-top: 30px;
+        }
+        
+        .footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .badge-success {
+            background-color: #28a745;
+        }
+        
+        .badge-warning {
+            background-color: #ffc107;
+            color: #343a40;
+        }
+        
+        .badge-info {
+            background-color: #17a2b8;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease-out;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-content {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .notification-content i {
+            font-size: 1.5rem;
+            color: #28a745;
+            margin-right: 10px;
+        }
+        
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading i {
+            font-size: 2rem;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        
+        #loginPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('file:///C:/Users/mantap123/AppData/Local/Packages/5319275A.WhatsAppDesktop_cv1g1gvanyjgm/TempState/061412E4A03C02F9902576EC55EBBE77/Gambar%20WhatsApp%202025-10-03%20pukul%2023.42.30_71cfb76b.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #loginPage .card {
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .main-content {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px 0;
+            }
+            
+            .logo {
+                font-size: 1.2rem;
+            }
+            
+            .nav-link {
+                padding: 6px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .feature-box {
+                padding: 15px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-user me-2"></i> Masuk ke Akun Anda
+            </div>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nomor Telepon</label>
+                        <input type="tel" id="phoneNumber" class="form-control" placeholder="Masukkan nomor telepon" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="password" id="pass" class="form-control" placeholder="Masukkan password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt me-2"></i> Masuk
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="mainContent" class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="logo d-flex align-items-center">
+                        <i class="fas fa-shipping-fast me-2"></i>
+                        <span>J&T Asuransi</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-light btn-sm me-2">
+                            <i class="fas fa-bell"></i>
+                        </button>
+                        <button class="btn btn-light btn-sm">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <div class="d-flex justify-content-center w-100">
+                    <div class="nav nav-tabs">
+                        <button class="nav-link active" onclick="changeTab('dashboard')">
+                            <i class="fas fa-home me-1"></i> Dashboard
+                        </button>
+                        <button class="nav-link" onclick="changeTab('asuransi')">
+                            <i class="fas fa-shield-alt me-1"></i> Asuransi
+                        </button>
+                        <button class="nav-link" onclick="changeTab('tracking')">
+                            <i class="fas fa-search me-1"></i> Tracking
+                        </button>
+                        <button class="nav-link" onclick="changeTab('riwayat')">
+                            <i class="fas fa-history me-1"></i> Riwayat
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Content Area -->
+        <div class="container mt-4" id="content-area">
+            <!-- Dashboard Tab -->
+            <div id="dashboard-tab" class="tab-content active">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-user me-2"></i> Selamat Datang, <span id="user-name">Budi Santoso</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h5 class="card-title mb-0">Saldo Asuransi</h5>
+                                        <p class="card-text text-success fw-bold" id="user-saldo">Rp 2.450.000</p>
+                                    </div>
+                                    <button class="btn btn-primary">
+                                        <i class="fas fa-plus me-1"></i> Isi Saldo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="mb-3">Fitur Utama</h5>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="feature-box">
+                                    <i class="fas fa-truck"></i>
+                                    <h5>Asuransi Pengiriman</h5>
+                                    <p>Lindungi paket Anda selama proses pengiriman</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="feature-box">
+                                    <i class="fas fa-search-location"></i>
+                                    <h5>Tracking Realtime</h5>
+                                    <p>Lacak posisi paket Anda kapan saja</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="feature-box">
+                                    <i class="fas fa-file-invoice-dollar"></i>
+                                    <h5>Pembayaran Mudah</h5>
+                                    <p>Bayar dengan berbagai metode yang tersedia</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="feature-box">
+                                    <i class="fas fa-headset"></i>
+                                    <h5>Customer Service</h5>
+                                    <p>Dukungan 24/7 untuk semua kebutuhan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <h5 class="mb-3">Statistik Terkini</h5>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <div class="stat-card">
+                                    <i class="fas fa-box"></i>
+                                    <h3 id="total-paket">128</h3>
+                                    <p>Paket Terasuransi</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-card">
+                                    <i class="fas fa-check-circle"></i>
+                                    <h3>98%</h3>
+                                    <p>Kepuasan Pelanggan</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-card">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <h3>Rp 12.500.000</h3>
+                                    <p>Total Klaim</p>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="stat-card">
+                                    <i class="fas fa-clock"></i>
+                                    <h3>24/7</h3>
+                                    <p>Waktu Layanan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Asuransi Tab -->
+            <div id="asuransi-tab" class="tab-content" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-shield-alt me-2"></i> Pasang Asuransi
+                            </div>
+                            <div class="card-body">
+                                <form id="insurance-form">
+                                    <div class="mb-3">
+                                        <label class="form-label">Nomor Resi</label>
+                                        <input type="text" class="form-control" placeholder="Masukkan nomor resi" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Nilai Barang</label>
+                                        <input type="number" class="form-control" placeholder="Masukkan nilai barang" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Jenis Asuransi</label>
+                                        <select class="form-select">
+                                            <option value="basic">Asuransi Dasar (3%)</option>
+                                            <option value="premium">Asuransi Premium (5%)</option>
+                                            <option value="full">Asuransi Lengkap (7%)</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Durasi Pengiriman</label>
+                                        <select class="form-select">
+                                            <option value="1">1 Hari</option>
+                                            <option value="3">3 Hari</option>
+                                            <option value="5">5 Hari</option>
+                                            <option value="7">7 Hari</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-check me-2"></i> Pasang Asuransi
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-list me-2"></i> Daftar Asuransi Aktif
+                            </div>
+                            <div class="card-body" id="insurance-list">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Memuat data asuransi...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tracking Tab -->
+            <div id="tracking-tab" class="tab-content" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-search-location me-2"></i> Tracking Paket
+                            </div>
+                            <div class="card-body">
+                                <form class="mb-4">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Masukkan nomor resi" required>
+                                        <button class="btn btn-primary" type="submit">
+                                            <i class="fas fa-search me-1"></i> Cari
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div class="border rounded p-3 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">JNT123456789</h6>
+                                        <span class="badge badge-success">Dikirim</span>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar" role="progressbar" style="width: 65%"></div>
+                                    </div>
+                                    <p class="text-muted mb-0">Paket sedang dalam perjalanan</p>
+                                </div>
+                                
+                                <div class="border rounded p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">JNT987654321</h6>
+                                        <span class="badge badge-warning">Dikirim</span>
+                                    </div>
+                                    <div class="progress mb-2">
+                                        <div class="progress-bar" role="progressbar" style="width: 30%"></div>
+                                    </div>
+                                    <p class="text-muted mb-0">Paket sedang diproses di kantor</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riwayat Tab -->
+            <div id="riwayat-tab" class="tab-content" style="display: none;">
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-history me-2"></i> Riwayat Asuransi
+                            </div>
+                            <div class="card-body" id="history-list">
+                                <div class="loading">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>Memuat riwayat asuransi...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification -->
+        <div class="notification" id="notification">
+            <div class="notification-content">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <h6>Asuransi Berhasil Diterapkan</h6>
+                    <p>Paket Anda sekarang terlindungi</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="navbar fixed-bottom bg-white border-top shadow-sm">
+            <div class="container">
+                <div class="d-flex justify-content-around w-100">
+                    <button class="btn btn-link text-dark p-2" onclick="changeTab('dashboard')">
+                        <i class="fas fa-home fa-lg"></i>
+                        <div class="small">Dashboard</div>
+                    </button>
+                    <button class="btn btn-link text-dark p-2" onclick="changeTab('asuransi')">
+                        <i class="fas fa-shield-alt fa-lg"></i>
+                        <div class="small">Asuransi</div>
+                    </button>
+                    <button class="btn btn-link text-dark p-2" onclick="changeTab('tracking')">
+                        <i class="fas fa-search-location fa-lg"></i>
+                        <div class="small">Tracking</div>
+                    </button>
+                    <button class="btn btn-link text-dark p-2" onclick="changeTab('riwayat')">
+                        <i class="fas fa-history fa-lg"></i>
+                        <div class="small">Riwayat</div>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Check if user is logged in
+        function checkLogin() {
+            const phoneNumber = localStorage.getItem('userPhoneNumber');
+            if (!phoneNumber) {
+                document.getElementById('loginPage').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+            } else {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                loadUserData();
+            }
+        }
+
+        // Tab switching functionality
+        function changeTab(tabName) {
+            // Hide all tab content
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Update active nav links
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Update active bottom nav buttons
+            const bottomButtons = document.querySelectorAll('.navbar .btn');
+            bottomButtons.forEach(btn => {
+                btn.classList.remove('text-primary');
+            });
+            
+            // Highlight active tab in nav
+            const activeTab = document.querySelector(`[onclick="changeTab('${tabName}')"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // Highlight active bottom nav
+            const bottomNav = document.querySelector(`[onclick="changeTab('${tabName}')"]`);
+            if (bottomNav) {
+                bottomNav.classList.add('text-primary');
+            }
+            
+            // Load data when switching to asuransi or riwayat tabs
+            if (tabName === 'asuransi') {
+                loadInsuranceData();
+            } else if (tabName === 'riwayat') {
+                loadHistoryData();
+            }
+        }
+        
+        // Form submission handling
+        document.getElementById('insurance-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            showNotification();
+            this.reset();
+        });
+        
+        // Show notification
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Initialize first tab
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLogin();
+            // Load user data if already logged in
+            loadUserData();
+        });
+        
+        // Add login form handling
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const pass = document.getElementById('pass').value;
+            
+            fetch('https://opensheet.elk.sh/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/Sheet1')
+                .then(response => response.json())
+                .then(data => {
+                    const user = data.find(item => 
+                        item.phoneNumber === phoneNumber && item.pass === pass
+                    );
+                    
+                    if (user) {
+                        localStorage.setItem('userPhoneNumber', phoneNumber);
+                        document.getElementById('loginPage').style.display = 'none';
+                        document.getElementById('mainContent').style.display = 'block';
+                        loadUserData();
+                    } else {
+                        alert('Nomor telepon atau password salah!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Terjadi kesalahan saat login');
+                });
+        });
+        
+        // Add animation to cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = 0;
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'all 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = 1;
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+        
+        // Load user data from localStorage
+        function loadUserData() {
+            const phoneNumber = localStorage.getItem('userPhoneNumber');
+            if (phoneNumber) {
+                fetchUserData(phoneNumber);
+            } else {
+                // Default user data if no phone number in localStorage
+                document.getElementById('user-name').textContent = 'Budi Santoso';
+                document.getElementById('user-saldo').textContent = 'Rp 2.450.000';
+            }
+        }
+        
+        // Fetch user data from API
+        function fetchUserData(phoneNumber) {
+            fetch('https://opensheet.elk.sh/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/Sheet1')
+                .then(response => response.json())
+                .then(data => {
+                    // Find user by phone number
+                    const user = data.find(item => item.phoneNumber === phoneNumber);
+                    if (user) {
+                        document.getElementById('user-name').textContent = user.namaLengkap;
+                        document.getElementById('user-saldo').textContent = 'Rp ' + parseInt(user.totalTagihan).toLocaleString();
+                        document.getElementById('total-paket').textContent = '128';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching user data:', error);
+                });
+        }
+        
+        // Load insurance data from API
+        function loadInsuranceData() {
+            const phoneNumber = localStorage.getItem('userPhoneNumber');
+            if (!phoneNumber) {
+                document.getElementById('insurance-list').innerHTML = '<div class="text-center text-muted">Silakan masuk terlebih dahulu</div>';
+                return;
+            }
+            
+            fetch('https://opensheet.elk.sh/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/Sheet1')
+                .then(response => response.json())
+                .then(data => {
+                    const user = data.find(item => item.phoneNumber === phoneNumber);
+                    if (user) {
+                        const insuranceHtml = `
+                            <div class="benefit-item">
+                                <i class="fas fa-box-open"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">${user.namaPaket}</h6>
+                                    <p class="mb-0 text-muted">Resi: ${user.namaPaket}</p>
+                                    <p class="mb-0 text-muted">Status: ${user.statusTagihan}</p>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0">Rp ${parseInt(user.totalTagihan).toLocaleString()}</h6>
+                                    <span class="badge ${user.statusTagihan === 'Lunas' ? 'badge-success' : 'badge-warning'}">${user.statusTagihan}</span>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('insurance-list').innerHTML = insuranceHtml;
+                    } else {
+                        document.getElementById('insurance-list').innerHTML = '<div class="text-center text-muted">Tidak ada data asuransi</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching insurance data:', error);
+                    document.getElementById('insurance-list').innerHTML = '<div class="text-center text-danger">Gagal memuat data</div>';
+                });
+        }
+        
+        // Load history data from API
+        function loadHistoryData() {
+            const phoneNumber = localStorage.getItem('userPhoneNumber');
+            if (!phoneNumber) {
+                document.getElementById('history-list').innerHTML = '<div class="text-center text-muted">Silakan masuk terlebih dahulu</div>';
+                return;
+            }
+            
+            fetch('https://opensheet.elk.sh/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/Sheet1')
+                .then(response => response.json())
+                .then(data => {
+                    const user = data.find(item => item.phoneNumber === phoneNumber);
+                    if (user) {
+                        const historyHtml = `
+                            <div class="benefit-item">
+                                <i class="fas fa-file-invoice"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Asuransi ${user.namaPaket}</h6>
+                                    <p class="mb-0 text-muted">Tanggal: 15 Apr 2023</p>
+                                    <p class="mb-0 text-muted">Nilai: Rp ${parseInt(user.totalTagihan).toLocaleString()}</p>
+                                </div>
+                                <div class="text-end">
+                                    <h6 class="mb-0 ${user.statusTagihan === 'Lunas' ? 'text-success' : 'text-danger'}">Rp ${parseInt(user.totalTagihan).toLocaleString()}</h6>
+                                    <span class="badge ${user.statusTagihan === 'Lunas' ? 'badge-info' : 'badge-warning'}">${user.statusTagihan}</span>
+                                </div>
+                            </div>
+                        `;
+                        document.getElementById('history-list').innerHTML = historyHtml;
+                    } else {
+                        document.getElementById('history-list').innerHTML = '<div class="text-center text-muted">Tidak ada riwayat asuransi</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching history data:', error);
+                    document.getElementById('history-list').innerHTML = '<div class="text-center text-danger">Gagal memuat data</div>';
+                });
+        }
+    </script>
+  <script>
+     document.querySelector('a[href*="jspad"]').style.display = 'none';
+  </script>
+</body>
+</html>
