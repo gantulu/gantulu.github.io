@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>List Data Asuransi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6">
+
+  <h2 class="text-2xl font-bold mb-4">📋 Data Asuransi</h2>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow rounded-lg">
+      <thead>
+        <tr class="bg-gray-200 text-gray-700">
+          <th class="px-4 py-2">Phone</th>
+          <th class="px-4 py-2">Nama</th>
+          <th class="px-4 py-2">Email</th>
+          <th class="px-4 py-2">Jenis</th>
+          <th class="px-4 py-2">Paket</th>
+          <th class="px-4 py-2">Total</th>
+          <th class="px-4 py-2">Status</th>
+          <th class="px-4 py-2">Bank</th>
+          <th class="px-4 py-2">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="dataTable" class="divide-y divide-gray-200"></tbody>
+    </table>
+  </div>
+
+  <!-- Modal Edit -->
+  <div id="editModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl">
+      <h3 class="text-xl font-semibold mb-4">Edit Data</h3>
+      <form id="editForm" class="space-y-3">
+        <input type="hidden" id="rowIndex">
+
+        <div class="grid grid-cols-2 gap-4">
+          <input type="text" id="phoneNumber" placeholder="Phone Number" class="border rounded p-2 w-full">
+          <input type="text" id="pass" placeholder="Password" class="border rounded p-2 w-full">
+          <input type="text" id="namaLengkap" placeholder="Nama Lengkap" class="border rounded p-2 w-full">
+          <input type="email" id="email" placeholder="Email" class="border rounded p-2 w-full">
+          <input type="text" id="jenisAsuransi" placeholder="Jenis Asuransi" class="border rounded p-2 w-full">
+          <input type="text" id="namaPaket" placeholder="Nama Paket" class="border rounded p-2 w-full">
+          <input type="number" id="tagihanPembayaran" placeholder="Tagihan" class="border rounded p-2 w-full">
+          <input type="number" id="pembayaranLainnya" placeholder="Pembayaran Lainnya" class="border rounded p-2 w-full">
+          <input type="number" id="totalTagihan" placeholder="Total Tagihan" class="border rounded p-2 w-full">
+
+          <!-- 🔽 Select Status -->
+          <select id="statusTagihan" class="border rounded p-2 w-full">
+            <option value="Belum bayar">Belum bayar</option>
+            <option value="Sudah bayar">Sudah bayar</option>
+            <option value="Pending">Pending</option>
+          </select>
+
+          <input type="text" id="bank" placeholder="Bank" class="border rounded p-2 w-full">
+          <input type="text" id="accountName" placeholder="Account Name" class="border rounded p-2 w-full">
+          <input type="text" id="accountNumber" placeholder="Account Number" class="border rounded p-2 w-full">
+          <input type="text" id="id" placeholder="ID" class="border rounded p-2 w-full">
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Batal</button>
+          <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Simpan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  const apiUrl = "https://api.apico.dev/v1/JP4CVu/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/values/Sheet1!A2:N";
+  const token = "096462fd9bb677b6a237c036e3178ab66df1f0c7467e7717d0a5cdc9df15703c";
+
+  function loadData() {
+    fetch(apiUrl, { headers: { Authorization: "Bearer " + token }})
+      .then(res => res.json())
+      .then(data => renderTable(data.values || []));
+  }
+
+  function renderTable(rows) {
+    const tbody = document.getElementById("dataTable");
+    tbody.innerHTML = "";
+    rows.forEach((row, i) => {
+      if(row.length === 0) return;
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-gray-50";
+      tr.innerHTML = `
+        <td class="px-4 py-2">${row[0] || ""}</td>
+        <td class="px-4 py-2">${row[2] || ""}</td>
+        <td class="px-4 py-2">${row[3] || ""}</td>
+        <td class="px-4 py-2">${row[4] || ""}</td>
+        <td class="px-4 py-2">${row[5] || ""}</td>
+        <td class="px-4 py-2">${row[8] || ""}</td>
+        <td class="px-4 py-2">${row[9] || ""}</td>
+        <td class="px-4 py-2">${row[10] || ""}</td>
+        <td class="px-4 py-2">
+          <button onclick="editRow(${i+2}, ${JSON.stringify(row).replace(/"/g,'&quot;')})" 
+            class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+            Edit
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function editRow(index, rowData) {
+    document.getElementById("rowIndex").value = index;
+    [
+      "phoneNumber","pass","namaLengkap","email","jenisAsuransi","namaPaket",
+      "tagihanPembayaran","pembayaranLainnya","totalTagihan","statusTagihan",
+      "bank","accountName","accountNumber","id"
+    ].forEach((field, i) => {
+      if(field === "statusTagihan") {
+        document.getElementById(field).value = rowData[i] || "Belum bayar";
+      } else {
+        document.getElementById(field).value = rowData[i] || "";
+      }
+    });
+    document.getElementById("editModal").classList.remove("hidden");
+  }
+
+  function closeModal() {
+    document.getElementById("editModal").classList.add("hidden");
+  }
+
+  document.getElementById("editForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    const index = document.getElementById("rowIndex").value;
+    const updated = [
+      phoneNumber.value, pass.value, namaLengkap.value, email.value,
+      jenisAsuransi.value, namaPaket.value, tagihanPembayaran.value, 
+      pembayaranLainnya.value, totalTagihan.value, statusTagihan.value,
+      bank.value, accountName.value, accountNumber.value, id.value
+    ];
+
+    fetch(`https://api.apico.dev/v1/JP4CVu/1U6wilxMABIiX3ZmNI1fqHUWQU8SxWzZkjsZh9_1OwYg/values/Sheet1!A${index}:N${index}?valueInputOption=USER_ENTERED`, {
+      method: "PUT",
+      headers: { Authorization: "Bearer " + token, "Content-Type": "application/json" },
+      body: JSON.stringify({ values: [updated] })
+    })
+    .then(res => res.json())
+    .then(() => {
+      alert("Data berhasil diperbarui!");
+      closeModal();
+      loadData();
+    })
+    .catch(err => alert("Error: " + err));
+  });
+
+  loadData();
+  </script>
+</body>
+</html>
