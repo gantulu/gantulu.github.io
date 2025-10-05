@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Akademi Crypto</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            dark: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body {
+      font-family: 'Inter', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      background-color: #000000;
+    }
+    .crypto-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .dark .crypto-gradient {
+      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    }
+    .form-container {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+    .dark .form-container {
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+    }
+    .animate-pulse-slow {
+      animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-900 min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
+  <div class="w-full max-w-2xl">
+    <div class="text-center mb-8">
+      <div class="flex justify-center mb-4">
+        <div class="w-16 h-16 rounded-full crypto-gradient flex items-center justify-center">
+          <img src="https://play-lh.googleusercontent.com/gESwr8IFL01XspnWug4AYWVgN64Me8cQpofZrbfZM9AJU37uV7y1zBj4PHy6TvZTU90=w240-h480-rw" alt="Akademi Crypto Logo" class="w-10 h-10">
+        </div>
+      </div>
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Akademi Crypto</h1>
+      <p class="text-gray-600 dark:text-gray-300">Daftar untuk mengikuti program pendidikan kripto kami</p>
+    </div>
+
+    <div class="form-container bg-white dark:bg-dark-800 rounded-xl p-6 md:p-8 transition-all duration-300 hover:shadow-xl">
+      <form id="myForm" class="space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap</label>
+            <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+          </div>
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat Email</label>
+            <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+          </div>
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nomor Telepon</label>
+          <input type="tel" id="phone" name="phone" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Program Pendidikan</label>
+            <select id="title" name="title" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+              <option value="">Pilih Program</option>
+            </select>
+          </div>
+          <div>
+            <label for="plan" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis Kelas</label>
+            <select id="plan" name="plan" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+              <option value="">Pilih Program Terlebih Dahulu</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 dark:bg-dark-700 rounded-lg p-4 space-y-2">
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Biaya Pendaftaran:</span>
+            <span id="price" class="text-sm font-semibold text-gray-900 dark:text-white">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Pendapatan Minimum:</span>
+            <span id="min-income" class="text-sm font-semibold text-gray-900 dark:text-white">-</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">Pendapatan Maksimum:</span>
+            <span id="max-income" class="text-sm font-semibold text-gray-900 dark:text-white">-</span>
+          </div>
+        </div>
+
+        <hr class="border-gray-200 dark:border-dark-700">
+
+        <div>
+          <label for="bank" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bank / eWallet</label>
+          <select id="bank" name="bank" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+            <option value="">Pilih Bank / eWallet</option>
+            <option value="BRI">BRI</option>
+            <option value="BNI">BNI</option>
+            <option value="BCA">BCA</option>
+            <option value="Mandiri">Mandiri</option>
+            <option value="LinkAja">eWallet LinkAja</option>
+            <option value="Ovo">eWallet Ovo</option>
+            <option value="Dana">eWallet Dana</option>
+            <option value="Gopay">eWallet Gopay</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label for="accountName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Rekening</label>
+            <input type="text" id="accountName" name="accountName" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+          </div>
+          <div>
+            <label for="accountNumber" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nomor Rekening / eWallet</label>
+            <input type="number" id="accountNumber" name="accountNumber" required class="w-full px-4 py-3 border border-gray-300 dark:border-dark-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-dark-700 dark:text-white transition-colors">
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-dark-900 shadow-lg">
+            Kirim Pendaftaran
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="mt-8 text-center">
+      <p class="text-sm text-gray-600 dark:text-gray-400">
+        Dengan mengirimkan, Anda setuju dengan 
+        <button onclick="alert('Terms and Conditions')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer">Syarat & Ketentuan</button>
+        dan 
+        <button onclick="alert('Privacy Policy')" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer">Kebijakan Privasi</button>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const titleSelect = document.getElementById('title');
+    const planSelect = document.getElementById('plan');
+    const priceEl = document.getElementById('price');
+    const minIncomeEl = document.getElementById('min-income');
+    const maxIncomeEl = document.getElementById('max-income');
+
+    let apiData = [];
+
+    function formatRupiah(number) {
+      if (!number) return '-';
+      return 'Rp' + Number(number).toLocaleString('id-ID');
+    }
+
+    // Ambil data dari API
+    fetch('https://opensheet.elk.sh/1bRZeNA6oH9T6OFWLEiE1r0wPsP-KEUlh1MIFjpWUdMc/Sheet1')
+      .then(response => response.json())
+      .then(data => {
+        apiData = data;
+
+        const titles = [...new Set(data.map(item => item.title))];
+        titleSelect.innerHTML = '<option value="">Pilih Program</option>';
+        titles.forEach(title => {
+          const option = document.createElement('option');
+          option.value = title;
+          option.textContent = title;
+          titleSelect.appendChild(option);
+        });
+
+        titleSelect.addEventListener('change', () => {
+          const selectedTitle = titleSelect.value;
+          planSelect.innerHTML = '<option value="">Pilih Jenis Kelas</option>';
+          priceEl.textContent = '-';
+          minIncomeEl.textContent = '-';
+          maxIncomeEl.textContent = '-';
+
+          const filtered = data.filter(item => item.title === selectedTitle);
+          filtered.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.plan;
+            option.textContent = item.plan;
+            planSelect.appendChild(option);
+          });
+        });
+
+        planSelect.addEventListener('change', () => {
+          const selectedTitle = titleSelect.value;
+          const selectedPlan = planSelect.value;
+
+          const selectedItem = apiData.find(item => item.title === selectedTitle && item.plan === selectedPlan);
+
+          if (selectedItem) {
+            priceEl.textContent = formatRupiah(selectedItem.price);
+            minIncomeEl.textContent = formatRupiah(selectedItem['min-income'] || selectedItem.incomeMin);
+            maxIncomeEl.textContent = formatRupiah(selectedItem['max-income'] || selectedItem.incomeMax);
+          } else {
+            priceEl.textContent = '-';
+            minIncomeEl.textContent = '-';
+            maxIncomeEl.textContent = '-';
+          }
+        });
+      })
+      .catch(err => {
+        console.error('Error fetching API:', err);
+        titleSelect.innerHTML = '<option value="">Gagal memuat program</option>';
+      });
+
+    // Submit form -> kirim WhatsApp
+    document.getElementById('myForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const title = titleSelect.value;
+      const plan = planSelect.value;
+      const price = priceEl.textContent;
+      const minIncome = minIncomeEl.textContent;
+      const maxIncome = maxIncomeEl.textContent;
+      const bank = document.getElementById('bank').value;
+      const accountName = document.getElementById('accountName').value;
+      const accountNumber = document.getElementById('accountNumber').value;
+
+      const message = `Halo,%0A` +
+                      `Nama: ${name}%0A` +
+                      `Email: ${email}%0A` +
+                      `Phone: ${phone}%0A` +
+                      `Program: ${title}%0A` +
+                      `Jenis Kelas: ${plan}%0A` +
+                      `Biaya: ${price}%0A` +
+                      `Min Pendapatan: ${minIncome}%0A` +
+                      `Max Pendapatan: ${maxIncome}%0A` +
+                      `Bank / eWallet: ${bank}%0A` +
+                      `Nama Rekening: ${accountName}%0A` +
+                      `Nomor Rekening / eWallet: ${accountNumber}`;
+
+      const whatsappNumber = '62882019109061';
+      window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    });
+  </script>
+</body>
+</html>
