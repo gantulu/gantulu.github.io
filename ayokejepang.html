@@ -15,37 +15,6 @@
       border-radius: 8px;
     }
   </style>
-  <script>
-    function toggleModal() {
-      document.getElementById('formModal').classList.toggle('hidden');
-    }
-    function filterLowongan(kategori) {
-      const cards = document.querySelectorAll('.lowongan-card');
-      cards.forEach(card => {
-        if (kategori === 'all' || card.dataset.kategori === kategori) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      new Swiper('.swiper', {
-        loop: true,
-        slidesPerView: 1.2,
-        spaceBetween: 16,
-        breakpoints: {
-          768: {
-            slidesPerView: 3,
-          }
-        },
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-      });
-    });
-  </script>
 </head>
 
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -106,10 +75,10 @@
       <h3 class="font-bold mb-2">📌 Kaigo</h3>
       <div class="swiper mb-6">
         <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://idmarimo.com/wp-content/uploads/2019/12/Tokutei-ginou-perawat.jpg" alt="Kaigo"></div>
-          <div class="swiper-slide"><img src="https://cdn.mainichi.jp/vol1/2017/05/01/20170501hpj00m040071000q/9.jpg?1" alt="Kaigo"></div>
-          <div class="swiper-slide"><img src="https://www.sanpou-s.net/files_thumbnail/co/764%E5%A4%A7%E5%8E%9F%E5%8C%BB%E7%99%82%E7%A7%98%E6%9B%B8%E7%A6%8F%E7%A5%89%E4%BF%9D%E8%82%B2%E5%B0%82%E9%96%80%E5%AD%A6%E6%A0%A1/25.jpg/500.jpg" alt="Kaigo"></div>
-          <div class="swiper-slide"><img src="https://static.wixstatic.com/media/f9d0d2_32defb1b16964d8fbd1698c07e7a7385~mv2.jpg" alt="Kaigo"></div>
+          <div class="swiper-slide"><img src="https://idmarimo.com/wp-content/uploads/2019/12/Tokutei-ginou-perawat.jpg" alt="Kaigo" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://cdn.mainichi.jp/vol1/2017/05/01/20170501hpj00m040071000q/9.jpg?1" alt="Kaigo" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://www.sanpou-s.net/files_thumbnail/co/764%E5%A4%A7%E5%8E%9F%E5%8C%BB%E7%99%82%E7%A7%98%E6%9B%B8%E7%A6%8F%E7%A5%89%E4%BF%9D%E8%82%B2%E5%B0%82%E9%96%80%E5%AD%A6%E6%A0%A1/25.jpg/500.jpg" alt="Kaigo" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://static.wixstatic.com/media/f9d0d2_32defb1b16964d8fbd1698c07e7a7385~mv2.jpg" alt="Kaigo" loading="lazy"></div>
         </div>
         <div class="swiper-pagination"></div>
       </div>
@@ -118,10 +87,10 @@
       <h3 class="font-bold mb-2">🔧 Teknisi</h3>
       <div class="swiper mb-6">
         <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://tse3.mm.bing.net/th/id/OIP.gdkuaBRRsY5CkTF5EcpcSwHaEK" alt="Teknisi"></div>
-          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.wdYu-kYXVjDzEGy0R7AvUwHaE7" alt="Teknisi"></div>
-          <div class="swiper-slide"><img src="https://cdn.prod.www.manager-magazin.de/images/5011e0db-0001-0004-0000-000000450528_w948_r1.778_fpx33.21_fpy50.jpg" alt="Teknisi"></div>
-          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.7Ax6T8epGCguYFKH7LqCqwHaE8" alt="Teknisi"></div>
+          <div class="swiper-slide"><img src="https://tse3.mm.bing.net/th/id/OIP.gdkuaBRRsY5CkTF5EcpcSwHaEK" alt="Teknisi" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.wdYu-kYXVjDzEGy0R7AvUwHaE7" alt="Teknisi" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://cdn.prod.www.manager-magazin.de/images/5011e0db-0001-0004-0000-000000450528_w948_r1.778_fpx33.21_fpy50.jpg" alt="Teknisi" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.7Ax6T8epGCguYFKH7LqCqwHaE8" alt="Teknisi" loading="lazy"></div>
         </div>
         <div class="swiper-pagination"></div>
       </div>
@@ -130,11 +99,11 @@
       <h3 class="font-bold mb-2">🍱 Katering</h3>
       <div class="swiper">
         <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://www.lpkjepang.id/wp-content/uploads/2022/12/Siswa-siswa-wanita-pekerjaan-PENGOLAHAN-MAKANAN-DAN-MINUMAN-di-Jepang-1024x536.webp" alt="Katering"></div>
-          <div class="swiper-slide"><img src="https://i.ytimg.com/vi/4cJAbeiyenI/hqdefault.jpg" alt="Katering"></div>
-          <div class="swiper-slide"><img src="https://www.nuevazona.com.ar/wp-content/uploads/2021/12/STERTZ-1.jpg" alt="Katering"></div>
-          <div class="swiper-slide"><img src="https://cdn.douradosnews.com.br/img/c/1280/960/dn_noticia/2019/01/1548246311.jpg" alt="Katering"></div>
-          <div class="swiper-slide"><img src="https://tse4.mm.bing.net/th/id/OIP.ADUdBUWbt9so_0yrU9rvHAHaEY" alt="Katering"></div>
+          <div class="swiper-slide"><img src="https://www.lpkjepang.id/wp-content/uploads/2022/12/Siswa-siswa-wanita-pekerjaan-PENGOLAHAN-MAKANAN-DAN-MINUMAN-di-Jepang-1024x536.webp" alt="Katering" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://i.ytimg.com/vi/4cJAbeiyenI/hqdefault.jpg" alt="Katering" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://www.nuevazona.com.ar/wp-content/uploads/2021/12/STERTZ-1.jpg" alt="Katering" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://cdn.douradosnews.com.br/img/c/1280/960/dn_noticia/2019/01/1548246311.jpg" alt="Katering" loading="lazy"></div>
+          <div class="swiper-slide"><img src="https://tse4.mm.bing.net/th/id/OIP.ADUdBUWbt9so_0yrU9rvHAHaEY" alt="Katering" loading="lazy"></div>
         </div>
         <div class="swiper-pagination"></div>
       </div>
@@ -158,18 +127,18 @@
       <div class="bg-white p-6 rounded w-full max-w-lg relative">
         <button onclick="toggleModal()" class="absolute top-2 right-2 text-gray-600 text-xl">&times;</button>
         <h2 class="text-xl font-bold mb-4">Formulir Lamaran Kerja</h2>
-        <form action="#" method="POST" class="space-y-4">
+        <form action="#" method="POST" class="space-y-4" id="lamaranForm">
           <input type="text" placeholder="Nama Lengkap" class="w-full border p-2 rounded" required>
           <input type="email" placeholder="Email" class="w-full border p-2 rounded" required>
           <input type="tel" placeholder="Nomor HP / WhatsApp" class="w-full border p-2 rounded" required>
           <select class="w-full border p-2 rounded" required>
             <option value="">-- Pilih Posisi --</option>
-            <option value="kaigo">Kaigo</option>
-            <option value="teknisi">Teknisi</option>
-            <option value="restoran">Restoran</option>
+            <option value="Kaigo">Kaigo</option>
+            <option value="Teknisi">Teknisi</option>
+            <option value="Restoran">Restoran</option>
           </select>
           <textarea placeholder="Pesan Tambahan (Opsional)" class="w-full border p-2 rounded" rows="3"></textarea>
-          <input type="file" class="w-full">
+          <input type="file" class="w-full" disabled title="Upload file tidak didukung untuk WhatsApp form" />
           <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Kirim Lamaran</button>
         </form>
       </div>
@@ -182,5 +151,71 @@
     <p>&copy; 2025 Info Lowongan Jepang. Semua hak dilindungi.</p>
   </footer>
 
+  <!-- Script -->
+  <script>
+    function toggleModal() {
+      document.getElementById('formModal').classList.toggle('hidden');
+    }
+
+    function filterLowongan(kategori) {
+      const cards = document.querySelectorAll('.lowongan-card');
+      cards.forEach(card => {
+        if (kategori === 'all' || card.dataset.kategori === kategori) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      new Swiper('.swiper', {
+        loop: true,
+        slidesPerView: 1.2,
+        spaceBetween: 16,
+        breakpoints: {
+          768: {
+            slidesPerView: 3,
+          }
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+
+      const form = document.getElementById('lamaranForm');
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const nama = form.querySelector('input[type="text"]').value.trim();
+        const email = form.querySelector('input[type="email"]').value.trim();
+        const hp = form.querySelector('input[type="tel"]').value.trim();
+        const posisi = form.querySelector('select').value;
+        const pesanTambahan = form.querySelector('textarea').value.trim();
+
+        if (!nama || !email || !hp || !posisi) {
+          alert('Mohon lengkapi semua data yang wajib diisi.');
+          return;
+        }
+
+        let pesan = `Hallo, saya ingin melamar pekerjaan:%0A`;
+        pesan += `Nama: ${nama}%0A`;
+        pesan += `Email: ${email}%0A`;
+        pesan += `Nomor HP/WA: ${hp}%0A`;
+        pesan += `Posisi: ${posisi}%0A`;
+        if (pesanTambahan) {
+          pesan += `Pesan tambahan: ${pesanTambahan}%0A`;
+        }
+
+        const nomorWA = "601128281095";
+        const waURL = `https://wa.me/${nomorWA}?text=${pesan}`;
+
+        window.open(waURL, '_blank');
+        toggleModal();
+        form.reset();
+      });
+    });
+  </script>
 </body>
 </html>
