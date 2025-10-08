@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Siapkan Dirimu untuk Masa Depan Cerah di Jepang</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #0066cc;
+      --secondary-color: #ff6b6b;
+      --accent-color: #4ecdc4;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f8ff;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #004a99 100%);
+      color: white;
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      border-radius: 0 0 20px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .section-title {
+      color: var(--primary-color);
+      position: relative;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: var(--secondary-color);
+    }
+    
+    .card {
+      border-radius: 15px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+      border: none;
+      margin-bottom: 2rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+      background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+      color: white;
+      border-radius: 15px 15px 0 0 !important;
+      font-weight: 600;
+    }
+    
+    .btn-primary {
+      background: var(--primary-color);
+      border: none;
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      background: #004a99;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,102,204,0.3);
+    }
+    
+    .btn-secondary {
+      background: var(--secondary-color);
+      border: none;
+      padding: 10px 25px;
+      border-radius: 50px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: #ff5252;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255,107,107,0.3);
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+    
+    .testimonial {
+      background: white;
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      margin: 2rem 0;
+    }
+    
+    .quote {
+      font-style: italic;
+      position: relative;
+      padding: 1rem 0;
+    }
+    
+    .quote:before {
+      content: """;
+      font-size: 4rem;
+      position: absolute;
+      top: -20px;
+      left: -15px;
+      color: var(--accent-color);
+      opacity: 0.3;
+      font-family: Georgia, serif;
+    }
+    
+    .author {
+      font-weight: 600;
+      color: var(--primary-color);
+      margin-top: 1rem;
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, var(--accent-color) 0%, #2a9d8f 100%);
+      color: white;
+      padding: 3rem 0;
+      border-radius: 20px;
+      margin: 3rem 0;
+    }
+    
+    .footer-section {
+      background: var(--dark-color);
+      color: white;
+      padding: 2rem 0;
+      border-radius: 20px 20px 0 0;
+      margin-top: 2rem;
+    }
+    
+    .footer-section a {
+      color: #ffd166;
+      text-decoration: none;
+    }
+    
+    .footer-section a:hover {
+      text-decoration: underline;
+    }
+    
+    .badge {
+      background: var(--secondary-color);
+      color: white;
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    /* Popup Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      animation: fadeIn 0.3s;
+    }
+    
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      top: 15px;
+      right: 20px;
+    }
+    
+    .close:hover {
+      color: #000;
+    }
+    
+    .modal-header {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-body {
+      padding: 1rem 0;
+    }
+    
+    .modal-footer {
+      border-top: 1px solid #eee;
+      padding-top: 1rem;
+      margin-top: 1rem;
+      text-align: right;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    @media (max-width: 768px) {
+      .hero-section {
+        padding: 2rem 0;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+      
+      .feature-card {
+        margin-bottom: 1rem;
+      }
+      
+      .modal-content {
+        margin: 10% auto;
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6">
+          <h1 class="display-4 fw-bold">Siapkan Dirimu untuk Masa Depan Cerah di Jepang</h1>
+          <p class="lead">Gaji hingga Rp20 juta+ per bulan, peluang kerja internasional yang menggoda!</p>
+          <button class="btn btn-light btn-lg mt-3" onclick="scrollToSection('lowongan')">
+            <i class="fas fa-arrow-down"></i> Lihat Lowongan
+          </button>
+        </div>
+        <div class="col-lg-6 text-center">
+          <i class="fas fa-plane fa-10x text-white"></i>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <!-- Introduction Section -->
+    <section class="my-5">
+      <div class="row">
+        <div class="col-12">
+          <h2 class="section-title">Peluang Kerja di Jepang yang Menggiurkan</h2>
+          <p class="lead">Dengan gaji yang bisa mencapai Rp20 juta lebih per bulan, tidak heran jika lowongan Jepang terbaru menjadi incaran. Namun untuk benar-benar bisa lolos, kamu harus mempersiapkan diri dari sekarang mulai dari bahasa, fisik, hingga legalitas dokumen.</p>
+          
+          <div class="row mt-4">
+            <div class="col-md-6">
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <i class="fas fa-briefcase"></i>
+                </div>
+                <h4 class="mb-3">Gaji Tinggi</h4>
+                <p>Lowongan dengan gaji fantastis hingga Rp20 juta per bulan</p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <i class="fas fa-globe-asia"></i>
+                </div>
+                <h4 class="mb-3">Masa Depan Cerah</h4>
+                <p>Pengalaman internasional dan peluang karier yang luas</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Job Opportunities Section -->
+    <section id="lowongan" class="my-5">
+      <h2 class="section-title">Daftar Lowongan Jepang Terbaru dengan Gaji Fantastis</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-user-nurse me-2"></i> Pekerja Perawat Lansia (Kaigo)
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Gaji: Rp21-26 juta/bulan</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Sertifikat pelatihan</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>JLPT N4</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Kontrak 3-5 tahun</li>
+              </ul>
+              <button class="btn btn-primary mt-3 w-100" onclick="openPopup('kaigo')">
+                <i class="fas fa-info-circle"></i> Detail
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-tools me-2"></i> Teknisi Manufaktur dan Otomotif
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Gaji: Rp23-30 juta/bulan</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Latar belakang teknik</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Pengalaman kerja/magang</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Bonus tambahan</li>
+              </ul>
+              <button class="btn btn-primary mt-3 w-100" onclick="openPopup('teknisi')">
+                <i class="fas fa-info-circle"></i> Detail
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-utensils me-2"></i> Pekerja Restoran dan Katering
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Gaji: Rp22-27 juta/bulan</h5>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Kemampuan bahasa Jepang</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Pengalaman kerja</li>
+                <li class="list-group-item"><i class="fas fa-check text-success me-2"></i>Cocok untuk hospitality</li>
+              </ul>
+              <button class="btn btn-primary mt-3 w-100" onclick="openPopup('restoran')">
+                <i class="fas fa-info-circle"></i> Detail
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Requirements Section -->
+    <section class="my-5">
+      <h2 class="section-title">Syarat Umum Melamar Lowongan Jepang Terbaru</h2>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-user-check me-2"></i> Usia dan Pendidikan
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Usia 18–30 tahun</li>
+                <li class="list-group-item">Pendidikan minimal SMA/SMK</li>
+                <li class="list-group-item">Beberapa posisi butuh D3/S1</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-language me-2"></i> Kemampuan Bahasa Jepang
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Minimal JLPT N4 (basic)</li>
+                <li class="list-group-item">N3 lebih disukai untuk sektor kesehatan</li>
+                <li class="list-group-item">Beberapa lembaga menyediakan pelatihan</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-12 mt-3">
+          <div class="card">
+            <div class="card-header">
+              <i class="fas fa-heartbeat me-2"></i> Kesehatan Fisik dan Mental
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Lolos tes kesehatan di Indonesia dan Jepang</li>
+                <li class="list-group-item">Tidak memiliki penyakit berat</li>
+                <li class="list-group-item">Memiliki stamina kerja yang kuat</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNMAHA Section -->
+    <section class="my-5">
+      <div class="cta-section">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h2 class="display-6 fw-bold">Kuliah di UNMAHA, Jalan Tercepat ke Jepang</h2>
+            <p class="lead">Jika kamu masih kuliah atau baru lulus SMA/SMK, kamu bisa mempersiapkan diri lebih matang untuk mengisi lowongan Jepang terbaru dengan cara kuliah di UNMAHA (Universitas Mahakarya Asia).</p>
+          </div>
+          <div class="col-lg-4 text-center">
+            <button class="btn btn-light btn-lg" onclick="alert('Info lebih lanjut akan tersedia dalam versi penuh')">
+              <i class="fas fa-graduation-cap me-2"></i> Daftar Sekarang
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNMAHA Benefits -->
+    <section class="my-5">
+      <h2 class="section-title">Keunggulan Kuliah di UNMAHA</h2>
+      
+      <div class="row">
+        <div class="col-md-3">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <h5 class="mb-3">Magang ke Jepang</h5>
+            <p>Dapatkan pengalaman langsung di perusahaan Jepang sebelum lulus</p>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-book"></i>
+            </div>
+            <h5 class="mb-3">Bahasa Jepang Intensif</h5>
+            <p>Disiapkan hingga lulus JLPT</p>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-handshake"></i>
+            </div>
+            <h5 class="mb-3">Relasi Industri</h5>
+            <p>Kerja sama dengan perusahaan Jepang</p>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-user-tie"></i>
+            </div>
+            <h5 class="mb-3">Dibimbing Hingga Siap Kerja</h5>
+            <p>Pembekalan budaya kerja Jepang dan proses rekrutmen</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Application Process -->
+    <section class="my-5">
+      <h2 class="section-title">Cara Melamar Lowongan Jepang Terbaru</h2>
+      
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body text-center">
+              <div class="badge mb-3">1</div>
+              <h5 class="card-title">Siapkan Dokumen Resmi</h5>
+              <p class="card-text">Paspor aktif, ijazah terakhir, sertifikat pelatihan dan bahasa Jepang</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body text-center">
+              <div class="badge mb-3">2</div>
+              <h5 class="card-title">Daftar ke Lembaga Resmi</h5>
+              <p class="card-text">Gunakan jasa lembaga penyalur yang legal dan terpercaya</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <div class="card-body text-center">
+              <div class="badge mb-3">3</div>
+              <h5 class="card-title">Ikuti Pelatihan dan Seleksi</h5>
+              <p class="card-text">Tes bahasa Jepang, tes kesehatan, dan wawancara</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tips Section -->
+    <section class="my-5">
+      <h2 class="section-title">Tips Agar Diterima di Lowongan Jepang Terbaru</h2>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="testimonial">
+            <div class="quote">
+              Latih bahasa Jepang sejak dini. Semakin mahir, semakin besar peluang diterima.
+            </div>
+            <div class="author">- Tips Profesional</div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="testimonial">
+            <div class="quote">
+              Jaga etika dan attitude. Jepang sangat menghargai kesopanan dan kerja keras.
+            </div>
+            <div class="author">- Tips Profesional</div>
+          </div>
+        </div>
+        
+        <div class="col-md-4">
+          <div class="testimonial">
+            <div class="quote">
+              Bangun mental yang siap bekerja keras. Rata-rata jam kerja di Jepang cukup panjang.
+            </div>
+            <div class="author">- Tips Profesional</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Popup Modal -->
+  <div id="jobModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closePopup()">&times;</span>
+      <div class="modal-header">
+        <h3 id="modalTitle"></h3>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Modal content will be inserted here -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePopup()">Tutup</button>
+        <button class="btn btn-success" onclick="sendWhatsAppMessage()">
+          <i class="fab fa-whatsapp me-2"></i> Kirim Pesan WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <h4><i class="fas fa-globe-asia me-2"></i> Siapkan Diri untuk Masa Depan di Jepang</h4>
+          <p>Ikuti peluang kerja internasional dengan gaji tinggi di negeri Sakura</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+          <p><i class="fas fa-envelope me-2"></i> info@japanopportunity.id</p>
+          <p><i class="fas fa-phone me-2"></i> +62 812 3456 7890</p>
+          <p><i class="fab fa-whatsapp me-2"></i> Hubungi Admin di WhatsApp</p>
+        </div>
+      </div>
+      <hr class="my-4" style="background-color: rgba(255,255,255,0.1);">
+      <div class="text-center">
+        <p>&copy; 2023 Siapkan Dirimu untuk Masa Depan Cerah di Jepang. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for anchor links
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    // Popup functions
+    let currentJobType = '';
+    
+    function openPopup(jobType) {
+      currentJobType = jobType;
+      const modal = document.getElementById('jobModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalBody = document.getElementById('modalBody');
+      
+      // Set modal content based on job type
+      switch(jobType) {
+        case 'kaigo':
+          modalTitle.textContent = 'Pekerja Perawat Lansia (Kaigo)';
+          modalBody.innerHTML = `
+            <p><strong>Gaji:</strong> Rp21-26 juta/bulan</p>
+            <p><strong>Deskripsi:</strong> Pekerjaan perawat lansia di Jepang menawarkan gaji tinggi dan peluang karier yang baik. Anda akan bekerja di rumah sakit, pusat perawatan lansia, atau rumah tinggal yang menyediakan perawatan.</p>
+            <h5>Keunggulan:</h5>
+            <ul>
+              <li>Gaji tinggi dan tunjangan kesehatan</li>
+              <li>Pelatihan komprehensif dan sertifikasi</li>
+              <li>Tempat tinggal dan transportasi disediakan</li>
+              <li>Kontrak jangka panjang (3-5 tahun)</li>
+            </ul>
+            <h5>Requirements:</h5>
+            <ul>
+              <li>Usia 18-30 tahun</li>
+              <li>Pendidikan minimal SMA/SMK</li>
+              <li>Sertifikat pelatihan perawatan lansia</li>
+              <li>Kemampuan JLPT N4</li>
+              <li>Lolos tes kesehatan</li>
+            </ul>
+          `;
+          break;
+        case 'teknisi':
+          modalTitle.textContent = 'Teknisi Manufaktur dan Otomotif';
+          modalBody.innerHTML = `
+            <p><strong>Gaji:</strong> Rp23-30 juta/bulan</p>
+            <p><strong>Deskripsi:</strong> Pekerjaan teknisi di sektor manufaktur dan otomotif di Jepang menawarkan peluang karier yang sangat baik dan gaji tinggi. Anda akan bekerja di pabrik atau bengkel otomotif besar.</p>
+            <h5>Keunggulan:</h5>
+            <ul>
+              <li>Gaji tinggi dan bonus kinerja</li>
+              <li>Kemampuan teknisi yang dikembangkan</li>
+              <li>Training profesional di perusahaan besar</li>
+              <li>Perjalanan kerja dan transportasi disediakan</li>
+            </ul>
+            <h5>Requirements:</h5>
+            <ul>
+              <li>Pendidikan teknik (SMK atau D3/S1)</li>
+              <li>Pengalaman kerja atau magang</li>
+              <li>Kemampuan JLPT N4 atau lebih tinggi</li>
+              <li>Kesadaran akan standar produksi jepang</li>
+              <li>Lolos tes kesehatan</li>
+            </ul>
+          `;
+          break;
+        case 'restoran':
+          modalTitle.textContent = 'Pekerja Restoran dan Katering';
+          modalBody.innerHTML = `
+            <p><strong>Gaji:</strong> Rp22-27 juta/bulan</p>
+            <p><strong>Deskripsi:</strong> Pekerjaan di sektor restoran dan katering Jepang memberi peluang untuk berkembang di industri hospitality. Anda akan bekerja di restoran terkenal atau hotel besar.</p>
+            <h5>Keunggulan:</h5>
+            <ul>
+              <li>Gaji tinggi dan tunjangan makan</li>
+              <li>Pelatihan bahasa Jepang</li>
+              <li>Tempat tinggal dan transportasi disediakan</li>
+              <li>Peluang promosi di perusahaan</li>
+            </ul>
+            <h5>Requirements:</h5>
+            <ul>
+              <li>Kemampuan bahasa Jepang (minimal JLPT N4)</li>
+              <li>Pengalaman kerja di bidang hospitality</li>
+              <li>Pengalaman kerja di restoran atau katering</li>
+              <li>Kesopanan dan keterampilan sosial</li>
+              <li>Lolos tes kesehatan</li>
+            </ul>
+          `;
+          break;
+        default:
+          modalTitle.textContent = 'Detail Lowongan';
+          modalBody.innerHTML = '<p>Informasi detail akan ditampilkan di sini.</p>';
+      }
+      
+      modal.style.display = 'block';
+    }
+    
+    function closePopup() {
+      const modal = document.getElementById('jobModal');
+      modal.style.display = 'none';
+    }
+    
+    function sendWhatsAppMessage() {
+      const phoneNumber = '601128281095';
+      let message = '';
+      
+      switch(currentJobType) {
+        case 'kaigo':
+          message = 'Halo, saya tertarik dengan lowongan Pekerja Perawat Lansia (Kaigo). Bisa saya info lebih lanjut?';
+          break;
+        case 'teknisi':
+          message = 'Halo, saya tertarik dengan lowongan Teknisi Manufaktur dan Otomotif. Bisa saya info lebih lanjut?';
+          break;
+        case 'restoran':
+          message = 'Halo, saya tertarik dengan lowongan Pekerja Restoran dan Katering. Bisa saya info lebih lanjut?';
+          break;
+        default:
+          message = 'Halo, saya tertarik dengan lowongan yang tersedia. Bisa saya info lebih lanjut?';
+      }
+      
+      const encodedMessage = encodeURIComponent(message);
+      const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+      window.open(url, '_blank');
+    }
+    
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      const modal = document.getElementById('jobModal');
+      if (event.target === modal) {
+        closePopup();
+      }
+    }
+    
+    // Button click handlers
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add any additional functionality here
+    });
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
