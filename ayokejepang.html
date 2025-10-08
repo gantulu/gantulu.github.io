@@ -5,16 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lowongan Kerja Jepang</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-  <style>
-    .swiper-slide img {
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-  </style>
 </head>
 
 <body class="bg-gray-100 text-gray-800 font-sans">
@@ -29,25 +19,14 @@
 
   <main class="container mx-auto px-4 py-8">
 
-    <!-- Filter -->
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold mb-2">Filter Lowongan</h2>
-      <div class="flex gap-3">
-        <button onclick="filterLowongan('all')" class="bg-gray-300 px-4 py-1 rounded">Semua</button>
-        <button onclick="filterLowongan('kaigo')" class="bg-gray-300 px-4 py-1 rounded">Kaigo</button>
-        <button onclick="filterLowongan('teknisi')" class="bg-gray-300 px-4 py-1 rounded">Teknisi</button>
-        <button onclick="filterLowongan('restoran')" class="bg-gray-300 px-4 py-1 rounded">Restoran</button>
-      </div>
-    </section>
-
-    <!-- Lowongan -->
+    <!-- Lowongan Cards -->
     <section class="mb-12 grid md:grid-cols-3 gap-6">
       <div class="lowongan-card bg-white p-6 rounded shadow" data-kategori="kaigo">
         <h3 class="text-xl font-bold mb-2">1. Pekerja Perawat Lansia (Kaigo)</h3>
         <p>🪙 Gaji: ¥180.000–¥220.000/bulan</p>
         <p>📄 Syarat: Sertifikat & JLPT N4</p>
         <p>⏳ Kontrak: 3–5 tahun</p>
-        <button onclick="toggleModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Lamar Sekarang</button>
+        <button onclick="showDetail(1)" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Detail</button>
       </div>
 
       <div class="lowongan-card bg-white p-6 rounded shadow" data-kategori="teknisi">
@@ -55,7 +34,7 @@
         <p>🪙 Gaji: ¥200.000–¥250.000/bulan</p>
         <p>📄 Syarat: Lulusan teknik & pengalaman</p>
         <p>🎁 Bonus & tunjangan besar</p>
-        <button onclick="toggleModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Lamar Sekarang</button>
+        <button onclick="showDetail(2)" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Detail</button>
       </div>
 
       <div class="lowongan-card bg-white p-6 rounded shadow" data-kategori="restoran">
@@ -63,159 +42,142 @@
         <p>🪙 Gaji: ¥190.000–¥230.000/bulan</p>
         <p>📄 Syarat: Dasar bahasa Jepang & pengalaman</p>
         <p>🍱 Cocok: Latar belakang boga</p>
-        <button onclick="toggleModal()" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Lamar Sekarang</button>
+        <button onclick="showDetail(3)" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">Detail</button>
       </div>
     </section>
 
-    <!-- Galeri Slider -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-semibold mb-6">Galeri Lingkungan Kerja</h2>
-
-      <!-- Kaigo -->
-      <h3 class="font-bold mb-2">📌 Kaigo</h3>
-      <div class="swiper mb-6">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://idmarimo.com/wp-content/uploads/2019/12/Tokutei-ginou-perawat.jpg" alt="Kaigo" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://cdn.mainichi.jp/vol1/2017/05/01/20170501hpj00m040071000q/9.jpg?1" alt="Kaigo" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://www.sanpou-s.net/files_thumbnail/co/764%E5%A4%A7%E5%8E%9F%E5%8C%BB%E7%99%82%E7%A7%98%E6%9B%B8%E7%A6%8F%E7%A5%89%E4%BF%9D%E8%82%B2%E5%B0%82%E9%96%80%E5%AD%A6%E6%A0%A1/25.jpg/500.jpg" alt="Kaigo" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://static.wixstatic.com/media/f9d0d2_32defb1b16964d8fbd1698c07e7a7385~mv2.jpg" alt="Kaigo" loading="lazy"></div>
-        </div>
-        <div class="swiper-pagination"></div>
-      </div>
-
-      <!-- Teknisi -->
-      <h3 class="font-bold mb-2">🔧 Teknisi</h3>
-      <div class="swiper mb-6">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://tse3.mm.bing.net/th/id/OIP.gdkuaBRRsY5CkTF5EcpcSwHaEK" alt="Teknisi" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.wdYu-kYXVjDzEGy0R7AvUwHaE7" alt="Teknisi" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://cdn.prod.www.manager-magazin.de/images/5011e0db-0001-0004-0000-000000450528_w948_r1.778_fpx33.21_fpy50.jpg" alt="Teknisi" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://tse1.mm.bing.net/th/id/OIP.7Ax6T8epGCguYFKH7LqCqwHaE8" alt="Teknisi" loading="lazy"></div>
-        </div>
-        <div class="swiper-pagination"></div>
-      </div>
-
-      <!-- Katering -->
-      <h3 class="font-bold mb-2">🍱 Katering</h3>
-      <div class="swiper">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="https://www.lpkjepang.id/wp-content/uploads/2022/12/Siswa-siswa-wanita-pekerjaan-PENGOLAHAN-MAKANAN-DAN-MINUMAN-di-Jepang-1024x536.webp" alt="Katering" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://i.ytimg.com/vi/4cJAbeiyenI/hqdefault.jpg" alt="Katering" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://www.nuevazona.com.ar/wp-content/uploads/2021/12/STERTZ-1.jpg" alt="Katering" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://cdn.douradosnews.com.br/img/c/1280/960/dn_noticia/2019/01/1548246311.jpg" alt="Katering" loading="lazy"></div>
-          <div class="swiper-slide"><img src="https://tse4.mm.bing.net/th/id/OIP.ADUdBUWbt9so_0yrU9rvHAHaEY" alt="Katering" loading="lazy"></div>
-        </div>
-        <div class="swiper-pagination"></div>
-      </div>
-    </section>
-
-    <!-- Testimoni -->
-    <section class="mb-12">
-      <h2 class="text-2xl font-semibold mb-4">Testimoni Pekerja Indonesia di Jepang</h2>
-      <div class="bg-white p-6 rounded shadow space-y-4">
-        <blockquote class="border-l-4 border-blue-500 pl-4">
-          <p>"Bekerja di Jepang mengubah hidup saya. Saya belajar budaya baru dan menabung untuk masa depan." <br>– Rina, Kaigo</p>
-        </blockquote>
-        <blockquote class="border-l-4 border-green-500 pl-4">
-          <p>"Lingkungan kerjanya profesional dan saya merasa dihargai. Gaji juga sesuai harapan!" <br>– Dedi, Teknisi</p>
-        </blockquote>
-      </div>
-    </section>
-
-    <!-- Modal Formulir Lamaran -->
-    <div id="formModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-      <div class="bg-white p-6 rounded w-full max-w-lg relative">
-        <button onclick="toggleModal()" class="absolute top-2 right-2 text-gray-600 text-xl">&times;</button>
-        <h2 class="text-xl font-bold mb-4">Formulir Lamaran Kerja</h2>
-        <form action="#" method="POST" class="space-y-4" id="lamaranForm">
-          <input type="text" placeholder="Nama Lengkap" class="w-full border p-2 rounded" required>
-          <input type="email" placeholder="Email" class="w-full border p-2 rounded" required>
-          <input type="tel" placeholder="Nomor HP / WhatsApp" class="w-full border p-2 rounded" required>
-          <select class="w-full border p-2 rounded" required>
-            <option value="">-- Pilih Posisi --</option>
-            <option value="Kaigo">Kaigo</option>
-            <option value="Teknisi">Teknisi</option>
-            <option value="Restoran">Restoran</option>
-          </select>
-          <textarea placeholder="Pesan Tambahan (Opsional)" class="w-full border p-2 rounded" rows="3"></textarea>
-          <input type="file" class="w-full" disabled title="Upload file tidak didukung untuk WhatsApp form" />
-          <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded">Kirim Lamaran</button>
-        </form>
+    <!-- Modal Detail -->
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+      <div class="bg-white p-6 rounded w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
+        <button onclick="toggleDetailModal()" class="absolute top-2 right-2 text-gray-600 text-xl">&times;</button>
+        <div id="detailContent"></div>
       </div>
     </div>
 
   </main>
 
-  <!-- Footer -->
   <footer class="bg-blue-600 text-white text-center py-4 mt-12">
     <p>&copy; 2025 Info Lowongan Jepang. Semua hak dilindungi.</p>
   </footer>
 
-  <!-- Script -->
   <script>
-    function toggleModal() {
-      document.getElementById('formModal').classList.toggle('hidden');
+    function toggleDetailModal() {
+      document.getElementById('detailModal').classList.toggle('hidden');
     }
 
-    function filterLowongan(kategori) {
-      const cards = document.querySelectorAll('.lowongan-card');
-      cards.forEach(card => {
-        if (kategori === 'all' || card.dataset.kategori === kategori) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
-      });
+    function openLamaranForm(posisi) {
+      const nomorWA = "601128281095";
+      const pesan = `Halo, saya tertarik melamar posisi: ${posisi}. Mohon informasi lebih lanjut. Terima kasih.`;
+      const waURL = `https://wa.me/${nomorWA}?text=${encodeURIComponent(pesan)}`;
+      window.open(waURL, '_blank');
+      toggleDetailModal();
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      new Swiper('.swiper', {
-        loop: true,
-        slidesPerView: 1.2,
-        spaceBetween: 16,
-        breakpoints: {
-          768: {
-            slidesPerView: 3,
-          }
-        },
-        pagination: {
-          el: '.swiper-pagination',
-          clickable: true,
-        },
-      });
+    const lowonganData = {
+      1: {
+        title: "Pekerja Perawat Lansia (Kaigo)",
+        gaji: `¥180.000 – ¥220.000/bulan<br>(~Rp21 juta – Rp26 juta, tergantung kurs dan pengalaman)`,
+        syarat: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Sertifikat pelatihan Kaigo (perawatan lansia)</li>
+            <li>Sertifikat JLPT minimal N4</li>
+            <li>Pengalaman di bidang perawatan lansia sangat diutamakan</li>
+            <li>Sabar, empati, dan komunikatif</li>
+            <li>Mampu membantu mandi, makan, dan aktivitas harian lansia</li>
+          </ul>`,
+        kontrak: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Durasi: 3 – 5 tahun</li>
+            <li>Potensi perpanjangan atau kontrak tetap berdasarkan performa</li>
+          </ul>`,
+        bonus: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Bonus kinerja dan kehadiran</li>
+            <li>Tunjangan: kesehatan, asuransi kerja, transportasi</li>
+            <li>Pelatihan lanjutan & peningkatan bahasa Jepang</li>
+          </ul>`,
+        lingkungan: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Panti jompo, rumah perawatan lansia, atau fasilitas kesehatan di Jepang</li>
+            <li>Jam kerja shift (termasuk akhir pekan)</li>
+            <li>Pekerjaan yang membutuhkan kesabaran dan perhatian tinggi</li>
+          </ul>`
+      },
+      2: {
+        title: "Teknisi Manufaktur dan Otomotif",
+        gaji: `Rp23 juta – Rp30 juta/bulan<br>Setara ¥200.000 – ¥250.000/bulan (kurs dapat berubah)`,
+        syarat: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Lulusan teknik: Mesin, Elektro, Otomotif, Industri, dll</li>
+            <li>Pengalaman kerja/minimal magang di bidang manufaktur/otomotif</li>
+            <li>Mahir dalam troubleshooting, perawatan & perbaikan mesin</li>
+            <li>Terbiasa dengan alat dan teknologi modern</li>
+            <li>Disiplin, teliti, kerja tim, dan problem-solving kuat</li>
+          </ul>`,
+        bonus: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Bonus kinerja, bonus proyek</li>
+            <li>Tunjangan: kesehatan (BPJS/asuransi), transportasi, makan</li>
+            <li>Pelatihan & pengembangan skill berkala</li>
+          </ul>`,
+        lingkungan: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Pabrik atau bengkel otomotif</li>
+            <li>Standar keselamatan tinggi</li>
+            <li>Jam kerja shift, dengan kemungkinan lembur</li>
+          </ul>`
+      },
+      3: {
+        title: "Pekerja Restoran dan Katering",
+        gaji: `Rp22 juta – Rp27 juta/bulan<br>Setara ¥190.000 – ¥230.000/bulan`,
+        syarat: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Kemampuan dasar bahasa Jepang (komunikasi & memahami instruksi)</li>
+            <li>Pengalaman kerja di restoran, katering, atau hospitality</li>
+            <li>Keterampilan: pelayanan pelanggan, memasak, persiapan makanan</li>
+            <li>Cekatan, teliti, ramah, dan mampu bekerja cepat di lingkungan sibuk</li>
+          </ul>`,
+        bonus: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Bonus kinerja & kehadiran</li>
+            <li>Tunjangan: kesehatan, asuransi kerja, transportasi, makan</li>
+            <li>Pelatihan kerja dan peningkatan bahasa Jepang</li>
+          </ul>`,
+        lingkungan: `
+          <ul class="list-disc ml-5 space-y-1">
+            <li>Restoran atau layanan katering di Jepang</li>
+            <li>Jam kerja shift (pagi, siang, malam), kemungkinan lembur</li>
+            <li>Suasana kerja dinamis dan melayani langsung pelanggan</li>
+          </ul>`
+      }
+    };
 
-      const form = document.getElementById('lamaranForm');
-      form.addEventListener('submit', function(event) {
-        event.preventDefault();
+    function showDetail(id) {
+      const data = lowonganData[id];
+      const content = `
+        <h2 class="text-xl font-bold mb-4">🔹 ${data.title}</h2>
+        <p class="font-semibold">🪙 Gaji</p>
+        <p class="mb-4">${data.gaji}</p>
 
-        const nama = form.querySelector('input[type="text"]').value.trim();
-        const email = form.querySelector('input[type="email"]').value.trim();
-        const hp = form.querySelector('input[type="tel"]').value.trim();
-        const posisi = form.querySelector('select').value;
-        const pesanTambahan = form.querySelector('textarea').value.trim();
+        <p class="font-semibold">📄 Syarat Kualifikasi</p>
+        ${data.syarat}
 
-        if (!nama || !email || !hp || !posisi) {
-          alert('Mohon lengkapi semua data yang wajib diisi.');
-          return;
-        }
+        ${data.kontrak ? `
+          <p class="font-semibold mt-4">⏳ Kontrak</p>
+          ${data.kontrak}
+        ` : ''}
 
-        let pesan = `Hallo, saya ingin melamar pekerjaan:%0A`;
-        pesan += `Nama: ${nama}%0A`;
-        pesan += `Email: ${email}%0A`;
-        pesan += `Nomor HP/WA: ${hp}%0A`;
-        pesan += `Posisi: ${posisi}%0A`;
-        if (pesanTambahan) {
-          pesan += `Pesan tambahan: ${pesanTambahan}%0A`;
-        }
+        <p class="font-semibold mt-4">🎁 Bonus & Tunjangan</p>
+        ${data.bonus}
 
-        const nomorWA = "601128281095";
-        const waURL = `https://wa.me/${nomorWA}?text=${pesan}`;
+        <p class="font-semibold mt-4">${id === 1 ? "🏥" : id === 2 ? "🏭" : "🍽️"} Lingkungan Kerja</p>
+        ${data.lingkungan}
 
-        window.open(waURL, '_blank');
-        toggleModal();
-        form.reset();
-      });
-    });
+        <button onclick="openLamaranForm('${data.title}')" class="mt-6 w-full bg-green-600 text-white py-2 rounded">Lamar Sekarang</button>
+      `;
+      document.getElementById('detailContent').innerHTML = content;
+      toggleDetailModal();
+    }
   </script>
 </body>
 </html>
