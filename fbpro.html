@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Pro - Masuk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1877f2 0%, #0866dc 100%);
+        }
+        
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .input-focus {
+            transition: all 0.3s ease;
+        }
+        
+        .input-focus:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(24, 119, 242, 0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #1877f2 0%, #0866dc 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(24, 119, 242, 0.4);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Login Page Section -->
+    <section id="loginpage" class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-6xl mx-auto flex flex-col lg:flex-row items-center justify-center gap-12">
+            <!-- Left Side - Branding -->
+            <div class="flex-1 text-center lg:text-left fade-in">
+                <div class="flex items-center justify-center lg:justify-start mb-6">
+                    <i class="fab fa-facebook text-6xl text-blue-600 mr-3"></i>
+                    <h1 class="text-5xl font-bold text-gray-800">Facebook</h1>
+                    <span class="text-2xl font-bold text-blue-600 ml-2">Pro</span>
+                </div>
+                <h2 class="text-3xl font-semibold text-gray-700 mb-4">Selamat Datang Kembali</h2>
+                <p class="text-lg text-gray-600 max-w-md">
+                    Masuk ke akun Facebook Pro Anda untuk mengakses fitur-fitur premium dan pengalaman yang lebih baik.
+                </p>
+                <div class="mt-8 flex items-center justify-center lg:justify-start space-x-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-shield-alt text-green-500 mr-2"></i>
+                        <span class="text-sm">Keamanan Terjamin</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-bolt text-yellow-500 mr-2"></i>
+                        <span class="text-sm">Performa Cepat</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Side - Login Form -->
+            <div class="w-full max-w-md glass-effect rounded-2xl shadow-2xl p-8 fade-in">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Masuk ke Facebook Pro</h3>
+                    <p class="text-gray-600">Gunakan email atau nomor telepon Anda</p>
+                </div>
+                
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Email atau Nomor Telepon
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="text" 
+                                id="email"
+                                class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus"
+                                placeholder="nama@email.com"
+                                required
+                            >
+                            <i class="fas fa-user absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Kata Sandi
+                        </label>
+                        <div class="relative">
+                            <input 
+                                type="password" 
+                                id="password"
+                                class="w-full px-4 py-3 pl-12 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent input-focus"
+                                placeholder="••••••••"
+                                required
+                            >
+                            <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <button type="button" id="togglePassword" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                            <span class="ml-2 text-sm text-gray-600">Ingat saya</span>
+                        </label>
+                        <a href="#" class="text-sm text-blue-600 hover:text-blue-700 hover:underline">
+                            Lupa kata sandi?
+                        </a>
+                    </div>
+                    
+                    <button 
+                        type="submit" 
+                        class="w-full btn-primary text-white font-semibold py-3 px-6 rounded-lg"
+                    >
+                        Masuk
+                    </button>
+                    
+                    <div class="relative my-6">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-2 bg-white text-gray-500">atau</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <button type="button" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fab fa-google text-red-500 mr-3"></i>
+                            <span class="text-gray-700">Masuk dengan Google</span>
+                        </button>
+                        <button type="button" class="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fab fa-apple text-gray-800 mr-3"></i>
+                            <span class="text-gray-700">Masuk dengan Apple</span>
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-8 text-center">
+                    <p class="text-gray-600">
+                        Belum punya akun? 
+                        <a href="#" class="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                            Daftar sekarang
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Authentication Page Section -->
+    <section id="authpage" class="min-h-screen flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-2xl mx-auto">
+            <div class="glass-effect rounded-2xl shadow-2xl p-8 slide-in">
+                <div class="text-center mb-8">
+                    <div class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-alt text-4xl text-blue-600"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Verifikasi Identitas Anda</h2>
+                    <p class="text-gray-600">Kami telah mengirimkan kode verifikasi ke perangkat Anda</p>
+                </div>
+                
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-info-circle text-blue-600 mr-3"></i>
+                        <p class="text-sm text-blue-800">
+                            Masukkan kode 6 digit yang kami kirim ke <span id="userEmail" class="font-semibold">nama@email.com</span>
+                        </p>
+                    </div>
+                </div>
+                
+                <form id="authForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-4">
+                            Kode Verifikasi
+                        </label>
+                        <div class="flex justify-center space-x-3">
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                            <input 
+                                type="text" 
+                                maxlength="1" 
+                                class="w-12 h-12 text-center text-xl font-semibold border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all"
+                                pattern="[0-9]"
+                                inputmode="numeric"
+                            >
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <p class="text-sm text-gray-600 mb-2">
+                            Tidak menerima kode? 
+                            <button type="button" id="resendCode" class="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
+                                Kirim ulang
+                            </button>
+                        </p>
+                        <p class="text-xs text-gray-500">
+                            Tunggu <span id="countdown">60</span> detik sebelum mengirim ulang
+                        </p>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button 
+                            type="button" 
+                            id="backToLogin"
+                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+                        >
+                            Kembali
+                        </button>
+                        <button 
+                            type="submit" 
+                            class="flex-1 btn-primary text-white font-semibold py-3 px-6 rounded-lg"
+                        >
+                            Verifikasi
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600">
+                        Masalah dengan verifikasi? 
+                        <a href="#" class="text-blue-600 hover:text-blue-700 hover:underline">
+                            Hubungi dukungan
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center fade-in">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-4xl text-green-600"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-800 mb-2">Berhasil!</h3>
+            <p class="text-gray-600 mb-6">Anda telah berhasil masuk ke Facebook Pro</p>
+            <button 
+                onclick="closeSuccessModal()"
+                class="btn-primary text-white font-semibold py-3 px-8 rounded-lg"
+            >
+                Lanjutkan
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+        
+        // Login form submission
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            // Update email in auth page
+            document.getElementById('userEmail').textContent = email;
+            
+            // Hide login page and show auth page
+            document.getElementById('loginpage').classList.add('hidden');
+            document.getElementById('authpage').classList.remove('hidden');
+            
+            // Focus first input
+            document.querySelector('#authpage input').focus();
+        });
+        
+        // OTP input handling
+        const otpInputs = document.querySelectorAll('#authpage input[type="text"]');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', function(e) {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+            
+            // Only allow numbers
+            input.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        });
+        
+        // Auth form submission
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Check if all OTP fields are filled
+            const allFilled = Array.from(otpInputs).every(input => input.value.length === 1);
+            
+            if (allFilled) {
+                // Show success modal
+                document.getElementById('successModal').classList.remove('hidden');
+            } else {
+                // Show error
+                alert('Harap masukkan kode verifikasi 6 digit');
+            }
+        });
+        
+        // Back to login
+        document.getElementById('backToLogin').addEventListener('click', function() {
+            document.getElementById('authpage').classList.add('hidden');
+            document.getElementById('loginpage').classList.remove('hidden');
+            
+            // Reset form
+            document.getElementById('loginForm').reset();
+            otpInputs.forEach(input => input.value = '');
+        });
+        
+        // Resend code functionality
+        let countdown = 60;
+        let countdownInterval;
+        
+        document.getElementById('resendCode').addEventListener('click', function() {
+            if (countdown === 60) {
+                startCountdown();
+                // Simulate sending code
+                alert('Kode verifikasi telah dikirim ulang');
+            }
+        });
+        
+        function startCountdown() {
+            countdown = 60;
+            const resendBtn = document.getElementById('resendCode');
+            const countdownSpan = document.getElementById('countdown');
+            
+            resendBtn.disabled = true;
+            resendBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            countdownInterval = setInterval(() => {
+                countdown--;
+                countdownSpan.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    countdown = 60;
+                }
+            }, 1000);
+        }
+        
+        // Close success modal
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+            // Reset everything
+            document.getElementById('authpage').classList.add('hidden');
+            document.getElementById('loginpage').classList.remove('hidden');
+            document.getElementById('loginForm').reset();
+            otpInputs.forEach(input => input.value = '');
+        }
+    </script>
+</body>
+</html>
