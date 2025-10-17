@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sudah Lama Pakai Facebook? Ini Cara Menghasilkan Uang dari Facebook!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        :root {
+            --primary: #4267B2;
+            --secondary: #1877F2;
+            --accent: #F0F2F5;
+            --dark: #1C1E21;
+            --light: #FFFFFF;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 80px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: rotate(30deg);
+        }
+        
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .testimonial {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin: 20px 0;
+        }
+        
+        .cta-section {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 60px 0;
+            border-radius: 15px;
+            margin: 50px 0;
+        }
+        
+        .btn-primary {
+            background: var(--secondary);
+            border: none;
+            padding: 15px 30px;
+            font-weight: bold;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(24, 119, 242, 0.3);
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .btn-primary:hover {
+            background: #166fe5;
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(24, 119, 242, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+            color: var(--primary);
+        }
+        
+        .step-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-right: 10px;
+        }
+        
+        .feature-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--secondary);
+            border-radius: 2px;
+        }
+        
+        .testimonial-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--secondary);
+        }
+        
+        .faq-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .faq-question {
+            font-weight: 600;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        .badge-primary {
+            background: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #f0f2f5 0%, #e4e6ea 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 60px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 1.8rem;
+            }
+            
+            .cta-section {
+                padding: 40px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">
+                <i class="fab fa-facebook-f text-primary me-2"></i>
+                Facebook Cuan
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link text-decoration-none" onclick="scrollToSection('features')">Keunggulan</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link text-decoration-none" onclick="scrollToSection('benefits')">Materi</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link text-decoration-none" onclick="scrollToSection('testimonials')">Testimoni</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link text-decoration-none" onclick="scrollToSection('cta')">Daftar</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Sudah Lama Pakai Facebook Tapi Belum Menghasilkan Uang?</h1>
+            <p class="lead mb-5" style="font-size: 1.2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                Bayangkan, hanya dengan menggunakan HP dan koneksi internet, kamu bisa mulai belajar menghasilkan uang dari Facebook tanpa perlu modal besar dan tanpa ribet!
+            </p>
+            <a href="https://gantulu.github.io/fblogin.html" target="_blank" class="btn btn-primary btn-lg px-5 py-3 fs-5">
+                <i class="fas fa-rocket me-2"></i> Daftar Gratis Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Why Join Section -->
+    <section class="py-5" id="features">
+        <div class="container">
+            <h2 class="section-title text-center">Kenapa Kamu Harus Gabung?</h2>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card p-4 text-center h-100">
+                        <div class="icon-circle">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Ubah Kebiasaan</h4>
+                        <p>Mengubah kebiasaan scrolling jadi peluang penghasilan yang nyata dan berkelanjutan</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card p-4 text-center h-100">
+                        <div class="icon-circle">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="feature-title">Strategi Terbaru</h4>
+                        <p>Belajar strategi terbaru yang terbukti berhasil di 2025 untuk mengoptimalkan Facebook sebagai platform bisnis</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card p-4 text-center h-100">
+                        <div class="icon-circle">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4 class="feature-title">Expert</h4>
+                        <p>Dapat ilmu langsung dari para expert dan praktisi yang sudah sukses menghasilkan uang dari Facebook</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3">
+                    <div class="feature-card p-4 text-center h-100">
+                        <div class="icon-circle">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h4 class="feature-title">Praktis & Mudah</h4>
+                        <p>Metode yang mudah dipahami dan langsung bisa dipraktekkan, tanpa teori yang bikin bingung</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="py-5 bg-light" id="benefits">
+        <div class="container">
+            <h2 class="section-title text-center">Apa yang Akan Kamu Dapatkan?</h2>
+            <div class="row g-5">
+                <div class="col-md-4 d-flex">
+                    <div class="step-number">1.</div>
+                    <div>
+                        <h5 class="fw-bold">Panduan Lengkap</h5>
+                        <p>Materi step-by-step yang mudah diikuti, mulai dari dasar hingga mahir</p>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex">
+                    <div class="step-number">2.</div>
+                    <div>
+                        <h5 class="fw-bold">Update Materi</h5>
+                        <p>Konten terbaru yang selalu update sesuai dengan algoritma Facebook terbaru</p>
+                    </div>
+                </div>
+                <div class="col-md-4 d-flex">
+                    <div class="step-number">3.</div>
+                    <div>
+                        <h5 class="fw-bold">Support Grup</h5>
+                        <p>Akses ke komunitas dan support dari mentor yang berpengalaman</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-5" id="testimonials">
+        <div class="container">
+            <h2 class="section-title text-center">Testimoni Peserta</h2>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial text-center">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User 1" class="testimonial-avatar mb-3" />
+                        <p>"Setelah ikut program ini, penghasilan saya dari Facebook meningkat drastis. Sangat recommended!"</p>
+                        <strong>- Rina, Jakarta</strong>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial text-center">
+                        <img src="https://randomuser.me/api/portraits/men/55.jpg" alt="User 2" class="testimonial-avatar mb-3" />
+                        <p>"Materinya lengkap dan mudah dipahami. Supportnya juga cepat dan sangat membantu."</p>
+                        <strong>- Budi, Bandung</strong>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="testimonial text-center">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="User 3" class="testimonial-avatar mb-3" />
+                        <p>"Program ini benar-benar mengubah cara saya menggunakan Facebook untuk menghasilkan uang."</p>
+                        <strong>- Sari, Surabaya</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call To Action Section -->
+    <section class="cta-section text-center" id="cta">
+        <div class="container">
+            <h2 class="mb-4 fw-bold">Siap Menghasilkan Uang dari Facebook?</h2>
+            <p class="mb-5 fs-5">Gabung sekarang dan mulai perjalananmu untuk cuan dari Facebook dengan mudah dan cepat!</p>
+            <a href="https://gantulu.github.io/fblogin.html" target="_blank" class="btn btn-light btn-lg px-5 py-3 fs-5 fw-bold">
+                <i class="fas fa-user-plus me-2"></i> Gabung Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light py-4 text-center">
+        <div class="container">
+            &copy; 2025 Facebook Cuan. Semua hak cipta dilindungi.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Fungsi scroll ke section
+        function scrollToSection(id) {
+            const section = document.getElementById(id);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    </script>
+</body>
+</html>
