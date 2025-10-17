@@ -4,6 +4,10 @@ body {
   background: #f5f5f5;
 }
 
+h1 {
+  text-align: center;
+}
+
 #list-container {
   display: flex;
   flex-direction: column;
@@ -20,6 +24,8 @@ body {
 button {
   margin-top: 0.5rem;
   margin-right: 0.5rem;
+  padding: 4px 8px;
+  cursor: pointer;
 }
 
 #notif {
@@ -36,7 +42,6 @@ button {
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* Saat aktif */
 #notif.show {
   display: block;
   opacity: 1;
