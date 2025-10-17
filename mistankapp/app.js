@@ -15,7 +15,6 @@ async function fetchData() {
   const data = await response.json();
   renderData(data.records);
 
-  // Cek apakah ada data baru
   if (data.records.length > 0) {
     const newId = data.records[0].id;
     if (latestRecordId && newId !== latestRecordId) {
@@ -53,12 +52,18 @@ function showNotification(message) {
   notifDiv.innerText = message;
   notifDiv.classList.add('show');
 
-  // Sembunyikan setelah 5 detik
+  // Mainkan suara
+  const audio = document.getElementById('notif-sound');
+  if (audio) {
+    audio.play().catch(err => {
+      console.warn("Gagal memutar suara:", err);
+    });
+  }
+
   setTimeout(() => {
     notifDiv.classList.remove('show');
   }, 5000);
 
-  // Notifikasi native
   if (Notification.permission === 'granted') {
     new Notification('🔔 Notifikasi', {
       body: message
@@ -70,16 +75,24 @@ document.getElementById('notif').addEventListener('click', () => {
   document.getElementById('notif').classList.remove('show');
 });
 
-// Izin notifikasi
+function enableSound() {
+  const audio = document.getElementById('notif-sound');
+  audio.play().then(() => {
+    alert("Suara aktif. Kamu akan mendengar notifikasi jika ada data baru.");
+    audio.pause();
+    audio.currentTime = 0;
+  }).catch(err => {
+    alert("Gagal mengaktifkan suara: " + err);
+  });
+}
+
 if ('Notification' in window) {
   Notification.requestPermission();
 }
 
-// Interval cek data baru tiap 10 detik
 setInterval(fetchData, 10000);
 fetchData();
 
-// PWA: Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(() => {
     console.log('Service worker terdaftar');
