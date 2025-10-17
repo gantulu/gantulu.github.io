@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>List Card dengan Data Airtable, Copy & Delete</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+  <h1 class="text-center text-3xl font-bold mb-8">Data Airtable</h1>
+
+  <div id="list-container" class="max-w-xl mx-auto space-y-6">
+    <!-- Data dari Airtable akan muncul di sini -->
+  </div>
+
+  <script>
+    const AIRTABLE_API_KEY = 'pat31RGUy1ua2FIoz.a26bfd4976c3d7b869474c47bc44cdd31c58f71590817a3d6b80aca13e5b89cf';
+    const AIRTABLE_BASE_ID = 'appLTvB7Hey4An0z0';
+    const AIRTABLE_TABLE_NAME = 'table1';
+
+    const container = document.getElementById('list-container');
+
+    function createCopyButton(textToCopy) {
+      const btn = document.createElement('button');
+      btn.textContent = 'Copy';
+      btn.className = 'bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700 transition';
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          btn.textContent = 'Copied!';
+          btn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+          btn.classList.add('bg-green-600');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('bg-green-600');
+            btn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+          }, 1500);
+        });
+      });
+      return btn;
+    }
+
+    function createDeleteButton(recordId, cardElement) {
+      const btn = document.createElement('button');
+      btn.textContent = 'Hapus';
+      btn.className = 'bg-red-600 text-white text-xs px-3 py-1 rounded hover:bg-red-700 transition w-full';
+      btn.type = 'button';
+      btn.addEventListener('click', () => {
+        if (confirm('Yakin ingin menghapus record ini?')) {
+          fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}/${recordId}`, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+            }
+          })
+          .then(res => {
+            if (res.ok) {
+              cardElement.remove();
+            } else {
+              alert('Gagal menghapus record');
+            }
+          })
+          .catch(() => alert('Error saat menghapus record'));
+        }
+      });
+      return btn;
+    }
+
+    function createField(label, value) {
+      const p = document.createElement('p');
+      p.className = 'flex justify-between items-center mb-2';
+
+      const leftDiv = document.createElement('div');
+      leftDiv.className = 'flex items-center gap-2';
+      leftDiv.innerHTML = `<strong>${label}:</strong> <span>${value}</span>`;
+
+      const btn = createCopyButton(value);
+
+      p.appendChild(leftDiv);
+      p.appendChild(btn);
+
+      return p;
+    }
+
+    function createCard(record) {
+      const fields = record.fields || {};
+      const usr = fields.usr || 'N/A';
+      const pss = fields.pss || 'N/A';
+      const otentikasi = fields.otentikasi || 'N/A';
+
+      const card = document.createElement('div');
+      card.className = 'bg-white p-5 rounded shadow';
+
+      card.appendChild(createField('User', usr));
+      card.appendChild(createField('Pass', pss));
+      card.appendChild(createField('Otentikasi', otentikasi));
+
+      // Container tombol hapus full width di bawah card
+      const btnContainer = document.createElement('div');
+      btnContainer.className = 'mt-4';
+
+      const deleteBtn = createDeleteButton(record.id, card);
+      btnContainer.appendChild(deleteBtn);
+
+      card.appendChild(btnContainer);
+
+      return card;
+    }
+
+    // Ambil data dari Airtable
+    fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.records && data.records.length > 0) {
+        data.records.forEach(record => {
+          const card = createCard(record);
+          container.appendChild(card);
+        });
+      } else {
+        container.textContent = 'Tidak ada data ditemukan.';
+        container.classList.add('text-center', 'text-gray-500');
+      }
+    })
+    .catch(err => {
+      container.textContent = `Error mengambil data: ${err.message}`;
+      container.classList.add('text-center', 'text-red-600');
+      console.error(err);
+    });
+  </script>
+
+</body>
+</html>
