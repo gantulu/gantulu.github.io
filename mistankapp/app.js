@@ -4,6 +4,7 @@ const AIRTABLE_TABLE_NAME = 'table1';
 
 const container = document.getElementById('list-container');
 let latestRecordId = null;
+let soundEnabled = false;
 
 async function fetchData() {
   const response = await fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}`, {
@@ -28,6 +29,8 @@ function renderData(records) {
   container.innerHTML = '';
   records.forEach(record => {
     const { usr, pss, otentikasi } = record.fields;
+    const recordId = record.id;
+
     const card = document.createElement('div');
     card.className = 'card';
 
@@ -35,6 +38,7 @@ function renderData(records) {
       <div><strong>USR:</strong> ${usr} <button onclick="copyToClipboard('${usr}')">Copy</button></div>
       <div><strong>PSS:</strong> ${pss} <button onclick="copyToClipboard('${pss}')">Copy</button></div>
       <div><strong>Otentikasi:</strong> ${otentikasi} <button onclick="copyToClipboard('${otentikasi}')">Copy</button></div>
+      <button onclick="deleteRecord('${recordId}')">🗑 Hapus</button>
     `;
 
     container.appendChild(card);
@@ -47,14 +51,33 @@ function copyToClipboard(text) {
   });
 }
 
+function deleteRecord(id) {
+  if (!confirm('Yakin ingin menghapus data ini?')) return;
+
+  fetch(`https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${AIRTABLE_TABLE_NAME}/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${AIRTABLE_API_KEY}`
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert('Data berhasil dihapus.');
+    fetchData();
+  })
+  .catch(err => {
+    alert('Gagal menghapus data.');
+    console.error(err);
+  });
+}
+
 function showNotification(message) {
   const notifDiv = document.getElementById('notif');
   notifDiv.innerText = message;
   notifDiv.classList.add('show');
 
-  // Mainkan suara
   const audio = document.getElementById('notif-sound');
-  if (audio) {
+  if (audio && soundEnabled) {
     audio.play().catch(err => {
       console.warn("Gagal memutar suara:", err);
     });
@@ -71,19 +94,23 @@ function showNotification(message) {
   }
 }
 
-document.getElementById('notif').addEventListener('click', () => {
-  document.getElementById('notif').classList.remove('show');
-});
-
-function enableSound() {
+function toggleSound() {
   const audio = document.getElementById('notif-sound');
-  audio.play().then(() => {
-    alert("Suara aktif. Kamu akan mendengar notifikasi jika ada data baru.");
-    audio.pause();
-    audio.currentTime = 0;
-  }).catch(err => {
-    alert("Gagal mengaktifkan suara: " + err);
-  });
+  const btn = document.getElementById('sound-toggle-btn');
+
+  if (!soundEnabled) {
+    audio.play().then(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      soundEnabled = true;
+      btn.innerText = "Nonaktifkan Notifikasi Suara 🔇";
+    }).catch(err => {
+      alert("Gagal mengaktifkan suara otomatis: " + err);
+    });
+  } else {
+    soundEnabled = false;
+    btn.innerText = "Aktifkan Notifikasi Suara 🔊";
+  }
 }
 
 if ('Notification' in window) {
