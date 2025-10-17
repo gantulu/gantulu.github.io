@@ -10,11 +10,17 @@
 <body>
   <h1>Data dari Airtable</h1>
 
+  <!-- Tombol aktivasi suara -->
+  <button onclick="enableSound()">Aktifkan Notifikasi Suara 🔊</button>
+
   <!-- Notifikasi visual -->
   <div id="notif"></div>
 
-  <!-- Container daftar data -->
+  <!-- Daftar data -->
   <div id="list-container"></div>
+
+  <!-- Suara notifikasi -->
+  <audio id="notif-sound" src="notif.mp3" preload="auto"></audio>
 
   <script src="app.js"></script>
 </body>
