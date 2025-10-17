@@ -3,7 +3,6 @@ const AIRTABLE_BASE_ID = 'appLTvB7Hey4An0z0';
 const AIRTABLE_TABLE_NAME = 'table1';
 
 const container = document.getElementById('list-container');
-
 let latestRecordId = null;
 
 async function fetchData() {
@@ -50,6 +49,16 @@ function copyToClipboard(text) {
 }
 
 function showNotification(message) {
+  const notifDiv = document.getElementById('notif');
+  notifDiv.innerText = message;
+  notifDiv.classList.add('show');
+
+  // Sembunyikan setelah 5 detik
+  setTimeout(() => {
+    notifDiv.classList.remove('show');
+  }, 5000);
+
+  // Notifikasi native
   if (Notification.permission === 'granted') {
     new Notification('🔔 Notifikasi', {
       body: message
@@ -57,15 +66,20 @@ function showNotification(message) {
   }
 }
 
+document.getElementById('notif').addEventListener('click', () => {
+  document.getElementById('notif').classList.remove('show');
+});
+
+// Izin notifikasi
 if ('Notification' in window) {
   Notification.requestPermission();
 }
 
-// Refresh data tiap 10 detik
+// Interval cek data baru tiap 10 detik
 setInterval(fetchData, 10000);
 fetchData();
 
-// Register Service Worker
+// PWA: Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').then(() => {
     console.log('Service worker terdaftar');
