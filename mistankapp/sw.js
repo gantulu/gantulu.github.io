@@ -6,7 +6,8 @@ self.addEventListener('install', event => {
         './index.html',
         './style.css',
         './app.js',
-        './manifest.json'
+        './manifest.json',
+        './notif.mp3'
       ]);
     })
   );
