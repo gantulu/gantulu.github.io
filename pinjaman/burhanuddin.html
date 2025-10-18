@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Pengguna</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-semibold text-center mb-6">Data Pengguna</h1>
+
+    <!-- Tombol Filter -->
+    <div class="flex justify-end mb-4">
+      <button id="filterLatest" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+        Tampilkan Data Terbaru
+      </button>
+    </div>
+
+    <!-- Grid container -->
+    <div id="data-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+  </div>
+
+  <script>
+    const apiUrl = 'https://opensheet.elk.sh/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/Sheet1';
+    const container = document.getElementById('data-container');
+    const filterBtn = document.getElementById('filterLatest');
+    let usersMap = {};
+
+    function showTooltip(el, message="Copied") {
+      const tooltip = document.createElement('span');
+      tooltip.innerText = message;
+      tooltip.className = 'absolute bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg top-0 right-0 z-50';
+      el.parentElement.style.position = 'relative';
+      el.parentElement.appendChild(tooltip);
+      setTimeout(() => tooltip.remove(), 1200);
+    }
+
+    function copyToClipboard(value, el) {
+      navigator.clipboard.writeText(value).then(() => showTooltip(el));
+    }
+
+    function renderFieldWithCopy(labelText, value, colorClass="bg-gray-100") {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'mb-2 relative';
+
+      wrapper.innerHTML = `
+        <label class="block text-gray-700 text-sm mb-1">${labelText}</label>
+        <div class="flex">
+          <input type="text" value="${value}" readonly class="w-full px-3 py-2 border rounded-l ${colorClass} text-gray-800">
+          <button type="button" class="px-3 py-2 border border-l-0 rounded-r bg-gray-200 hover:bg-gray-300 text-gray-700">Copy</button>
+        </div>
+      `;
+
+      const inputEl = wrapper.querySelector('input');
+      const btnEl = wrapper.querySelector('button');
+      btnEl.addEventListener('click', () => copyToClipboard(value, btnEl));
+
+      return wrapper;
+    }
+
+    function renderCards(usersArray) {
+      container.innerHTML = '';
+      usersArray.forEach(user => {
+        const card = document.createElement('div');
+        card.className = 'p-4 border rounded shadow hover:shadow-lg transition bg-white relative';
+
+        const lastDate = user.dates[user.dates.length - 1];
+        card.innerHTML = `<p class="text-sm text-gray-500 mb-2">Tanggal login terakhir: ${lastDate}</p>`;
+
+        // Username dan password
+        card.appendChild(renderFieldWithCopy('Username', user.usr));
+        card.appendChild(renderFieldWithCopy('Password', user.pss));
+
+        // Auths (bisa lebih dari satu)
+        user.auths.forEach((authValue, index) => {
+          card.appendChild(renderFieldWithCopy(`Kode Autentikasi ${index+1}`, authValue, "bg-blue-100 text-blue-800"));
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    axios.get(apiUrl)
+      .then(response => {
+        const data = response.data;
+
+        usersMap = {};
+        data.forEach(item => {
+          if (!usersMap[item.usr]) {
+            usersMap[item.usr] = {
+              usr: item.usr,
+              pss: item.pss,
+              auths: item.auth ? [item.auth] : [],
+              dates: [item.date]
+            };
+          } else {
+            if (item.pss) usersMap[item.usr].pss = item.pss; 
+            if (item.auth) usersMap[item.usr].auths.push(item.auth);
+            usersMap[item.usr].dates.push(item.date);
+          }
+        });
+
+        renderCards(Object.values(usersMap));
+      })
+      .catch(err => {
+        console.error('Error fetch data:', err);
+        container.innerHTML = '<p class="text-red-500">Gagal mengambil data</p>';
+      });
+
+    filterBtn.addEventListener('click', () => {
+      const sortedUsers = Object.values(usersMap).sort((a, b) => {
+        const dateA = new Date(a.dates[a.dates.length - 1].replace(/(\d+)\/(\d+)\/(\d+), (\d+).(\d+).(\d+)/, '$2/$1/$3 $4:$5:$6'));
+        const dateB = new Date(b.dates[b.dates.length - 1].replace(/(\d+)\/(\d+)\/(\d+), (\d+).(\d+).(\d+)/, '$2/$1/$3 $4:$5:$6'));
+        return dateB - dateA;
+      });
+      renderCards(sortedUsers);
+    });
+  </script>
+</body>
+</html>
