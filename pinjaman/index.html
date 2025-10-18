@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PWA Mobile Data</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="/images/icon-192x192.png">
+</head>
+<body>
+  <h1>📋 Data Pengguna</h1>
+
+  <!-- Tombol Filter -->
+  <div class="filter">
+    <button id="filterBtn">Tampilkan Data Terbaru</button>
+  </div>
+
+  <!-- List Card -->
+  <div id="listCard" class="listCard">
+    <!-- Card akan ditampilkan di sini -->
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    // Daftarkan Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(reg => console.log('Service Worker terdaftar:', reg.scope))
+          .catch(err => console.error('Gagal daftar Service Worker:', err));
+      });
+    }
+  </script>
+</body>
+</html>
