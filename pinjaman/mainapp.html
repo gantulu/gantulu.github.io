@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - Simulasi Pinjaman</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    :root {
+        --primary: #4361ee;
+        --secondary: #3a0ca3;
+        --accent: #4cc9f0;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --success: #4caf50;
+        --warning: #ff9800;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    /* Sidebar overlay style */
+    .sidebar {
+        background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        color: white;
+        width: 250px;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: -250px; /* hide initially */
+        padding: 2rem 0;
+        box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+        z-index: 1000;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar.open {
+        left: 0; /* visible when open */
+    }
+
+    .sidebar .nav-link {
+        color: rgba(255,255,255,0.8);
+        padding: 0.8rem 1.5rem;
+        margin: 0.2rem 0;
+        border-radius: 0 20px 20px 0;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar .nav-link.active,
+    .sidebar .nav-link:hover {
+        background: rgba(255,255,255,0.15);
+        color: white;
+    }
+
+    .sidebar .nav-link i {
+        margin-right: 10px;
+        width: 20px;
+        text-align: center;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: rgba(0,0,0,0.3);
+        z-index: 900;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+
+    .overlay.show {
+        width: 100%;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 2rem;
+        transition: margin-left 0.3s ease;
+    }
+
+    .header {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        border: none;
+        transition: transform 0.3s ease;
+        margin-bottom: 1.5rem;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card-header {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        color: white;
+        border-radius: 15px 15px 0 0 !important;
+        font-weight: 600;
+        padding: 1rem 1.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(to right, var(--primary), var(--secondary));
+        border: none;
+        padding: 0.7rem 1.5rem;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+    }
+
+    .form-control, .form-select {
+        border-radius: 10px;
+        padding: 0.8rem 1rem;
+        border: 1px solid #dee2e6;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 0.25rem rgba(76, 201, 240, 0.25);
+    }
+
+    .table th {
+        background-color: var(--primary);
+        color: white;
+        font-weight: 600;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .overlay-close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 1.5rem;
+        color: white;
+        cursor: pointer;
+    }
+
+    .stats-card {
+        border-radius: 15px;
+        padding: 1.5rem;
+        color: white;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .stats-card.primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+
+    .stats-card.success {
+        background: linear-gradient(135deg, var(--success), #2e7d32);
+    }
+
+    .stats-card.warning {
+        background: linear-gradient(135deg, var(--warning), #e65100);
+    }
+
+    .stats-card.info {
+        background: linear-gradient(135deg, var(--accent), #0288d1);
+    }
+
+    .stats-card h3 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .activity-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+    }
+
+    .activity-item:last-child {
+        border-bottom: none;
+    }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .activity-icon.primary {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+    }
+
+    .activity-icon.success {
+        background-color: rgba(76, 175, 80, 0.1);
+        color: var(--success);
+    }
+
+    .activity-icon.warning {
+        background-color: rgba(255, 152, 0, 0.1);
+        color: var(--warning);
+    }
+
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .result-card {
+        background-color: #f8f9fa;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .notification-item {
+        padding: 0.75rem;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .notification-item:last-child {
+        border-bottom: none;
+    }
+
+    .notification-icon {
+        margin-right: 1rem;
+        font-size: 1.2rem;
+    }
+
+    .notification-time {
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+</style>
+</head>
+<body>
+
+<!-- Sidebar Toggle Button -->
+<button class="sidebar-toggle btn btn-primary" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="text-center mb-4">
+        <h4><i class="fas fa-money-bill-wave"></i> Simulasi Pinjaman</h4>
+    </div>
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <button class="nav-link active" onclick="showPage('dashboard')">
+                <i class="fas fa-home"></i> <span>Dashboard</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="showPage('simulasi')">
+                <i class="fas fa-calculator"></i> <span>Simulasi</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="showPage('riwayat')">
+                <i class="fas fa-history"></i> <span>Riwayat</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="showPage('profil')">
+                <i class="fas fa-user"></i> <span>Profil</span>
+            </button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" onclick="showPage('pengaturan')">
+                <i class="fas fa-cog"></i> <span>Pengaturan</span>
+            </button>
+        </li>
+    </ul>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+    <!-- Halaman dashboard -->
+    <div id="dashboardPage">
+        <div class="header">
+            <h2>Dashboard</h2>
+            <div class="user-info">
+                <div>
+                    <h5 class="mb-0">John Doe</h5>
+                    <small class="text-muted">john.doe@example.com</small>
+                </div>
+                <div class="user-avatar">JD</div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card primary">
+                    <h3>Rp 150jt</h3>
+                    <p>Total Pinjaman Aktif</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card success">
+                    <h3>3</h3>
+                    <p>Pinjaman Selesai</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card warning">
+                    <h3>Rp 4.5jt</h3>
+                    <p>Angsuran Bulan Ini</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stats-card info">
+                    <h3>12%</h3>
+                    <p>Suku Bunga Rata-rata</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">Grafik Pinjaman</div>
+                    <div class="card-body">
+                        <canvas id="loanChart" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">Aktivitas Terkini</div>
+                    <div class="card-body p-0">
+                        <div class="activity-item">
+                            <div class="activity-icon primary">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Simulasi Pinjaman Baru</h6>
+                                <small class="text-muted">2 jam yang lalu</small>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Pembayaran Berhasil</h6>
+                                <small class="text-muted">1 hari yang lalu</small>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon warning">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Pengingat Pembayaran</h6>
+                                <small class="text-muted">3 hari yang lalu</small>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon primary">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Dokumen Diperbarui</h6>
+                                <small class="text-muted">5 hari yang lalu</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman simulasi -->
+    <div id="simulasiPage" style="display:none;">
+        <div class="header">
+            <h2>Simulasi Pinjaman</h2>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <form id="loanForm">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="loanAmount" class="form-label">Jumlah Pinjaman (Rp)</label>
+                            <input type="number" class="form-control" id="loanAmount" placeholder="Contoh: 100000000" min="1000000" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="loanType" class="form-label">Jenis Pinjaman</label>
+                            <select class="form-select" id="loanType" required>
+                                <option value="" selected disabled>Pilih jenis pinjaman</option>
+                                <option value="kpr">KPR (Kredit Pemilikan Rumah)</option>
+                                <option value="kta">KTA (Kredit Tanpa Agunan)</option>
+                                <option value="kendaraan">Kredit Kendaraan</option>
+                                <option value="multiguna">Kredit Multiguna</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="loanTerm" class="form-label">Jangka Waktu (bulan)</label>
+                            <select class="form-select" id="loanTerm" required>
+                                <option value="" selected disabled>Pilih jangka waktu</option>
+                                <option value="12">12 bulan (1 tahun)</option>
+                                <option value="24">24 bulan (2 tahun)</option>
+                                <option value="36">36 bulan (3 tahun)</option>
+                                <option value="48">48 bulan (4 tahun)</option>
+                                <option value="60">60 bulan (5 tahun)</option>
+                                <option value="120">120 bulan (10 tahun)</option>
+                                <option value="180">180 bulan (15 tahun)</option>
+                                <option value="240">240 bulan (20 tahun)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="interestRate" class="form-label">Suku Bunga (%)</label>
+                            <input type="number" class="form-control" id="interestRate" placeholder="Contoh: 9.5" step="0.1" min="1" max="30" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentMethod" class="form-label">Metode Pembayaran</label>
+                        <select class="form-select" id="paymentMethod" required>
+                            <option value="" selected disabled>Pilih metode pembayaran</option>
+                            <option value="anuitas">Anuitas (angsuran tetap)</option>
+                            <option value="efektif">Efektif (angsuran menurun)</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Hitung Simulasi</button>
+                    </div>
+                </form>
+
+                <div id="simulationResult" style="display: none;">
+                    <h5 class="mt-4 mb-3">Hasil Simulasi</h5>
+                    <div class="result-card">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <h6>Jumlah Pinjaman</h6>
+                                <p class="fw-bold" id="resultAmount">Rp 0</p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <h6>Angsuran per Bulan</h6>
+                                <p class="fw-bold" id="resultMonthly">Rp 0</p>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <h6>Total Pembayaran</h6>
+                                <p class="fw-bold" id="resultTotal">Rp 0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive mt-4">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Bulan</th>
+                                    <th>Angsuran Pokok</th>
+                                    <th>Bunga</th>
+                                    <th>Total Angsuran</th>
+                                    <th>Sisa Pinjaman</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentSchedule">
+                                <!-- Payment schedule will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-outline-primary" onclick="saveSimulation()">
+                            <i class="fas fa-save"></i> Simulasi
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="printSimulation()">
+                            <i class="fas fa-print"></i> Cetak
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman riwayat -->
+    <div id="riwayatPage" style="display:none;">
+        <div class="header">
+            <h2>Riwayat Pinjaman</h2>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Cari riwayat..." id="searchHistory">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select class="form-select" id="filterHistory">
+                            <option value="all">Semua Riwayat</option>
+                            <option value="active">Pinjaman Aktif</option>
+                            <option value="completed">Pinjaman Selesai</option>
+                            <option value="simulation">Simulasi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tanggal</th>
+                                <th>Jenis Pinjaman</th>
+                                <th>Jumlah</th>
+                                <th>Jangka Waktu</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#LN001</td>
+                                <td>15/06/2023</td>
+                                <td>KPR</td>
+                                <td>Rp 300.000.000</td>
+                                <td>180 bulan</td>
+                                <td><span class="badge bg-success">Aktif</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('LN001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#LN002</td>
+                                <td>20/07/2023</td>
+                                <td>KTA</td>
+                                <td>Rp 50.000.000</td>
+                                <td>36 bulan</td>
+                                <td><span class="badge bg-success">Aktif</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('LN002')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#SIM001</td>
+                                <td>05/08/2023</td>
+                                <td>Kendaraan</td>
+                                <td>Rp 150.000.000</td>
+                                <td>60 bulan</td>
+                                <td><span class="badge bg-info">Simulasi</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('SIM001')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#LN003</td>
+                                <td>10/02/2022</td>
+                                <td>Kendaraan</td>
+                                <td>Rp 100.000.000</td>
+                                <td>48 bulan</td>
+                                <td><span class="badge bg-secondary">Selesai</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary" onclick="viewDetail('LN003')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman profil -->
+    <div id="profilPage" style="display:none;">
+        <div class="header">
+            <h2>Profil Pengguna</h2>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="https://picsum.photos/seed/user123/150/150.jpg" alt="Profile Picture" class="profile-img mb-3">
+                        <button class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-camera"></i> Ganti Foto
+                        </button>
+                    </div>
+                    <div class="col-md-8">
+                        <form id="profileForm">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="firstName" class="form-label">Nama Depan</label>
+                                    <input type="text" class="form-control" id="firstName" value="John" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lastName" class="form-label">Nama Belakang</label>
+                                    <input type="text" class="form-control" id="lastName" value="Doe" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" value="john.doe@example.com" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="phone" class="form-label">No. Telepon</label>
+                                    <input type="tel" class="form-control" id="phone" value="081234567890" required>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="birthDate" class="form-label">Tanggal Lahir</label>
+                                    <input type="date" class="form-control" id="birthDate" value="1985-06-15" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="occupation" class="form-label">Pekerjaan</label>
+                                    <input type="text" class="form-control" id="occupation" value="Karyawan Swasta" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label">Alamat</label>
+                                <textarea class="form-control" id="address" rows="3" required>Jl. Contoh No. 123, Jakarta Selatan, DKI Jakarta</textarea>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Halaman pengaturan -->
+    <div id="pengaturanPage" style="display:none;">
+        <div class="header">
+            <h2>Pengaturan</h2>
+        </div>
+        <div class="card">
+            <div class="card-header">Notifikasi</div>
+            <div class="card-body">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="emailNotif" checked>
+                    <label class="form-check-label" for="emailNotif">
+                        Notifikasi Email
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="smsNotif">
+                    <label class="form-check-label" for="smsNotif">
+                        Notifikasi SMS
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="paymentReminder" checked>
+                    <label class="form-check-label" for="paymentReminder">
+                        Pengingat Pembayaran
+                    </label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="promotionNotif">
+                    <label class="form-check-label" for="promotionNotif">
+                        Notifikasi Promosi
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Keamanan</div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Password</h6>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                        <i class="fas fa-key"></i> Ubah Password
+                    </button>
+                </div>
+                <div class="mb-4">
+                    <h6>Autentikasi Dua Faktor</h6>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="twoFactorAuth">
+                        <label class="form-check-label" for="twoFactorAuth">
+                            Aktifkan Autentikasi Dua Faktor
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">Preferensi</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="language" class="form-label">Bahasa</label>
+                    <select class="form-select" id="language">
+                        <option value="id" selected>Bahasa Indonesia</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="currency" class="form-label">Mata Uang</label>
+                    <select class="form-select" id="currency">
+                        <option value="idr" selected>Rupiah (Rp)</option>
+                        <option value="usd">US Dollar ($)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="theme" class="form-label">Tema</label>
+                    <select class="form-select" id="theme">
+                        <option value="light" selected>Terang</option>
+                        <option value="dark">Gelap</option>
+                    </select>
+                </div>
+                <div class="d-grid">
+                    <button class="btn btn-primary">Simpan Pengaturan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">Ubah Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="changePasswordForm">
+                    <div class="mb-3">
+                        <label for="currentPassword" class="form-label">Password Saat Ini</label>
+                        <input type="password" class="form-control" id="currentPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">Password Baru</label>
+                        <input type="password" class="form-control" id="newPassword" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Konfirmasi Password Baru</label>
+                        <input type="password" class="form-control" id="confirmPassword" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Ubah Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    // Toggle sidebar
+    sidebarToggle.addEventListener('click', () => {
+        sidebar.classList.add('open');
+        overlay.classList.add('show');
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+    });
+
+    // Show pages dynamically
+    function showPage(page) {
+        const pages = ['dashboard', 'simulasi', 'riwayat', 'profil', 'pengaturan'];
+        pages.forEach(p => {
+            const el = document.getElementById(p + 'Page');
+            if(el) el.style.display = (p === page) ? 'block' : 'none';
+        });
+        
+        // Update active nav link
+        document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        event.target.closest('.nav-link').classList.add('active');
+        
+        // close sidebar after selection (mobile)
+        sidebar.classList.remove('open');
+        overlay.classList.remove('show');
+        
+        // Initialize chart if dashboard is shown
+        if (page === 'dashboard') {
+            initLoanChart();
+        }
+    }
+
+    // Initialize loan chart on dashboard
+    function initLoanChart() {
+        const ctx = document.getElementById('loanChart');
+        if (!ctx) return;
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+                datasets: [{
+                    label: 'Pinjaman Aktif',
+                    data: [120, 135, 125, 140, 150, 145, 155, 160, 150, 145, 140, 150],
+                    borderColor: '#4361ee',
+                    backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }, {
+                    label: 'Pembayaran',
+                    data: [10, 12, 11, 13, 15, 14, 16, 17, 15, 14, 13, 15],
+                    borderColor: '#4caf50',
+                    backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Rp ' + value + 'jt';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Handle loan simulation form
+    document.getElementById('loanForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const amount = parseFloat(document.getElementById('loanAmount').value);
+        const term = parseInt(document.getElementById('loanTerm').value);
+        const rate = parseFloat(document.getElementById('interestRate').value) / 100 / 12;
+        const paymentMethod = document.getElementById('paymentMethod').value;
+        
+        // Calculate monthly payment
+        let monthlyPayment;
+        if (paymentMethod === 'anuitas') {
+            monthlyPayment = amount * rate * Math.pow(1 + rate, term) / (Math.pow(1 + rate, term) - 1);
+        } else {
+            // For efektif method, we'll show the first month payment
+            monthlyPayment = (amount / term) + (amount * rate);
+        }
+        
+        // Calculate total payment
+        const totalPayment = monthlyPayment * term;
+        
+        // Display results
+        document.getElementById('resultAmount').textContent = 'Rp ' + amount.toLocaleString('id-ID');
+        document.getElementById('resultMonthly').textContent = 'Rp ' + Math.round(monthlyPayment).toLocaleString('id-ID');
+        document.getElementById('resultTotal').textContent = 'Rp ' + Math.round(totalPayment).toLocaleString('id-ID');
+        
+        // Generate payment schedule
+        const scheduleBody = document.getElementById('paymentSchedule');
+        scheduleBody.innerHTML = '';
+        
+        let remainingBalance = amount;
+        for (let i = 1; i <= term; i++) {
+            const interestPayment = remainingBalance * rate;
+            let principalPayment;
+            
+            if (paymentMethod === 'anuitas') {
+                principalPayment = monthlyPayment - interestPayment;
+            } else {
+                principalPayment = amount / term;
+            }
+            
+            remainingBalance -= principalPayment;
+            
+            // Ensure remaining balance doesn't go negative due to rounding
+            if (remainingBalance < 0) remainingBalance = 0;
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${i}</td>
+                <td>Rp ${Math.round(principalPayment).toLocaleString('id-ID')}</td>
+                <td>Rp ${Math.round(interestPayment).toLocaleString('id-ID')}</td>
+                <td>Rp ${Math.round(monthlyPayment).toLocaleString('id-ID')}</td>
+                <td>Rp ${Math.round(remainingBalance).toLocaleString('id-ID')}</td>
+            `;
+            scheduleBody.appendChild(row);
+            
+            // Stop if balance is zero
+            if (remainingBalance <= 0) break;
+        }
+        
+        // Show result section
+        document.getElementById('simulationResult').style.display = 'block';
+    });
+
+    // Handle profile form
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // In a real app, you would send this data to a server
+        alert('Profil berhasil diperbarui!');
+    });
+
+    // Handle change password form
+    document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (newPassword !== confirmPassword) {
+            alert('Password baru dan konfirmasi password tidak cocok!');
+            return;
+        }
+        
+        // In a real app, you would send this data to a server
+        alert('Password berhasil diubah!');
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+        modal.hide();
+        
+        // Reset form
+        this.reset();
+    });
+
+    // Save simulation function
+    function saveSimulation() {
+        // In a real app, you would save this to a database
+        alert('Simulasi berhasil disimpan!');
+    }
+
+    // Print simulation function
+    function printSimulation() {
+        // In a real app, you would generate a PDF or print-friendly view
+        window.print();
+    }
+
+    // View detail function
+    function viewDetail(id) {
+        // In a real app, you would navigate to a detail page or show a modal
+        alert('Menampilkan detail untuk ' + id);
+    }
+
+    // Initialize chart when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initLoanChart();
+    });
+</script>
+</body>
+</html>
