@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Listing</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .product {
+      margin: 20px;
+      display: inline-block;
+      text-align: center;
+    }
+
+    .product img {
+      width: 200px;
+      height: 200px;
+    }
+
+    .product h2 {
+      font-size: 1.2em;
+    }
+
+    .product p {
+      font-size: 1em;
+    }
+
+    #variant-section {
+      display: none;
+      padding: 20px;
+      border: 1px solid #ccc;
+      margin-top: 20px;
+    }
+
+    #closeVariant {
+      cursor: pointer;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Product List</h1>
+
+  <div id="product-list"></div> <!-- Product listing goes here -->
+
+  <!-- Variant Section (Initially hidden) -->
+  <div id="variant-section">
+    <button id="closeVariant">Close</button>
+    <img id="variant-image" src="" alt="Product Image" />
+    <h3 id="variant-title"></h3>
+    <p>Sale Price: <span id="variant-sale-price"></span></p>
+    <p>Price: <span id="variant-price"></span> <span id="variant-diskon"></span></p>
+
+    <label for="colorVariant">Color: </label>
+    <select id="colorVariant"></select>
+
+    <label for="band_colorVariant">Band Color: </label>
+    <select id="band_colorVariant"></select>
+
+    <label for="band_typeVariant">Band Type: </label>
+    <select id="band_typeVariant"></select>
+
+    <label for="sizeVariant">Size: </label>
+    <select id="sizeVariant"></select>
+
+    <label for="connectivityVariant">Connectivity: </label>
+    <select id="connectivityVariant"></select>
+
+    <button id="addToCart">Add to Cart</button>
+  </div>
+
+  <script>
+    // Fetch product data from the API
+    fetch('https://opensheet.elk.sh/175vx5FjbuhufPp1fAa4g_w7Ar98wXnGer2dRygNmhu4/Sheet1')
+      .then(response => response.json())
+      .then(data => {
+        const productList = document.getElementById('product-list');
+        const urlParams = new URLSearchParams(window.location.search);
+        const itmParam = urlParams.get('itm'); // Get the item_group_id from URL
+
+        // Loop through the data and display products
+        data.forEach(product => {
+          let productHTML = `
+            <a href="?itm=${product.item_group_id}" class="product" data-item-group-id="${product.item_group_id}">
+              <img src="${product.image_link}" alt="${product.title}" />
+              <h2>${product.title}</h2>
+              <p>Sale Price: ${product.sale_price}</p>
+              <p>Price: ${product.price} ${product.diskon}</p>
+            </a>
+          `;
+          productList.innerHTML += productHTML;
+        });
+
+        // If itm parameter exists in the URL, show the corresponding variant section
+        if (itmParam) {
+          const product = data.find(p => p.item_group_id === itmParam);
+          if (product) {
+            showVariantSection(product);
+          }
+        }
+      });
+
+    // Function to show the variant section
+    function showVariantSection(product) {
+      const variantSection = document.getElementById('variant-section');
+      const closeVariantButton = document.getElementById('closeVariant');
+      
+      // Set variant details
+      document.getElementById('variant-image').src = product.image_link;
+      document.getElementById('variant-title').textContent = product.title;
+      document.getElementById('variant-sale-price').textContent = product.sale_price;
+      document.getElementById('variant-price').textContent = product.price;
+      document.getElementById('variant-diskon').textContent = product.diskon;
+
+      // Populate select options (color, size, etc.)
+      const colorSelect = document.getElementById('colorVariant');
+      colorSelect.innerHTML = `<option value="${product.color}">${product.color}</option>`;
+
+      const bandColorSelect = document.getElementById('band_colorVariant');
+      bandColorSelect.innerHTML = `<option value="${product.band_color}">${product.band_color}</option>`;
+
+      const bandTypeSelect = document.getElementById('band_typeVariant');
+      bandTypeSelect.innerHTML = `<option value="${product.band_type}">${product.band_type}</option>`;
+
+      const sizeSelect = document.getElementById('sizeVariant');
+      sizeSelect.innerHTML = `<option value="${product.size}">${product.size}</option>`;
+
+      const connectivitySelect = document.getElementById('connectivityVariant');
+      connectivitySelect.innerHTML = `<option value="${product.connectivity}">${product.connectivity}</option>`;
+
+      // Show the variant section
+      variantSection.style.display = 'block';
+
+      // Close button functionality to hide the variant section and clear the URL param
+      closeVariantButton.addEventListener('click', function() {
+        variantSection.style.display = 'none';
+        window.history.pushState('', '', window.location.pathname); // Remove itm param from URL
+      });
+    }
+
+    // Add to Cart button functionality (for now, just log the selected options)
+    document.getElementById('addToCart').addEventListener('click', function() {
+      const selectedColor = document.getElementById('colorVariant').value;
+      const selectedBandColor = document.getElementById('band_colorVariant').value;
+      const selectedBandType = document.getElementById('band_typeVariant').value;
+      const selectedSize = document.getElementById('sizeVariant').value;
+      const selectedConnectivity = document.getElementById('connectivityVariant').value;
+
+      // Log the selected variant details (replace with actual cart functionality)
+      console.log('Added to cart:', {
+        title: document.getElementById('variant-title').textContent,
+        color: selectedColor,
+        bandColor: selectedBandColor,
+        bandType: selectedBandType,
+        size: selectedSize,
+        connectivity: selectedConnectivity
+      });
+    });
+  </script>
+</body>
+</html>
