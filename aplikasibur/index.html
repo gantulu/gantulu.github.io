@@ -1,107 +1,220 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard PWA</title>
-  <link rel="manifest" href="manifest.json">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .card { @apply p-4 mb-3 border rounded shadow bg-white; }
-    .copy-btn { @apply ml-2 px-2 py-1 bg-blue-500 text-white rounded cursor-pointer; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data List Card</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3b82f6">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script>
+tailwind.config = {
+  theme: { extend: { colors: { primary:'#3b82f6', secondary:'#10b981', dark:'#1f2937', light:'#f9fafb' } } }
+}
+</script>
 </head>
-<body class="bg-gray-100 p-4">
-  <h1 class="text-2xl font-bold mb-4">Dashboard PWA</h1>
+<body class="bg-gray-50 min-h-screen">
+<div class="container mx-auto px-4 py-8">
+<header class="mb-8 text-center">
+<h1 class="text-3xl font-bold text-gray-800 mb-2">Data List Card</h1>
+<p class="text-gray-600">Manage and view your data with ease</p>
+</header>
 
-  <div class="mb-4 flex gap-2 flex-wrap">
-    <button id="enableNotif" class="px-3 py-2 bg-green-500 text-white rounded">Aktifkan Notifikasi</button>
-    <button id="disableNotif" class="px-3 py-2 bg-red-500 text-white rounded">Nonaktifkan Notifikasi</button>
-    <span id="notifStatus" class="ml-2 font-semibold">Notifikasi: Nonaktif</span>
-    <button id="filterBtn" class="px-3 py-2 bg-gray-700 text-white rounded ml-auto">Filter Terbaru/Terlama</button>
-  </div>
+<!-- Notification Controls -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+<div class="flex flex-wrap gap-4 items-center justify-center">
+<button id="enableNotification" class="bg-primary hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2"><i class="fas fa-bell"></i> Aktifkan Notifikasi</button>
+<button id="disableNotification" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2"><i class="fas fa-bell-slash"></i> Nonaktifkan Notifikasi</button>
+<div class="flex items-center gap-2">
+<div id="notificationStatus" class="w-3 h-3 rounded-full bg-red-500"></div>
+<span id="statusText" class="font-medium text-gray-700">Notifikasi Nonaktif</span>
+</div>
+</div>
+</div>
 
-  <div id="listCard"></div>
+<!-- Filter & Refresh -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+<div class="flex flex-wrap gap-4 items-center justify-center">
+<button id="filterLatest" class="bg-secondary hover:bg-green-600 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2"><i class="fas fa-sort-amount-down"></i> Filter Terbaru</button>
+<button id="refreshData" class="bg-gray-700 hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-lg flex items-center gap-2"><i class="fas fa-sync-alt"></i> Refresh</button>
+</div>
+</div>
 
-  <audio id="notifSound" src="sounds/notif.mp3" preload="auto"></audio>
+<!-- Data List Cards -->
+<div id="dataContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('Service Worker registered'))
-        .catch(err => console.error('Service Worker failed:', err));
+<div id="loading" class="hidden flex justify-center items-center py-8">
+<div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+</div>
+
+<div id="emptyState" class="hidden text-center py-12">
+<i class="fas fa-inbox text-5xl text-gray-300 mb-4"></i>
+<h3 class="text-xl font-medium text-gray-700 mb-2">Tidak ada data</h3>
+<p class="text-gray-500">Silakan refresh untuk memuat data</p>
+</div>
+</div>
+
+<script>
+const dataContainer=document.getElementById('dataContainer');
+const loadingElement=document.getElementById('loading');
+const emptyState=document.getElementById('emptyState');
+const enableNotificationBtn=document.getElementById('enableNotification');
+const disableNotificationBtn=document.getElementById('disableNotification');
+const notificationStatus=document.getElementById('notificationStatus');
+const statusText=document.getElementById('statusText');
+const filterLatestBtn=document.getElementById('filterLatest');
+const refreshDataBtn=document.getElementById('refreshData');
+
+let notificationsEnabled=false, rawData=[], filteredData=[], lastDataLength=0;
+const apiUrl='https://opensheet.elk.sh/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/Sheet1';
+const notificationSound=new Audio('notif.mp3');
+
+document.addEventListener('DOMContentLoaded',()=>{
+    loadAndDisplayData();
+
+    enableNotificationBtn.addEventListener('click',()=>{notificationsEnabled=true;updateNotificationStatus();showNotification('Notifikasi diaktifkan');});
+    disableNotificationBtn.addEventListener('click',()=>{notificationsEnabled=false;updateNotificationStatus();showNotification('Notifikasi dinonaktifkan');});
+    filterLatestBtn.addEventListener('click',filterLatestData);
+    refreshDataBtn.addEventListener('click',loadAndDisplayData);
+
+    if('serviceWorker' in navigator){
+        navigator.serviceWorker.register('/sw.js').then(reg=>console.log('SW registered',reg)).catch(err=>console.error(err));
     }
 
-    const apiURL = 'https://opensheet.elk.sh/1UqeWoK2iElSp9scRY0P1j69FJhD_9RuUqCfAS_8brXY/Sheet1';
-    const notifSound = document.getElementById('notifSound');
-    let lastAuthList = [];
-    let notifEnabled = false;
-    let sortLatest = true;
+    setInterval(checkNewData,60000);
+});
 
-    async function fetchData(playSound = true) {
-      try {
-        const response = await fetch(apiURL);
-        const data = await response.json();
+async function loadAndDisplayData(){
+    showLoading();
+    try{
+        const response=await fetch(apiUrl);
+        if(!response.ok)throw new Error('Failed to fetch');
+        rawData=await response.json();
+        filteredData=[...rawData];
+        lastDataLength=rawData.length;
+        displayData();
+    }catch(err){console.error(err);showError('Gagal memuat data.');}
+    finally{hideLoading();}
+}
 
-        // Urutkan data berdasarkan tanggal
-        data.sort((a, b) => sortLatest ? new Date(b.date) - new Date(a.date) : new Date(a.date) - new Date(b.date));
+function displayData(){
+    if(filteredData.length===0) return showEmptyState();
+    showDataContainer();
+    dataContainer.innerHTML='';
 
-        // Cek apakah ada auth baru
-        const currentAuthList = data.map(item => item.auth);
-        const isNewData = currentAuthList.some(auth => !lastAuthList.includes(auth));
+    const grouped={};
+    filteredData.forEach(item=>{
+        const key=item.usr||'N/A';
+        if(!grouped[key]) grouped[key]=[];
+        grouped[key].push(item);
+    });
 
-        if (playSound && isNewData && lastAuthList.length > 0 && notifEnabled) {
-          notifSound.play();
-        }
-
-        lastAuthList = currentAuthList;
-        displayData(data);
-      } catch (error) {
-        console.error('Gagal mengambil data:', error);
-      }
-    }
-
-    function displayData(data) {
-      const listCard = document.getElementById('listCard');
-      listCard.innerHTML = '';
-
-      data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <p><strong>Date:</strong> ${item.date}</p>
-          <p><strong>User:</strong> ${item.usr} <button class="copy-btn" data-copy="${item.usr}">Copy</button></p>
-          <p><strong>Password:</strong> ${item.pss} <button class="copy-btn" data-copy="${item.pss}">Copy</button></p>
-          <p><strong>Auth:</strong> ${item.auth} <button class="copy-btn" data-copy="${item.auth}">Copy</button></p>
-        `;
-        listCard.appendChild(card);
-      });
-
-      document.querySelectorAll('.copy-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          navigator.clipboard.writeText(btn.dataset.copy);
-          alert('Copied: ' + btn.dataset.copy);
+    Object.keys(grouped).forEach(usr=>{
+        const items=grouped[usr];
+        const groupedByDate={};
+        items.forEach(item=>{
+            const dateKey=item.date||'No Date';
+            if(!groupedByDate[dateKey]) groupedByDate[dateKey]=[];
+            groupedByDate[dateKey].push(item);
         });
-      });
-    }
 
-    document.getElementById('filterBtn').addEventListener('click', () => {
-      sortLatest = !sortLatest;
-      fetchData(false);
+        const card=document.createElement('div');
+        card.className='bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300';
+
+        let innerHtml=`<div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-lg font-semibold text-gray-800">User: ${usr}</h3>
+          <button onclick="copyToClipboard('${usr}')" class="text-primary hover:text-blue-700 flex items-center gap-1">
+            <i class="fas fa-copy"></i>
+          </button>
+        </div>`;
+
+        Object.keys(groupedByDate).forEach(date=>{
+            const dateItems=groupedByDate[date];
+            innerHtml+=`<div class="mb-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div class="mb-2 text-sm text-gray-500 font-medium">Date: ${date}</div>`;
+            dateItems.forEach(item=>{
+                innerHtml+=`
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Password:</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium text-gray-800">${item.pss||'N/A'}</span>
+                        <button onclick="copyToClipboard('${item.pss||'N/A'}')" class="text-primary hover:text-blue-700"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-gray-600">Auth:</span>
+                    <div class="flex items-center gap-2">
+                        <span class="font-medium text-gray-800">${item.auth||'N/A'}</span>
+                        <button onclick="copyToClipboard('${item.auth||'N/A'}')" class="text-primary hover:text-blue-700"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>`;
+            });
+            innerHtml+='</div>';
+        });
+
+        innerHtml+='</div>';
+        card.innerHTML=innerHtml;
+        dataContainer.appendChild(card);
     });
+}
 
-    document.getElementById('enableNotif').addEventListener('click', () => {
-      notifEnabled = true;
-      document.getElementById('notifStatus').textContent = 'Notifikasi: Aktif';
-    });
+function copyToClipboard(text){
+    navigator.clipboard.writeText(text).then(()=>{
+        const button=event.target.closest('button');
+        const original=button.innerHTML;
+        button.innerHTML='<i class="fas fa-check"></i>';
+        setTimeout(()=>button.innerHTML=original,2000);
+    }).catch(console.error);
+}
 
-    document.getElementById('disableNotif').addEventListener('click', () => {
-      notifEnabled = false;
-      document.getElementById('notifStatus').textContent = 'Notifikasi: Nonaktif';
-    });
+function updateNotificationStatus(){
+    notificationStatus.className=notificationsEnabled?'w-3 h-3 rounded-full bg-green-500':'w-3 h-3 rounded-full bg-red-500';
+    statusText.textContent=notificationsEnabled?'Notifikasi Aktif':'Notifikasi Nonaktif';
+}
 
-    fetchData(false);
-    setInterval(() => fetchData(true), 15000);
-  </script>
+function filterLatestData(){
+    if(rawData.length===0) return;
+    filteredData=[...rawData].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0));
+    displayData();
+    showNotification('Data disaring berdasarkan data terbaru');
+}
+
+function showLoading(){loadingElement.classList.remove('hidden');dataContainer.classList.add('hidden');emptyState.classList.add('hidden');}
+function hideLoading(){loadingElement.classList.add('hidden');}
+function showDataContainer(){dataContainer.classList.remove('hidden');emptyState.classList.add('hidden');}
+function showEmptyState(){dataContainer.classList.add('hidden');emptyState.classList.remove('hidden');}
+function showError(msg){dataContainer.innerHTML=`<div class="col-span-full text-center py-8"><div class="text-red-500 mb-2"><i class="fas fa-exclamation-triangle text-4xl"></i></div><h3 class="text-xl font-medium text-gray-700 mb-2">Error</h3><p class="text-gray-500">${msg}</p></div>`;dataContainer.classList.remove('hidden');emptyState.classList.add('hidden');}
+
+function showNotification(msg){
+    const n=document.createElement('div');
+    n.className='fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fadeInOut';
+    n.textContent=msg;
+    document.body.appendChild(n);
+    setTimeout(()=>n.remove(),3000);
+}
+
+const style=document.createElement('style');
+style.textContent='@keyframes fadeInOut{0%{opacity:0;transform:translateY(-10px);}10%{opacity:1;transform:translateY(0);}90%{opacity:1;transform:translateY(0);}100%{opacity:0;transform:translateY(-10px);}}.animate-fadeInOut{animation:fadeInOut 3s ease-in-out;}';
+document.head.appendChild(style);
+
+async function checkNewData(){
+    if(!notificationsEnabled) return;
+    try{
+        const response=await fetch(apiUrl);
+        const latestData=await response.json();
+        if(latestData.length>lastDataLength){
+            lastDataLength=latestData.length;
+            showNotification('Ada data baru!');
+            notificationSound.play().catch(console.error);
+            rawData=latestData;
+            filteredData=[...rawData];
+            displayData();
+        }
+    }catch(err){console.error(err);}
+}
+</script>
 </body>
 </html>
