@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Checkout - Smart Watch Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reused styles for consistency */
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overscroll-behavior: none;
+        }
+        .safe-area-bottom {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .safe-area-top {
+            padding-top: env(safe-area-inset-top);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 overflow-x-hidden">
+    <header class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white py-4 px-4 shadow-md safe-area-top">
+        <div class="max-w-xl mx-auto flex items-center">
+            <a href="index.html" class="text-white mr-4"><i class="fas fa-arrow-left"></i></a>
+            <h1 class="text-xl font-bold">Checkout</h1>
+        </div>
+    </header>
+    
+    <main class="max-w-xl mx-auto px-4 py-6">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Review Order</h2>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <h3 class="font-semibold text-lg mb-3 border-b pb-2 text-gray-700">Items in Cart</h3>
+            <div id="checkoutItems" class="space-y-4">
+                <div class="text-center py-8 text-gray-500">
+                    <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                    <p>Loading cart...</p>
+                </div>
+            </div>
+        </div>
+
+        <form id="checkoutForm" class="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <h3 class="font-semibold text-lg mb-3 border-b pb-2 text-gray-700">Shipping Details</h3>
+            
+            <div class="mb-4">
+                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="name" name="name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            
+            <div class="mb-4">
+                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div class="mb-4">
+                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Shipping Address</label>
+                <textarea id="address" name="address" rows="3" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+        </form>
+
+        <div class="bg-white rounded-xl shadow-sm p-4 mb-20">
+            <h3 class="font-semibold text-lg mb-3 border-b pb-2 text-gray-700">Order Summary</h3>
+            
+            <div class="space-y-2 text-gray-600">
+                <div class="flex justify-between">
+                    <span>Subtotal (<span id="itemCount">0</span> items)</span>
+                    <span id="subtotalPrice" class="font-medium">RM 0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Shipping Fee</span>
+                    <span id="shippingFee" class="font-medium text-green-600">FREE</span>
+                </div>
+                <div class="flex justify-between pt-3 border-t border-dashed mt-3">
+                    <span class="font-bold text-xl text-gray-800">Total Payment</span>
+                    <span id="totalPrice" class="font-bold text-red-600 text-xl">RM 0.00</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    <div class="fixed bottom-0 left-0 right-0 bg-white shadow-2xl p-4 border-t safe-area-bottom">
+        <div class="max-w-xl mx-auto">
+            <button type="submit" form="checkoutForm" id="payButton" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors duration-300 disabled:bg-gray-400">
+                Place Order - RM 0.00
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        let cart = [];
+
+        // --- Utility Functions (Copied from main script for independence) ---
+        
+        // Format price with RM currency
+        function formatPrice(price) {
+            if (!price) return 'RM 0.00';
+            const numericPrice = price.toString().replace(/[^0-9.]+/g, "");
+            const formattedPrice = parseFloat(numericPrice).toFixed(2);
+            return `RM ${formattedPrice}`;
+        }
+        
+        // Extract numeric value from price string
+        function extractNumericPrice(price) {
+            if (!price) return 0;
+            const numericPrice = price.toString().replace(/[^0-9.]+/g, "");
+            return parseFloat(numericPrice) || 0;
+        }
+
+        // --- Core Checkout Logic ---
+
+        function loadCartFromLocalStorage() {
+            const savedCart = localStorage.getItem('shoppingCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            if (cart.length === 0) {
+                document.getElementById('checkoutItems').innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-shopping-cart text-5xl mb-4"></i>
+                        <p>Your cart is empty. Please add items to proceed.</p>
+                        <a href="index.html" class="mt-4 inline-block text-blue-600 font-medium">Go back to shopping</a>
+                    </div>
+                `;
+                document.getElementById('payButton').disabled = true;
+                return false;
+            }
+            return true;
+        }
+
+        function renderOrderSummary() {
+            let subtotal = 0;
+            let itemCount = 0;
+            
+            const itemsHtml = cart.map(item => {
+                const price = extractNumericPrice(item.sale_price || item.price);
+                const itemTotal = price * item.quantity;
+                subtotal += itemTotal;
+                itemCount += item.quantity;
+
+                let attributes = [
+                    item.color, 
+                    item.band_color, 
+                    item.band_type, 
+                    item.size, 
+                    item.connectivity
+                ].filter(Boolean).join(' / ');
+
+                return `
+                    <div class="flex border-b pb-3">
+                        <img src="${item.image_link}" alt="${item.title}" class="w-16 h-16 object-cover rounded-md mr-3 flex-shrink-0">
+                        <div class="flex-grow">
+                            <h4 class="font-medium text-gray-800 line-clamp-1">${item.title}</h4>
+                            <p class="text-xs text-gray-500">${attributes || 'No variant'}</p>
+                            <p class="text-sm text-gray-500">Qty: ${item.quantity} x ${formatPrice(price)}</p>
+                        </div>
+                        <div class="text-right flex-shrink-0">
+                            <span class="font-semibold text-red-500">${formatPrice(itemTotal)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('checkoutItems').innerHTML = itemsHtml;
+            
+            // Assuming free shipping for simplicity
+            const shipping = 0;
+            const total = subtotal + shipping;
+
+            document.getElementById('itemCount').textContent = itemCount;
+            document.getElementById('subtotalPrice').textContent = formatPrice(subtotal);
+            document.getElementById('totalPrice').textContent = formatPrice(total);
+            document.getElementById('payButton').textContent = `Place Order - ${formatPrice(total)}`;
+            
+            if (itemCount === 0) {
+                 document.getElementById('payButton').disabled = true;
+            } else {
+                 document.getElementById('payButton').disabled = false;
+            }
+        }
+
+        function handleCheckout(event) {
+            event.preventDefault();
+            
+            if (cart.length === 0) {
+                alert('Your cart is empty. Cannot place order.');
+                return;
+            }
+
+            const formData = new FormData(event.target);
+            const name = formData.get('name');
+            const address = formData.get('address');
+            
+            // Simulate payment processing / order submission
+            console.log("Order Submitted:");
+            console.log("Customer: " + name);
+            console.log("Address: " + address);
+            console.log("Items: ", cart);
+            console.log("Total: " + document.getElementById('totalPrice').textContent);
+
+            // 1. Clear the cart from localStorage
+            localStorage.removeItem('shoppingCart');
+            cart = [];
+            
+            // 2. Display success message
+            const main = document.querySelector('main');
+            main.innerHTML = `
+                <div class="text-center py-20">
+                    <i class="fas fa-check-circle text-green-500 text-6xl mb-4"></i>
+                    <h2 class="text-3xl font-bold mb-3">Order Placed Successfully!</h2>
+                    <p class="text-gray-600 mb-6">Thank you for your purchase. Your order will be processed shortly.</p>
+                    <a href="index.html" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors">Continue Shopping</a>
+                </div>
+            `;
+            
+            // Disable and hide fixed button area
+            document.getElementById('payButton').disabled = true;
+            document.querySelector('.fixed.bottom-0').style.display = 'none';
+        }
+
+        // --- Initialization ---
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartLoaded = loadCartFromLocalStorage();
+            if (cartLoaded) {
+                renderOrderSummary();
+            }
+
+            document.getElementById('checkoutForm').addEventListener('submit', handleCheckout);
+        });
+    </script>
+</body>
+</html>
