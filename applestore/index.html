@@ -12,23 +12,30 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    overscroll-behavior: none;
+    /* Body full height, center horizontally */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        overscroll-behavior: none;
 
-    /* Tambahan untuk layout tengah */
-    height: 100vh;           /* tinggi layar penuh */
-    display: flex;
-    flex-direction: column;
-    align-items: center;     /* center horizontal */
-    background-color: #f9fafb; /* optional, sama seperti bg-gray-50 */
-}
+        height: 100%;          /* tinggi penuh layar */
+        display: flex;
+        flex-direction: column;
+        align-items: center;     /* center horizontal */
+        background-color: #f9fafb; /* bisa diganti sesuai tema */
+        margin: 0;
+    }
 
-main, header {
-    width: 100%;
-    max-width: 500px; /* batas maksimal lebar */
-}
-
+    /* Main content area */
+    main {
+        width: 100%;
+        max-width: 500px;       /* lebar maksimal */
+        flex: 1;                /* isi sisa tinggi body */
+        box-sizing: border-box; /* padding tidak menambah lebar */
+        padding-left: 1rem;     /* optional, bisa sesuai Tailwind px-4 */
+        padding-right: 1rem;
+        padding-top: 1.5rem;    /* optional, py-6 */
+        padding-bottom: 1.5rem;
+    }
         
         /* Custom scrollbar */
         ::-webkit-scrollbar {
