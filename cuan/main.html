@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live Chat Grup API</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#f3f4f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px;}
+.chat-container{width: 100%; max-width: 500px; height: 90vh; max-height: 800px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden;}
+.custom-scrollbar::-webkit-scrollbar{width:4px}
+.custom-scrollbar::-webkit-scrollbar-track{background:#f1f1f1}
+.custom-scrollbar::-webkit-scrollbar-thumb{background:#888;border-radius:2px}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#555}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.message-bubble{animation:fadeIn 0.3s ease-out}
+.avatar{width:36px;height:36px;border-radius:50%;object-fit:cover}
+@keyframes typing{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.typing-dot{animation:typing 1.4s infinite}
+.typing-dot:nth-child(2){animation-delay:0.2s}
+.typing-dot:nth-child(3){animation-delay:0.4s}
+.whatsapp-input {
+    background-color: #f0f2f5;
+    border-radius: 24px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+.whatsapp-input input {
+    background: transparent;
+    border: none;
+    outline: none;
+    flex: 1;
+    margin: 0 8px;
+}
+.whatsapp-button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.whatsapp-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+.whatsapp-button.primary {
+    background-color: #0084ff;
+    color: white;
+}
+.whatsapp-button.primary:hover {
+    background-color: #0066cc;
+}
+.whatsapp-button.record {
+    background-color: #FF5252;
+    color: white;
+}
+.whatsapp-button.record:hover {
+    background-color: #E04040;
+}
+.messenger-send-icon {
+    width: 20px;
+    height: 20px;
+    transform: rotate(-45deg);
+}
+</style>
+</head>
+<body>
+
+<div class="chat-container">
+<header class="bg-blue-600 text-white p-4 flex items-center shadow-md">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center"><i class="fas fa-users"></i></div>
+<div>
+<h1 class="font-bold text-lg">Program Penghasil Uang</h1>
+<p class="text-xs opacity-80">245 anggota, 32 online</p>
+</div>
+</div>
+</header>
+
+<div class="flex-1 overflow-y-auto p-4 custom-scrollbar" id="chatMessages"></div>
+
+<!-- WhatsApp Style Chat Input Area -->
+<div class="p-4 border-t border-gray-200 bg-white">
+    <div class="flex items-center space-x-2">
+        <!-- Left side buttons -->
+        <button class="whatsapp-button" id="attachButton" title="Lampirkan">
+            <i class="fas fa-plus text-gray-600"></i>
+        </button>
+        
+        <!-- Input area -->
+        <div class="whatsapp-input">
+            <button class="whatsapp-button" id="cameraButton" title="Kamera">
+                <i class="fas fa-camera text-gray-600"></i>
+            </button>
+            <input type="text" id="messageInput" placeholder="Pesan">
+            <button class="whatsapp-button" id="emojiButton" title="Emoji">
+                <i class="far fa-smile text-gray-600"></i>
+            </button>
+        </div>
+        
+        <!-- Right side buttons -->
+        <button class="whatsapp-button" id="voiceButton" title="Rekam suara">
+            <i class="fas fa-microphone text-gray-600"></i>
+        </button>
+        <button class="whatsapp-button primary" id="sendButton" title="Kirim">
+            <svg class="messenger-send-icon" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+            </svg>
+        </button>
+    </div>
+</div>
+
+<!-- Login Modal -->
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+    <div class="bg-white rounded-lg p-6 max-w-sm w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Login Diperlukan</h3>
+            <button id="closeModal" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="text-center mb-4">
+            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fab fa-facebook-f text-blue-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-600">Anda harus login dengan Facebook untuk mengirim pesan di grup ini</p>
+        </div>
+        <a href="/login.html" class="block w-full bg-blue-600 text-white text-center py-3 rounded-lg hover:bg-blue-700 font-medium">Login dengan Facebook</a>
+        <button id="cancelLogin" class="mt-3 w-full bg-gray-100 text-gray-800 py-2 rounded-lg hover:bg-gray-200">Batal</a>
+    </div>
+</div>
+</div>
+
+<script>
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const sendButton = document.getElementById('sendButton');
+const loginModal = document.getElementById('loginModal');
+const closeModal = document.getElementById('closeModal');
+const cancelLogin = document.getElementById('cancelLogin');
+const API_URL = 'https://opensheet.elk.sh/1BhWhW_gYXONep837cQsVzMVEsrTf_t3C8GK-QW-nS48/Sheet1';
+let lastDataLength = 0;
+
+function sleep(ms){ return new Promise(resolve=>setTimeout(resolve, ms)); }
+
+async function fetchChatData(){
+    try{
+        const res = await fetch(API_URL);
+        if(!res.ok) throw new Error(res.statusText);
+        const data = await res.json();
+        return data;
+    }catch(e){
+        console.error("Gagal fetch API:", e);
+        return [];
+    }
+}
+
+function formatTime(date){
+    const h = date.getHours().toString().padStart(2,'0');
+    const m = date.getMinutes().toString().padStart(2,'0');
+    return `${h}:${m}`;
+}
+
+async function renderNewMessages(chatData){
+    const newMessages = chatData.slice(lastDataLength);
+    lastDataLength = chatData.length;
+
+    for(let msg of newMessages){
+        const avatarUrl = msg.img || `https://picsum.photos/seed/${msg.name}/36/36.jpg`;
+
+        // Typing animation
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'flex mb-4';
+        typingDiv.innerHTML = `
+            <img src="${avatarUrl}" class="avatar mr-2">
+            <div class="bg-white rounded-lg rounded-tl-none p-3 shadow-sm flex space-x-1">
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+            </div>
+        `;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        const sentences = msg.chat.split('.').filter(s=>s.trim()!=='').length || 1;
+        await sleep(sentences * 1000);
+
+        chatMessages.removeChild(typingDiv);
+
+        const now = new Date();
+        const timeString = formatTime(now);
+        const dateString = now.toLocaleDateString('id-ID');
+
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'flex mb-4 message-bubble';
+        messageDiv.innerHTML = `
+            <img src="${avatarUrl}" alt="${msg.name}" class="avatar mr-2">
+            <div class="max-w-xs">
+                <div class="flex items-baseline mb-1">
+                    <span class="font-semibold text-sm mr-2">${msg.name}</span>
+                    <span class="text-xs text-gray-500">${dateString} ${timeString}</span>
+                </div>
+                <div class="bg-white rounded-lg rounded-tl-none p-3 shadow-sm">
+                    <p class="text-sm">${msg.chat}</p>
+                </div>
+            </div>
+        `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+}
+
+async function initChat(){
+    const chatData = await fetchChatData();
+    if(chatData.length){
+        await renderNewMessages(chatData);
+    }
+}
+
+async function autoRefresh(){
+    const chatData = await fetchChatData();
+    if(chatData.length > lastDataLength){
+        await renderNewMessages(chatData);
+    }
+}
+
+// Event listener untuk tombol kirim
+sendButton.addEventListener('click', function() {
+    if (messageInput.value.trim() !== '') {
+        // Tampilkan modal login
+        loginModal.classList.remove('hidden');
+    }
+});
+
+// Event listener untuk menutup modal
+closeModal.addEventListener('click', function() {
+    loginModal.classList.add('hidden');
+});
+
+cancelLogin.addEventListener('click', function() {
+    loginModal.classList.add('hidden');
+});
+
+// Event listener untuk menutup modal saat klik di luar modal
+window.addEventListener('click', function(event) {
+    if (event.target === loginModal) {
+        loginModal.classList.add('hidden');
+    }
+});
+
+// Event listener untuk input pesan saat menekan Enter
+messageInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' && messageInput.value.trim() !== '') {
+        loginModal.classList.remove('hidden');
+    }
+});
+
+// Event listeners untuk tombol tambahan
+document.getElementById('attachButton').addEventListener('click', function() {
+    loginModal.classList.remove('hidden');
+});
+
+document.getElementById('cameraButton').addEventListener('click', function() {
+    loginModal.classList.remove('hidden');
+});
+
+document.getElementById('voiceButton').addEventListener('click', function() {
+    loginModal.classList.remove('hidden');
+});
+
+document.getElementById('emojiButton').addEventListener('click', function() {
+    // Placeholder for emoji picker functionality
+    messageInput.value += '😊';
+    messageInput.focus();
+});
+
+initChat();
+setInterval(autoRefresh, 30000);
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+</body>
+</html>
