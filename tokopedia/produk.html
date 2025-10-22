@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-in-1 Facial Radio Frequency - Tokopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Tokopedia Colors */
+        :root {
+            --tokopedia-green: #00AA5B;
+            --tokopedia-dark-green: #00803F;
+            --tokopedia-red: #E51B23;
+            --tokopedia-orange: #FF7F23;
+            --tokopedia-light-gray: #F0F0F0;
+            --tokopedia-gray: #757575;
+        }
+        
+        .tokopedia-green { background-color: var(--tokopedia-green); }
+        .tokopedia-dark-green { background-color: var(--tokopedia-dark-green); }
+        .tokopedia-red { background-color: var(--tokopedia-red); }
+        .tokopedia-orange { background-color: var(--tokopedia-orange); }
+        
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom animations */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideUpModal {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .slide-up-modal {
+            animation: slideUpModal 0.3s ease-out;
+        }
+        
+        /* Tokopedia badge styles */
+        .badge-discount {
+            background: linear-gradient(135deg, #FF5722 0%, #E91E63 100%);
+        }
+        
+        .badge-cashback {
+            background: linear-gradient(135deg, #00AA5B 0%, #00C853 100%);
+        }
+        
+        .badge-power-merchant {
+            background: linear-gradient(135deg, #FFB300 0%, #FF6F00 100%);
+        }
+        
+        /* Image gallery styles */
+        .image-gallery-container {
+            scroll-snap-type: x mandatory;
+        }
+        
+        .gallery-item {
+            scroll-snap-align: start;
+        }
+        
+        /* Tab indicator */
+        .tab-indicator {
+            position: relative;
+        }
+        
+        .tab-indicator.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--tokopedia-green);
+            border-radius: 3px 3px 0 0;
+        }
+        
+        /* Floating action button */
+        .fab-container {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            z-index: 40;
+        }
+        
+        /* Product card hover effect */
+        .product-card {
+            transition: all 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        /* Shimmer loading effect */
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+        
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        /* Bottom variant selector */
+        .bottom-variant {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: white;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+            z-index: 50;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-out;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .bottom-variant.active {
+            transform: translateY(0);
+        }
+        
+        /* Cart overlay */
+        .cart-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 60;
+            display: none;
+        }
+        
+        .cart-overlay.active {
+            display: block;
+        }
+        
+        /* Cart page */
+        .cart-page {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 100%;
+            background-color: white;
+            z-index: 70;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            overflow-y: auto;
+        }
+        
+        .cart-page.active {
+            transform: translateX(0);
+        }
+        
+        /* Quantity selector */
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+        }
+        
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            cursor: pointer;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            height: 32px;
+            text-align: center;
+            border: none;
+            border-left: 1px solid #e0e0e0;
+            border-right: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-md mx-auto bg-white min-h-screen relative">
+        <!-- Header -->
+        <header class="tokopedia-green text-white sticky top-0 z-50">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 -ml-2" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <h1 class="text-base font-semibold">Detail Produk</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2">
+                        <i class="fas fa-share-alt text-lg"></i>
+                    </button>
+                    <button class="p-2">
+                        <i class="far fa-heart text-lg"></i>
+                    </button>
+                    <button class="p-2 relative" onclick="openCart()">
+                        <i class="fas fa-shopping-cart text-lg"></i>
+                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="cartCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Product Image Gallery -->
+        <div class="relative bg-white">
+            <div class="relative h-96 overflow-hidden">
+                <img id="mainImage" src="https://m.media-amazon.com/images/I/61T7IBsVLmL._AC_SL1500_.jpg" 
+                     alt="Product" class="w-full h-full object-contain">
+                
+                <!-- Video Badge -->
+                <div class="absolute top-4 right-4 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full flex items-center space-x-1 text-sm">
+                    <i class="fas fa-play-circle"></i>
+                    <span>Video</span>
+                </div>
+                
+                <!-- Image Indicators -->
+                <div class="absolute bottom-4 left-0 right-0 flex justify-center space-x-2">
+                    <span class="w-2 h-2 bg-white rounded-full"></span>
+                    <span class="w-2 h-2 bg-white bg-opacity-50 rounded-full"></span>
+                    <span class="w-2 h-2 bg-white bg-opacity-50 rounded-full"></span>
+                    <span class="w-2 h-2 bg-white bg-opacity-50 rounded-full"></span>
+                    <span class="w-2 h-2 bg-white bg-opacity-50 rounded-full"></span>
+                </div>
+            </div>
+            
+            <!-- Thumbnail Gallery -->
+            <div class="flex space-x-2 p-4 overflow-x-auto hide-scrollbar image-gallery-container">
+                <img src="https://m.media-amazon.com/images/I/61T7IBsVLmL._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg border-2 border-green-500 gallery-item cursor-pointer"
+                     onclick="changeImage(0)">
+                <img src="https://m.media-amazon.com/images/I/71oGa8IDcKL._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg border border-gray-200 gallery-item cursor-pointer"
+                     onclick="changeImage(1)">
+                <img src="https://m.media-amazon.com/images/I/716pnSGRIML._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg border border-gray-200 gallery-item cursor-pointer"
+                     onclick="changeImage(2)">
+                <img src="https://m.media-amazon.com/images/I/614P9qCKGrL._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg border border-gray-200 gallery-item cursor-pointer"
+                     onclick="changeImage(3)">
+                <img src="https://m.media-amazon.com/images/I/61P5Kg5XhnL._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg border border-gray-200 gallery-item cursor-pointer"
+                     onclick="changeImage(4)">
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="px-4 py-3 bg-white">
+            <!-- Badges -->
+            <div class="flex flex-wrap gap-2 mb-3">
+                <span class="badge-power-merchant text-white text-xs px-2 py-1 rounded-full">
+                    <i class="fas fa-medal mr-1"></i> Power Merchant
+                </span>
+                <span class="bg-blue-500 text-white text-xs px-2 py-1 rounded-full">
+                    <i class="fas fa-truck mr-1"></i> Gratis Ongkir
+                </span>
+            </div>
+            
+            <!-- Product Name -->
+            <h1 class="text-lg font-semibold text-gray-900 mb-2">
+                3-in-1 facial radio frequency skin lifting machine
+            </h1>
+            
+            <!-- Rating -->
+            <div class="flex items-center space-x-2 mb-3">
+                <div class="flex items-center">
+                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                    <i class="fas fa-star-half-alt text-yellow-400 text-sm"></i>
+                </div>
+                <span class="text-sm text-gray-600">4.5</span>
+                <span class="text-sm text-gray-500">| 125 terjual</span>
+                <span class="text-sm text-gray-500">| 87 ulasan</span>
+            </div>
+            
+            <!-- Price Section -->
+            <div class="flex items-baseline space-x-2 mb-4">
+                <span class="text-2xl font-bold text-red-500" id="salePrice">Rp1.915.376</span>
+                <span class="text-sm text-gray-500 line-through" id="originalPrice">Rp3.192.294</span>
+                <span class="badge-discount text-white text-xs px-2 py-1 rounded" id="discountBadge">60%</span>
+            </div>
+            
+            <!-- Variant Selector -->
+            <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Pilih Varian</h3>
+                <div class="flex space-x-2">
+                    <button onclick="selectVariant('3 Polar')" 
+                            class="variant-btn px-4 py-2 border-2 border-green-500 bg-green-50 text-green-700 rounded-lg text-sm font-medium transition-all"
+                            id="variant-3polar">
+                        3 Polar
+                    </button>
+                    <button onclick="selectVariant('6 Polar')" 
+                            class="variant-btn px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium transition-all hover:border-green-500"
+                            id="variant-6polar">
+                        6 Polar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Promo Banner -->
+            <div class="bg-gradient-to-r from-red-500 to-pink-500 rounded-lg p-3 mb-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-tag text-white"></i>
+                        <span class="text-white font-semibold text-sm">Flash Sale</span>
+                    </div>
+                    <div class="flex items-center space-x-1">
+                        <span class="text-white text-xs">Berakhir dalam</span>
+                        <span class="bg-white text-red-500 px-2 py-0.5 rounded text-xs font-bold">02:34:56</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="bg-white border-b sticky top-14 z-40">
+            <div class="flex">
+                <button onclick="switchTab('description')" 
+                        class="tab-indicator active flex-1 py-3 text-sm font-medium text-green-600 transition-all"
+                        id="tab-description">
+                    Deskripsi
+                </button>
+                <button onclick="switchTab('specs')" 
+                        class="tab-indicator flex-1 py-3 text-sm font-medium text-gray-600 transition-all hover:text-green-600"
+                        id="tab-specs">
+                    Spesifikasi
+                </button>
+                <button onclick="switchTab('reviews')" 
+                        class="tab-indicator flex-1 py-3 text-sm font-medium text-gray-600 transition-all hover:text-green-600"
+                        id="tab-reviews">
+                    Ulasan
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="bg-white">
+            <!-- Description Tab -->
+            <div id="content-description" class="tab-content p-4">
+                <p class="text-sm text-gray-700 leading-relaxed" id="productDescription">
+                    Versi 3 Polar cocok untuk area wajah kecil seperti pipi, dagu, dan bawah mata. 
+                    Menghasilkan panas lembut untuk merangsang produksi kolagen alami, mengencangkan kulit, 
+                    serta mengurangi garis halus.
+                </p>
+                
+                <!-- Product Features -->
+                <div class="mt-4 space-y-2">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <span class="text-sm text-gray-700">Teknologi Radio Frequency 3 Polar</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <span class="text-sm text-gray-700">Meningkatkan produksi kolagen</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <span class="text-sm text-gray-700">Mengencangkan kulit wajah</span>
+                    </div>
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-check-circle text-green-500 mt-0.5"></i>
+                        <span class="text-sm text-gray-700">Mengurangi garis halus dan kerutan</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Specs Tab -->
+            <div id="content-specs" class="tab-content hidden p-4">
+                <div class="space-y-3">
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-sm text-gray-600">Kondisi</span>
+                        <span class="text-sm font-medium">Baru</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-sm text-gray-600">Berat</span>
+                        <span class="text-sm font-medium">500 gram</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-sm text-gray-600">Kategori</span>
+                        <span class="text-sm font-medium">Alat Kecantikan</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-sm text-gray-600">Merek</span>
+                        <span class="text-sm font-medium">BeautyTech</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-b">
+                        <span class="text-sm text-gray-600">Garansi</span>
+                        <span class="text-sm font-medium">1 Tahun</span>
+                    </div>
+                    <div class="flex justify-between py-2">
+                        <span class="text-sm text-gray-600">Daya</span>
+                        <span class="text-sm font-medium">10W</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reviews Tab -->
+            <div id="content-reviews" class="tab-content hidden p-4">
+                <!-- Review Summary -->
+                <div class="flex items-center justify-between mb-4 pb-4 border-b">
+                    <div class="flex items-center space-x-3">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold">4.5</div>
+                            <div class="flex text-yellow-400 text-xs">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-600">87 ulasan</div>
+                            <div class="text-xs text-gray-500">125 terjual</div>
+                        </div>
+                    </div>
+                    <button class="text-green-600 text-sm font-medium">
+                        Lihat Semua <i class="fas fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
+                
+                <!-- Review Items -->
+                <div class="space-y-4">
+                    <div class="border-b pb-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-gray-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-medium text-sm">Andi Pratama</span>
+                                    <span class="text-xs text-gray-500">2 hari lalu</span>
+                                </div>
+                                <div class="flex text-yellow-400 text-xs mb-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <p class="text-sm text-gray-700">
+                                    Produk sangat bagus! Setelah 2 minggu pemakaian, kulit wajah terasa lebih kencang 
+                                    dan garis halus berkurang. Recommended!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="border-b pb-4">
+                        <div class="flex items-start space-x-3">
+                            <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user text-gray-500"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="font-medium text-sm">Siti Nurhaliza</span>
+                                    <span class="text-xs text-gray-500">1 minggu lalu</span>
+                                </div>
+                                <div class="flex text-yellow-400 text-xs mb-2">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <p class="text-sm text-gray-700">
+                                    Alatnya mudah digunakan dan hasilnya terlihat. Hanya saja perlu kesabaran untuk 
+                                    hasil maksimal. Overall puas dengan pembelian ini.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller Info -->
+        <div class="bg-white mt-2 p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-store text-white text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">BeautyCare Official</div>
+                        <div class="flex items-center space-x-2 text-xs text-gray-600">
+                            <span>Jakarta Pusat</span>
+                            <span>•</span>
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span>4.8</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="text-green-600 text-sm font-medium">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="bg-white mt-2 p-4">
+            <h3 class="font-semibold text-sm mb-3">Produk Terkait</h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="product-card border rounded-lg p-2 cursor-pointer">
+                    <img src="https://m.media-amazon.com/images/I/71oGa8IDcKL._AC_SL1500_.jpg" 
+                         class="w-full h-32 object-cover rounded mb-2">
+                    <h4 class="text-xs font-medium line-clamp-2 mb-1">Face Lifting Device 6 Polar</h4>
+                    <div class="text-red-500 font-bold text-sm">Rp2.125.000</div>
+                    <div class="flex items-center text-xs text-gray-500 mt-1">
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <span>4.3</span>
+                        <span class="ml-1">| Terjual 89</span>
+                    </div>
+                </div>
+                
+                <div class="product-card border rounded-lg p-2 cursor-pointer">
+                    <img src="https://m.media-amazon.com/images/I/716pnSGRIML._AC_SL1500_.jpg" 
+                         class="w-full h-32 object-cover rounded mb-2">
+                    <h4 class="text-xs font-medium line-clamp-2 mb-1">RF Beauty Device Pro</h4>
+                    <div class="text-red-500 font-bold text-sm">Rp1.750.000</div>
+                    <div class="flex items-center text-xs text-gray-500 mt-1">
+                        <i class="fas fa-star text-yellow-400 mr-1"></i>
+                        <span>4.6</span>
+                        <span class="ml-1">| Terjual 156</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t max-w-md mx-auto">
+            <div class="flex p-3 space-x-2">
+                <button onclick="showBottomVariant('cart')" 
+                        class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium text-sm flex items-center justify-center space-x-2 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Masukkan Keranjang</span>
+                </button>
+                <button onclick="showBottomVariant('buy')" 
+                        class="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-green-700 transition-colors">
+                    Beli Sekarang
+                </button>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab-container">
+            <button class="w-14 h-14 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all">
+                <i class="fas fa-comments text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Space for fixed bottom -->
+        <div class="h-20"></div>
+    </div>
+
+    <!-- Bottom Variant Selector -->
+    <div class="bottom-variant" id="bottomVariant">
+        <div class="p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Pilih Varian</h3>
+                <button onclick="closeBottomVariant()" class="p-1">
+                    <i class="fas fa-times text-gray-500"></i>
+                </button>
+            </div>
+            
+            <div class="flex items-start space-x-3 mb-4">
+                <img id="variantImage" src="https://m.media-amazon.com/images/I/61T7IBsVLmL._AC_SL1500_.jpg" 
+                     class="w-20 h-20 object-cover rounded-lg">
+                <div class="flex-1">
+                    <h4 class="text-sm font-medium line-clamp-2 mb-1">3-in-1 facial radio frequency skin lifting machine</h4>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-lg font-bold text-red-500" id="variantSalePrice">Rp1.915.376</span>
+                        <span class="text-xs text-gray-500 line-through" id="variantOriginalPrice">Rp3.192.294</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Varian</h3>
+                <div class="flex space-x-2">
+                    <button onclick="selectBottomVariant('3 Polar')" 
+                            class="bottom-variant-btn px-4 py-2 border-2 border-green-500 bg-green-50 text-green-700 rounded-lg text-sm font-medium transition-all"
+                            id="bottom-variant-3polar">
+                        3 Polar
+                    </button>
+                    <button onclick="selectBottomVariant('6 Polar')" 
+                            class="bottom-variant-btn px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium transition-all hover:border-green-500"
+                            id="bottom-variant-6polar">
+                        6 Polar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Jumlah</h3>
+                <div class="quantity-selector">
+                    <button class="quantity-btn" onclick="decreaseQuantity()">
+                        <i class="fas fa-minus text-xs"></i>
+                    </button>
+                    <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="10" readonly>
+                    <button class="quantity-btn" onclick="increaseQuantity()">
+                        <i class="fas fa-plus text-xs"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex space-x-2">
+                <button onclick="addToCartFromBottom()" 
+                        class="flex-1 bg-gray-100 text-gray-700 py-3 rounded-lg font-medium text-sm flex items-center justify-center space-x-2 hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Masukkan Keranjang</span>
+                </button>
+                <button onclick="buyNowFromBottom()" 
+                        class="flex-1 bg-green-600 text-white py-3 rounded-lg font-medium text-sm hover:bg-green-700 transition-colors">
+                    Beli Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+    <!-- Cart Page -->
+    <div class="cart-page" id="cartPage">
+        <div class="sticky top-0 bg-white z-10 border-b">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 -ml-2" onclick="closeCart()">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <h1 class="text-base font-semibold">Keranjang Saya</h1>
+                </div>
+                <button class="text-green-600 text-sm font-medium" onclick="clearCart()">
+                    Hapus Semua
+                </button>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <!-- Cart Items -->
+            <div id="cartItems" class="space-y-4 mb-4">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            
+            <!-- Empty Cart Message -->
+            <div id="emptyCartMessage" class="text-center py-8 hidden">
+                <i class="fas fa-shopping-cart text-4xl text-gray-300 mb-3"></i>
+                <p class="text-gray-500">Keranjang belanja Anda kosong</p>
+                <button onclick="closeCart()" class="mt-4 text-green-600 font-medium">
+                    Lanjut Belanja
+                </button>
+            </div>
+            
+            <!-- Cart Summary -->
+            <div id="cartSummary" class="bg-gray-50 rounded-lg p-4 mb-4">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm text-gray-600">Subtotal</span>
+                    <span class="text-sm font-medium" id="subtotal">Rp0</span>
+                </div>
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm text-gray-600">Ongkos Kirim</span>
+                    <span class="text-sm font-medium">Dihitung di checkout</span>
+                </div>
+                <div class="flex justify-between pt-2 border-t">
+                    <span class="text-base font-semibold">Total</span>
+                    <span class="text-base font-bold text-red-500" id="total">Rp0</span>
+                </div>
+            </div>
+            
+            <!-- Checkout Button -->
+            <button onclick="checkout()" 
+                    class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                Checkout
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Product data
+        const products = {
+            "3 Polar": {
+                sale_price: "1.915.376",
+                discount: "60%",
+                price: "3.192.294",
+                description: "Versi 3 Polar cocok untuk area wajah kecil seperti pipi, dagu, dan bawah mata. Menghasilkan panas lembut untuk merangsang produksi kolagen alami, mengencangkan kulit, serta mengurangi garis halus.",
+                image: "https://m.media-amazon.com/images/I/61T7IBsVLmL._AC_SL1500_.jpg"
+            },
+            "6 Polar": {
+                sale_price: "2.125.000",
+                discount: "55%",
+                price: "3.700.000",
+                description: "Versi 6 Polar memiliki jangkauan lebih luas untuk area pipi, leher, dan dahi. Didesain untuk hasil lifting yang lebih cepat dan efisien, memperbaiki elastisitas kulit dan mempertegas kontur wajah.",
+                image: "https://m.media-amazon.com/images/I/71oGa8IDcKL._AC_SL1500_.jpg"
+            }
+        };
+        
+        let currentVariant = "3 Polar";
+        let bottomVariantAction = "cart"; // "cart" or "buy"
+        let cart = [];
+        
+        // Initialize cart from localStorage
+        function initCart() {
+            const savedCart = localStorage.getItem('tokopediaCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+                updateCartCount();
+            }
+        }
+        
+        // Update cart count in header
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+        
+        // Save cart to localStorage
+        function saveCart() {
+            localStorage.setItem('tokopediaCart', JSON.stringify(cart));
+            updateCartCount();
+        }
+        
+        // Show bottom variant selector
+        function showBottomVariant(action) {
+            bottomVariantAction = action;
+            document.getElementById('bottomVariant').classList.add('active');
+            
+            // Update variant selector with current variant
+            updateBottomVariantSelector();
+        }
+        
+        // Close bottom variant selector
+        function closeBottomVariant() {
+            document.getElementById('bottomVariant').classList.remove('active');
+        }
+        
+        // Update bottom variant selector
+        function updateBottomVariantSelector() {
+            const product = products[currentVariant];
+            document.getElementById('variantImage').src = product.image;
+            document.getElementById('variantSalePrice').textContent = `Rp${product.sale_price}`;
+            document.getElementById('variantOriginalPrice').textContent = `Rp${product.price}`;
+            
+            // Update variant buttons
+            document.querySelectorAll('.bottom-variant-btn').forEach(btn => {
+                btn.classList.remove('border-2', 'border-green-500', 'bg-green-50', 'text-green-700');
+                btn.classList.add('border', 'border-gray-300');
+            });
+            
+            const selectedBtn = document.getElementById(`bottom-variant-${currentVariant.toLowerCase().replace(' ', '')}`);
+            selectedBtn.classList.remove('border', 'border-gray-300');
+            selectedBtn.classList.add('border-2', 'border-green-500', 'bg-green-50', 'text-green-700');
+            
+            // Reset quantity
+            document.getElementById('quantityInput').value = 1;
+        }
+        
+        // Select variant in bottom selector
+        function selectBottomVariant(variant) {
+            currentVariant = variant;
+            updateBottomVariantSelector();
+        }
+        
+        // Increase quantity
+        function increaseQuantity() {
+            const input = document.getElementById('quantityInput');
+            const currentValue = parseInt(input.value);
+            if (currentValue < 10) {
+                input.value = currentValue + 1;
+            }
+        }
+        
+        // Decrease quantity
+        function decreaseQuantity() {
+            const input = document.getElementById('quantityInput');
+            const currentValue = parseInt(input.value);
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+        
+        // Add to cart from bottom variant selector
+        function addToCartFromBottom() {
+            const quantity = parseInt(document.getElementById('quantityInput').value);
+            const product = products[currentVariant];
+            
+            // Check if product already in cart
+            const existingItemIndex = cart.findIndex(item => item.variant === currentVariant);
+            
+            if (existingItemIndex !== -1) {
+                // Update quantity if product already in cart
+                cart[existingItemIndex].quantity += quantity;
+            } else {
+                // Add new item to cart
+                cart.push({
+                    id: Date.now(),
+                    name: "3-in-1 facial radio frequency skin lifting machine",
+                    variant: currentVariant,
+                    price: parseInt(product.sale_price.replace(/\./g, '')),
+                    originalPrice: parseInt(product.price.replace(/\./g, '')),
+                    image: product.image,
+                    quantity: quantity
+                });
+            }
+            
+            saveCart();
+            closeBottomVariant();
+            showNotification('Produk berhasil ditambahkan ke keranjang!');
+        }
+        
+        // Buy now from bottom variant selector
+        function buyNowFromBottom() {
+            addToCartFromBottom();
+            setTimeout(() => {
+                openCart();
+            }, 500);
+        }
+        
+        // Open cart
+        function openCart() {
+            document.getElementById('cartOverlay').classList.add('active');
+            document.getElementById('cartPage').classList.add('active');
+            renderCartItems();
+        }
+        
+        // Close cart
+        function closeCart() {
+            document.getElementById('cartOverlay').classList.remove('active');
+            document.getElementById('cartPage').classList.remove('active');
+        }
+        
+        // Render cart items
+        function renderCartItems() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+            const cartSummary = document.getElementById('cartSummary');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '';
+                emptyCartMessage.classList.remove('hidden');
+                cartSummary.classList.add('hidden');
+                return;
+            }
+            
+            emptyCartMessage.classList.add('hidden');
+            cartSummary.classList.remove('hidden');
+            
+            let subtotal = 0;
+            let cartItemsHTML = '';
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                
+                cartItemsHTML += `
+                    <div class="bg-white border rounded-lg p-3">
+                        <div class="flex items-start space-x-3">
+                            <img src="${item.image}" class="w-20 h-20 object-cover rounded-lg">
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium line-clamp-2 mb-1">${item.name}</h4>
+                                <p class="text-xs text-gray-500 mb-2">Varian: ${item.variant}</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-red-500 font-bold text-sm">Rp${item.price.toLocaleString('id-ID')}</span>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="decreaseCartItemQuantity(${item.id})" class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                                            <i class="fas fa-minus text-xs"></i>
+                                        </button>
+                                        <span class="text-sm w-6 text-center">${item.quantity}</span>
+                                        <button onclick="increaseCartItemQuantity(${item.id})" class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                                            <i class="fas fa-plus text-xs"></i>
+                                        </button>
+                                        <button onclick="removeFromCart(${item.id})" class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center ml-2">
+                                            <i class="fas fa-trash text-xs text-red-500"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItemsContainer.innerHTML = cartItemsHTML;
+            document.getElementById('subtotal').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('total').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+        }
+        
+        // Increase cart item quantity
+        function increaseCartItemQuantity(itemId) {
+            const item = cart.find(item => item.id === itemId);
+            if (item && item.quantity < 10) {
+                item.quantity++;
+                saveCart();
+                renderCartItems();
+            }
+        }
+        
+        // Decrease cart item quantity
+        function decreaseCartItemQuantity(itemId) {
+            const item = cart.find(item => item.id === itemId);
+            if (item && item.quantity > 1) {
+                item.quantity--;
+                saveCart();
+                renderCartItems();
+            }
+        }
+        
+        // Remove from cart
+        function removeFromCart(itemId) {
+            cart = cart.filter(item => item.id !== itemId);
+            saveCart();
+            renderCartItems();
+        }
+        
+        // Clear cart
+        function clearCart() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua item dari keranjang?')) {
+                cart = [];
+                saveCart();
+                renderCartItems();
+            }
+        }
+        
+        // Checkout
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Keranjang belanja Anda kosong!');
+                return;
+            }
+            
+            // Save cart to localStorage before checkout
+            saveCart();
+            
+            // Redirect to checkout page
+            window.location.href = '/checkout.html';
+        }
+        
+        function selectVariant(variant) {
+            currentVariant = variant;
+            
+            // Update variant buttons
+            document.querySelectorAll('.variant-btn').forEach(btn => {
+                btn.classList.remove('border-2', 'border-green-500', 'bg-green-50', 'text-green-700');
+                btn.classList.add('border', 'border-gray-300');
+            });
+            
+            const selectedBtn = document.getElementById(`variant-${variant.toLowerCase().replace(' ', '')}`);
+            selectedBtn.classList.remove('border', 'border-gray-300');
+            selectedBtn.classList.add('border-2', 'border-green-500', 'bg-green-50', 'text-green-700');
+            
+            // Update product info
+            const product = products[variant];
+            document.getElementById('salePrice').textContent = `Rp${product.sale_price}`;
+            document.getElementById('originalPrice').textContent = `Rp${product.price}`;
+            document.getElementById('discountBadge').textContent = `${product.discount}%`;
+            document.getElementById('productDescription').textContent = product.description;
+            document.getElementById('mainImage').src = product.image;
+            
+            // Update gallery
+            document.querySelectorAll('.gallery-item').forEach((img, index) => {
+                img.classList.remove('border-2', 'border-green-500');
+                img.classList.add('border', 'border-gray-200');
+                if (index === 0) {
+                    img.classList.remove('border', 'border-gray-200');
+                    img.classList.add('border-2', 'border-green-500');
+                }
+            });
+        }
+        
+        function changeImage(index) {
+            const images = [
+                "https://m.media-amazon.com/images/I/61T7IBsVLmL._AC_SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/71oGa8IDcKL._AC_SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/716pnSGRIML._AC_SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/614P9qCKGrL._AC_SL1500_.jpg",
+                "https://m.media-amazon.com/images/I/61P5Kg5XhnL._AC_SL1500_.jpg"
+            ];
+            
+            document.getElementById('mainImage').src = images[index];
+            
+            // Update gallery selection
+            document.querySelectorAll('.gallery-item').forEach((img, i) => {
+                img.classList.remove('border-2', 'border-green-500');
+                img.classList.add('border', 'border-gray-200');
+                if (i === index) {
+                    img.classList.remove('border', 'border-gray-200');
+                    img.classList.add('border-2', 'border-green-500');
+                }
+            });
+        }
+        
+        function switchTab(tabName) {
+            // Update tabs
+            document.querySelectorAll('.tab-indicator').forEach(tab => {
+                tab.classList.remove('active', 'text-green-600');
+                tab.classList.add('text-gray-600');
+            });
+            
+            document.getElementById(`tab-${tabName}`).classList.add('active', 'text-green-600');
+            document.getElementById(`tab-${tabName}`).classList.remove('text-gray-600');
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+        }
+        
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-20 left-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg z-50 slide-up';
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Initialize cart on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initCart();
+        });
+    </script>
+</body>
+</html>
