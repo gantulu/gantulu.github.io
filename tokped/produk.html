@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RF Tripolar dan Six Polar Radio Frequency - LKTECH | Tokopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom styles untuk wireframe */
+        .wireframe-bg {
+            background-color: #f0f0f0;
+            background-image: 
+                linear-gradient(45deg, #e0e0e0 25%, transparent 25%),
+                linear-gradient(-45deg, #e0e0e0 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #e0e0e0 75%),
+                linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+        }
+        
+        .placeholder-text {
+            background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        .placeholder-image {
+            background: linear-gradient(135deg, #e0e0e0 0%, #f0f0f0 50%, #e0e0e0 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% -200%; }
+            100% { background-position: 200% 200%; }
+        }
+        
+        .tokopedia-green {
+            background-color: #00AA5B;
+        }
+        
+        .tokopedia-red {
+            background-color: #EE4D2D;
+        }
+        
+        /* Cart overlay styles */
+        .cart-overlay {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .cart-overlay.active {
+            transform: translateY(0);
+        }
+        
+        /* Variant bottom sheet styles */
+        .variant-sheet {
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .variant-sheet.active {
+            transform: translateY(0);
+        }
+        
+        /* Variant option styles */
+        .variant-option {
+            transition: all 0.2s ease;
+        }
+        
+        .variant-option:hover {
+            transform: scale(1.05);
+        }
+        
+        .variant-option.selected {
+            border-color: #00AA5B;
+            background-color: #E6F7F0;
+        }
+        
+        /* Full screen cart styles */
+        .fullscreen-cart {
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+        
+        .fullscreen-cart.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+        
+        /* Review image gallery */
+        .review-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .review-gallery img {
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        /* Discussion item styles */
+        .discussion-item {
+            transition: background-color 0.2s ease;
+        }
+        
+        .discussion-item:hover {
+            background-color: #f9fafb;
+        }
+        
+        /* Section animation */
+        .section-content {
+            animation: slideUp 0.5s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header Tokopedia -->
+    <div class="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm">
+        <div class="flex items-center justify-between p-4">
+            <button class="text-gray-700">
+                <i class="fas fa-arrow-left text-xl"></i>
+            </button>
+            <div class="flex gap-4">
+                <button class="text-gray-700">
+                    <i class="fas fa-share-alt text-xl"></i>
+                </button>
+                <button class="text-gray-700 relative" onclick="toggleCart()">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">2</span>
+                </button>
+                <button class="text-gray-700">
+                    <i class="fas fa-ellipsis-v text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pt-16 pb-40">
+        <!-- Product Gallery -->
+        <div class="bg-white">
+            <div class="relative">
+                <div class="placeholder-image h-96 relative">
+                    <div class="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
+                        1/5
+                    </div>
+                    <button class="absolute top-4 right-4 bg-white bg-opacity-80 rounded-full p-2">
+                        <i class="far fa-heart text-gray-700"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Thumbnail Gallery -->
+            <div class="flex gap-2 p-4 overflow-x-auto">
+                <div class="placeholder-image w-20 h-20 rounded border-2 border-green-500"></div>
+                <div class="placeholder-image w-20 h-20 rounded border"></div>
+                <div class="placeholder-image w-20 h-20 rounded border"></div>
+                <div class="placeholder-image w-20 h-20 rounded border"></div>
+                <div class="placeholder-image w-20 h-20 rounded border"></div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="bg-white mt-2 p-4">
+            <div class="flex items-start justify-between mb-2">
+                <div class="flex-1">
+                    <h1 class="text-lg font-semibold text-gray-900 mb-2">RF Tripolar dan Six Polar Radio Frequency 3 Polar dan 6 Polar Lifting</h1>
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 text-sm"></i>
+                            <span class="text-sm ml-1">4.9</span>
+                        </div>
+                        <span class="text-gray-400 text-sm">|</span>
+                        <span class="text-sm text-gray-600">1.2rb terjual</span>
+                        <span class="text-gray-400 text-sm">|</span>
+                        <span class="text-sm text-gray-600">1.5rb ulasan</span>
+                        <span class="text-gray-400 text-sm">|</span>
+                        <span class="text-sm text-gray-600">Bogor</span>
+                    </div>
+                </div>
+                <button class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="far fa-heart text-2xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex items-baseline gap-2 mb-4">
+                <span class="text-2xl font-bold text-red-500">Rp2.450.000</span>
+                <span class="text-sm text-gray-500 line-through">Rp3.500.000</span>
+                <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded">30%</span>
+            </div>
+
+            <!-- Promo Info -->
+            <div class="space-y-2 mb-4">
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+                    <div class="flex items-center gap-2 text-green-700 text-sm">
+                        <i class="fas fa-tag"></i>
+                        <span class="font-medium">Cashback 10% hingga Rp50.000</span>
+                    </div>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <div class="flex items-center gap-2 text-blue-700 text-sm">
+                        <i class="fas fa-truck"></i>
+                        <span class="font-medium">Gratis Ongkir</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Variant Selection -->
+            <div class="border-t pt-4">
+                <h3 class="text-sm font-medium mb-2">Pilih Varian:</h3>
+                <div class="space-y-3">
+                    <div>
+                        <p class="text-xs text-gray-600 mb-2">Tipe</p>
+                        <div class="flex gap-2">
+                            <button class="variant-option px-4 py-2 border rounded-lg text-sm selected" onclick="selectVariant(this)">
+                                3 Polar
+                            </button>
+                            <button class="variant-option px-4 py-2 border rounded-lg text-sm" onclick="selectVariant(this)">
+                                6 Polar
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-600 mb-2">Warna</p>
+                        <div class="flex gap-2">
+                            <button class="variant-option px-4 py-2 border rounded-lg text-sm selected" onclick="selectVariant(this)">
+                                Putih
+                            </button>
+                            <button class="variant-option px-4 py-2 border rounded-lg text-sm" onclick="selectVariant(this)">
+                                Hitam
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quantity -->
+            <div class="border-t pt-4 mt-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium">Jumlah</span>
+                    <div class="flex items-center gap-3">
+                        <button class="w-8 h-8 rounded-full border flex items-center justify-center" onclick="updateQuantity(-1)">
+                            <i class="fas fa-minus text-xs"></i>
+                        </button>
+                        <span class="font-medium" id="quantity">1</span>
+                        <button class="w-8 h-8 rounded-full border flex items-center justify-center" onclick="updateQuantity(1)">
+                            <i class="fas fa-plus text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seller Info -->
+        <div class="bg-white mt-2 p-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="https://picsum.photos/seed/lktech/50/50.jpg" alt="Seller" class="w-12 h-12 rounded-full">
+                    <div>
+                        <h3 class="font-medium text-sm">LKTECH</h3>
+                        <div class="flex items-center gap-1">
+                            <i class="fas fa-star text-yellow-400 text-xs"></i>
+                            <span class="text-xs text-gray-600">4.8</span>
+                            <span class="text-xs text-gray-400">| Aktif 1 jam lalu</span>
+                        </div>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded">Power Merchant</span>
+                            <span class="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded">Official Store</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="text-green-600 text-sm font-medium">
+                    <i class="fas fa-store mr-1"></i>
+                    Kunjungi Toko
+                </button>
+            </div>
+        </div>
+
+        <!-- Deskripsi Section -->
+        <div class="bg-white mt-2 p-4 section-content">
+            <h3 class="font-medium text-sm mb-3">Deskripsi Produk</h3>
+            <div class="prose prose-sm max-w-none">
+                <p class="text-gray-700 mb-3">
+                    RF Tripolar dan Six Polar Radio Frequency adalah alat kecantikan canggih yang menggunakan teknologi radio frequency untuk perawatan wajah dan tubuh. Dengan dua mode (3 Polar dan 6 Polar), alat ini memberikan hasil maksimal untuk:
+                </p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 mb-3">
+                    <li>Mengencangkan kulit wajah</li>
+                    <li>Mengurangi keriput dan garis halus</li>
+                    <li>Mengecilkan pori-pori</li>
+                    <li>Mencerahkan kulit</li>
+                    <li>Mengangkat wajah (face lifting)</li>
+                </ul>
+                <p class="text-gray-700 mb-3">
+                    <strong>Fitur Utama:</strong>
+                </p>
+                <ul class="list-disc list-inside text-gray-700 space-y-1 mb-3">
+                    <li>2 mode: 3 Polar untuk area kecil, 6 Polar untuk area besar</li>
+                    <li>Layar LCD untuk pengaturan mudah</li>
+                    <li>5 tingkat intensitas yang dapat disesuaikan</li>
+                    <li>Timer otomatis untuk keamanan</li>
+                    <li>Desain ergonomis dan mudah digunakan</li>
+                </ul>
+                <p class="text-gray-700">
+                    Alat ini aman digunakan di rumah dengan hasil yang terbukti efektif. Dapatkan kulit yang lebih kencang dan sehat hanya dengan pemakaian rutin 15-20 menit setiap hari.
+                </p>
+            </div>
+        </div>
+
+        <!-- Spesifikasi Section -->
+        <div class="bg-white mt-2 p-4 section-content">
+            <h3 class="font-medium text-sm mb-3">Spesifikasi Produk</h3>
+            <div class="space-y-4">
+                <!-- Informasi Umum -->
+                <div>
+                    <h4 class="font-medium text-sm mb-3 text-gray-900">Informasi Umum</h4>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Merek</span>
+                            <span class="text-sm text-gray-900 font-medium">LKTECH</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Model</span>
+                            <span class="text-sm text-gray-900 font-medium">RF-3000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Kategori</span>
+                            <span class="text-sm text-gray-900 font-medium">Alat Kecantikan</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Garansi</span>
+                            <span class="text-sm text-gray-900 font-medium">1 Tahun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teknis -->
+                <div>
+                    <h4 class="font-medium text-sm mb-3 text-gray-900">Spesifikasi Teknis</h4>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Tipe</span>
+                            <span class="text-sm text-gray-900 font-medium">RF Tripolar & Six Polar</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Daya</span>
+                            <span class="text-sm text-gray-900 font-medium">50W</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Voltase</span>
+                            <span class="text-sm text-gray-900 font-medium">220V</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Frekuensi</span>
+                            <span class="text-sm text-gray-900 font-medium">5MHz</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Tingkat Intensitas</span>
+                            <span class="text-sm text-gray-900 font-medium">5 Level</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Timer</span>
+                            <span class="text-sm text-gray-900 font-medium">0-30 menit</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fisik -->
+                <div>
+                    <h4 class="font-medium text-sm mb-3 text-gray-900">Dimensi & Berat</h4>
+                    <div class="bg-gray-50 rounded-lg p-4 space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Berat</span>
+                            <span class="text-sm text-gray-900 font-medium">1.5 kg</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Dimensi</span>
+                            <span class="text-sm text-gray-900 font-medium">25 x 15 x 10 cm</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Material</span>
+                            <span class="text-sm text-gray-900 font-medium">ABS Plastic</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-600">Warna</span>
+                            <span class="text-sm text-gray-900 font-medium">Putih / Hitam</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kelengkapan -->
+                <div>
+                    <h4 class="font-medium text-sm mb-3 text-gray-900">Kelengkapan Paket</h4>
+                    <div class="bg-gray-50 rounded-lg p-4">
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-500 mt-0.5"></i>
+                                <span>1 Unit RF Machine</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-500 mt-0.5"></i>
+                                <span>1 Kabel Power</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-500 mt-0.5"></i>
+                                <span>1 Manual Book</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-500 mt-0.5"></i>
+                                <span>1 Warranty Card</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fas fa-check text-green-500 mt-0.5"></i>
+                                <span>1 Box Packaging</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ulasan Section -->
+        <div class="bg-white mt-2 p-4 section-content">
+            <h3 class="font-medium text-sm mb-3">Ulasan Pembeli</h3>
+            <div class="flex items-center gap-4 mb-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold">4.9</div>
+                    <div class="flex text-yellow-400 text-sm justify-center">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="text-xs text-gray-600">1.5rb ulasan</div>
+                </div>
+                <div class="flex-1 space-y-1">
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>5</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                        </div>
+                        <span>85%</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>4</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 10%"></div>
+                        </div>
+                        <span>10%</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>3</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 3%"></div>
+                        </div>
+                        <span>3%</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>2</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 1%"></div>
+                        </div>
+                        <span>1%</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span>1</span>
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 1%"></div>
+                        </div>
+                        <span>1%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter and Sort -->
+            <div class="flex gap-2 mb-4 overflow-x-auto">
+                <select class="px-3 py-1 bg-gray-100 rounded-lg text-xs whitespace-nowrap">
+                    <option>Semua</option>
+                    <option>Dengan Foto</option>
+                    <option>Dengan Video</option>
+                </select>
+                <select class="px-3 py-1 bg-gray-100 rounded-lg text-xs whitespace-nowrap">
+                    <option>Terbaru</option>
+                    <option>Terbantu</option>
+                    <option>Rating Tertinggi</option>
+                    <option>Rating Terendah</option>
+                </select>
+                <button class="px-3 py-1 bg-gray-100 rounded-lg text-xs whitespace-nowrap">
+                    5 Bintang
+                </button>
+                <button class="px-3 py-1 bg-gray-100 rounded-lg text-xs whitespace-nowrap">
+                    4 Bintang
+                </button>
+                <button class="px-3 py-1 bg-gray-100 rounded-lg text-xs whitespace-nowrap">
+                    3 Bintang
+                </button>
+            </div>
+
+            <!-- Review Items -->
+            <div class="space-y-4">
+                <!-- Review 1 -->
+                <div class="border-b pb-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/user1/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Sarah Putri</h4>
+                                <span class="text-xs text-gray-500">2 hari lalu</span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="flex text-yellow-400 text-xs">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">Varian: 3 Polar, Putih</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Produk sangat bagus! Hasilnya terlihat setelah 2 minggu pemakaian. Kulit wajah terasa lebih kencang dan cerah. Seller juga ramah dan fast response. Packaging rapi dan aman. Recommended banget!
+                            </p>
+                            <div class="review-gallery">
+                                <img src="https://picsum.photos/seed/review1a/100/100.jpg" alt="Review">
+                                <img src="https://picsum.photos/seed/review1b/100/100.jpg" alt="Review">
+                                <img src="https://picsum.photos/seed/review1c/100/100.jpg" alt="Review">
+                            </div>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                                <button class="hover:text-green-600 flex items-center gap-1">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    Membantu (23)
+                                </button>
+                                <button class="hover:text-blue-600 flex items-center gap-1">
+                                    <i class="fas fa-comment"></i>
+                                    Balas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 2 -->
+                <div class="border-b pb-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/user2/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Maya Sari</h4>
+                                <span class="text-xs text-gray-500">1 minggu lalu</span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="flex text-yellow-400 text-xs">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">Varian: 6 Polar, Hitam</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Alat mudah digunakan, pengiriman cepat. Hanya saja butuh waktu untuk melihat hasil yang signifikan. Overall puas dengan pembelian ini. Mungkin akan beli lagi untuk hadiah.
+                            </p>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                                <button class="hover:text-green-600 flex items-center gap-1">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    Membantu (15)
+                                </button>
+                                <button class="hover:text-blue-600 flex items-center gap-1">
+                                    <i class="fas fa-comment"></i>
+                                    Balas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review 3 -->
+                <div class="border-b pb-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/user3/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Budi Santoso</h4>
+                                <span class="text-xs text-gray-500">3 hari lalu</span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="flex text-yellow-400 text-xs">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="text-xs text-gray-600">Varian: 3 Polar, Putih</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Mantap banget! Setelah 1 bulan pemakaian, wajahku terlihat lebih muda 5 tahun. Keriput di sudut mata dan dahi berkurang signifikan. Worth every penny!
+                            </p>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-2 mb-2">
+                                <div class="flex items-center gap-2 text-blue-700 text-xs">
+                                    <i class="fas fa-tag"></i>
+                                    <span>Pembelian verified • Bonus cashback Rp50.000</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 text-xs text-gray-500 mt-2">
+                                <button class="hover:text-green-600 flex items-center gap-1">
+                                    <i class="fas fa-thumbs-up"></i>
+                                    Membantu (45)
+                                </button>
+                                <button class="hover:text-blue-600 flex items-center gap-1">
+                                    <i class="fas fa-comment"></i>
+                                    Balas
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More -->
+            <div class="text-center mt-4">
+                <button class="text-green-600 text-sm font-medium">
+                    Muat Lebih Banyak
+                </button>
+            </div>
+        </div>
+
+        <!-- Diskusi Section -->
+        <div class="bg-white mt-2 p-4 section-content">
+            <h3 class="font-medium text-sm mb-3">Diskusi Produk</h3>
+            <!-- Discussion Stats -->
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-medium text-green-800">Diskusi Produk</div>
+                        <div class="text-xs text-green-600">23 diskusi • 89% terjawab</div>
+                    </div>
+                    <button onclick="showDiscussionForm()" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                        <i class="fas fa-plus mr-1"></i>
+                        Buat Diskusi
+                    </button>
+                </div>
+            </div>
+
+            <!-- Discussion Form (Hidden by default) -->
+            <div id="discussionForm" class="hidden mb-4 bg-gray-50 rounded-lg p-4">
+                <h4 class="font-medium text-sm mb-3">Ajukan Pertanyaan</h4>
+                <textarea class="w-full p-3 border rounded-lg text-sm resize-none" rows="3" placeholder="Tanyakan tentang produk ini..."></textarea>
+                <div class="flex gap-2 mt-3">
+                    <button onclick="hideDiscussionForm()" class="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg text-sm">
+                        Batal
+                    </button>
+                    <button onclick="submitDiscussion()" class="flex-1 bg-green-600 text-white py-2 rounded-lg text-sm">
+                        Kirim
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Discussions -->
+            <div class="flex gap-2 mb-4 overflow-x-auto">
+                <button class="px-3 py-1 bg-green-100 text-green-700 rounded-lg text-xs whitespace-nowrap">
+                    Semua
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs whitespace-nowrap">
+                    Belum Dijawab
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs whitespace-nowrap">
+                    Terpopuler
+                </button>
+                <button class="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg text-xs whitespace-nowrap">
+                    Terbaru
+                </button>
+            </div>
+
+            <!-- Discussion Items -->
+            <div class="space-y-4">
+                <!-- Discussion 1 -->
+                <div class="discussion-item border rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/disc1/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Rina Wijaya</h4>
+                                <span class="text-xs text-gray-500">5 jam lalu</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Apakah alat ini aman untuk kulit sensitif? Saya punya kulit wajah yang mudah iritasi.
+                            </p>
+                            <div class="flex items-center gap-4 text-xs">
+                                <button class="text-gray-500 hover:text-green-600">
+                                    <i class="fas fa-thumbs-up mr-1"></i>
+                                    12
+                                </button>
+                                <button class="text-gray-500 hover:text-blue-600">
+                                    <i class="fas fa-comment mr-1"></i>
+                                    Balas
+                                </button>
+                                <span class="text-green-600">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Terjawab Penjual
+                                </span>
+                            </div>
+                            
+                            <!-- Seller Reply -->
+                            <div class="mt-3 ml-2 pl-4 border-l-2 border-green-200">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <img src="https://picsum.photos/seed/lktech/30/30.jpg" alt="Seller" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs font-medium text-green-600">LKTECH</span>
+                                    <span class="text-xs text-gray-500">• 4 jam lalu</span>
+                                </div>
+                                <p class="text-sm text-gray-700">
+                                    Halo Kak Rina, alat ini aman untuk kulit sensitif karena dilengkapi dengan 5 tingkat intensitas yang bisa disesuaikan. Untuk pemula disarankan mulai dari level 1-2 dulu. Jangan lupa gunakan serum sebelum pemakaian untuk hasil maksimal ya.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discussion 2 -->
+                <div class="discussion-item border rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/disc2/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Andi Pratama</h4>
+                                <span class="text-xs text-gray-500">1 hari lalu</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Bedanya 3 Polar dan 6 Polar apa ya? Mana yang lebih cocok untuk pemula?
+                            </p>
+                            <div class="flex items-center gap-4 text-xs">
+                                <button class="text-gray-500 hover:text-green-600">
+                                    <i class="fas fa-thumbs-up mr-1"></i>
+                                    8
+                                </button>
+                                <button class="text-gray-500 hover:text-blue-600">
+                                    <i class="fas fa-comment mr-1"></i>
+                                    Balas
+                                </button>
+                            </div>
+                            
+                            <!-- User Reply -->
+                            <div class="mt-3 ml-2 pl-4 border-l-2 border-gray-200">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <img src="https://picsum.photos/seed/user4/30/30.jpg" alt="User" class="w-6 h-6 rounded-full">
+                                    <span class="text-xs font-medium">Siti Nurhaliza</span>
+                                    <span class="text-xs text-gray-500">• 12 jam lalu</span>
+                                </div>
+                                <p class="text-sm text-gray-700">
+                                    Menurutku 3 Polar lebih cocok untuk pemula karena fokusnya lebih ke area kecil. 6 Polar itu untuk area yang lebih luas seperti pipi dan leher. Saya pake 3 Polar dan hasilnya bagus kok.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discussion 3 -->
+                <div class="discussion-item border rounded-lg p-4">
+                    <div class="flex items-start gap-3">
+                        <img src="https://picsum.photos/seed/disc3/40/40.jpg" alt="User" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="font-medium text-sm">Dewi Lestari</h4>
+                                <span class="text-xs text-gray-500">2 hari lalu</span>
+                            </div>
+                            <p class="text-sm text-gray-700 mb-2">
+                                Berapa lama biasanya hasilnya mulai terlihat? Dan berapa kali sehari pemakaiannya?
+                            </p>
+                            <div class="flex items-center gap-4 text-xs">
+                                <button class="text-gray-500 hover:text-green-600">
+                                    <i class="fas fa-thumbs-up mr-1"></i>
+                                    15
+                                </button>
+                                <button class="text-gray-500 hover:text-blue-600">
+                                    <i class="fas fa-comment mr-1"></i>
+                                    Balas
+                                </button>
+                                <span class="text-orange-600">
+                                    <i class="fas fa-clock mr-1"></i>
+                                    Menunggu Jawaban
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Discussions -->
+            <div class="text-center mt-4">
+                <button class="text-green-600 text-sm font-medium">
+                    Lihat Diskusi Lainnya
+                </button>
+            </div>
+        </div>
+
+        <!-- Related Products -->
+        <div class="bg-white mt-2 p-4">
+            <h3 class="font-medium text-sm mb-3">Produk Terkait</h3>
+            <div class="flex gap-3 overflow-x-auto">
+                <div class="flex-shrink-0 w-32">
+                    <img src="https://picsum.photos/seed/related1/120/120.jpg" alt="Related" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">RF Beauty Device Pro</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.7</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp1.850.000</p>
+                </div>
+                <div class="flex-shrink-0 w-32">
+                    <img src="https://picsum.photos/seed/related2/120/120.jpg" alt="Related" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">Face Lifting Machine</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.8</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp2.100.000</p>
+                </div>
+                <div class="flex-shrink-0 w-32">
+                    <img src="https://picsum.photos/seed/related3/120/120.jpg" alt="Related" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">Skin Tightening Device</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.9</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp3.200.000</p>
+                </div>
+                <div class="flex-shrink-0 w-32">
+                    <img src="https://picsum.photos/seed/related4/120/120.jpg" alt="Related" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">Anti Aging Device</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.6</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp2.750.000</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lainnya dari Toko -->
+        <div class="bg-white mt-2 p-4">
+            <div class="flex items-center justify-between mb-3">
+                <h3 class="font-medium text-sm">Lainnya di toko ini</h3>
+                <button class="text-green-600 text-sm">Lihat Semua</button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <img src="https://picsum.photos/seed/store1/150/150.jpg" alt="Store Product" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">Microdermabrasion Machine</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.8</span>
+                        <span class="text-xs text-gray-400">| 50+ terjual</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp1.950.000</p>
+                </div>
+                <div>
+                    <img src="https://picsum.photos/seed/store2/150/150.jpg" alt="Store Product" class="w-full h-32 object-cover rounded-lg mb-2">
+                    <p class="text-xs text-gray-900 line-clamp-2">LED Light Therapy Mask</p>
+                    <div class="flex items-center gap-1 mb-1">
+                        <i class="fas fa-star text-yellow-400 text-xs"></i>
+                        <span class="text-xs text-gray-600">4.9</span>
+                        <span class="text-xs text-gray-400">| 100+ terjual</span>
+                    </div>
+                    <p class="text-sm font-bold text-red-500">Rp2.350.000</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Full Screen Cart Section (Hidden by default) -->
+    <div id="cartSection" class="fixed inset-0 z-50 hidden">
+        <!-- Cart Content Full Screen -->
+        <div class="fullscreen-cart absolute inset-0 bg-white">
+            <!-- Cart Header -->
+            <div class="bg-white border-b px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleCart()" class="text-gray-700">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </button>
+                    <h3 class="text-lg font-semibold">Keranjang Saya</h3>
+                </div>
+                <button class="text-green-600 text-sm font-medium">
+                    Hapus Semua
+                </button>
+            </div>
+            
+            <!-- Shipping Address -->
+            <div class="bg-green-50 px-4 py-3 border-b">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-map-marker-alt text-green-600"></i>
+                        <div>
+                            <div class="text-sm font-medium">Dikirim ke</div>
+                            <div class="text-xs text-gray-600">Rumah - John Doe</div>
+                        </div>
+                    </div>
+                    <button class="text-green-600 text-sm">Ubah</button>
+                </div>
+            </div>
+            
+            <!-- Cart Items -->
+            <div class="overflow-y-auto" style="height: calc(100vh - 280px);">
+                <!-- Cart Item 1 -->
+                <div class="p-4 border-b">
+                    <div class="flex gap-3">
+                        <div class="placeholder-image w-20 h-20 rounded"></div>
+                        <div class="flex-1">
+                            <div class="placeholder-text h-4 w-full rounded mb-1"></div>
+                            <div class="text-xs text-gray-600 mb-2">3 Polar, Putih</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center">
+                                        <i class="fas fa-minus text-xs"></i>
+                                    </button>
+                                    <span class="text-sm">1</span>
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center">
+                                        <i class="fas fa-plus text-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="text-red-500 font-semibold">Rp2.450.000</div>
+                            </div>
+                        </div>
+                        <button class="text-gray-400">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Cart Item 2 -->
+                <div class="p-4 border-b">
+                    <div class="flex gap-3">
+                        <div class="placeholder-image w-20 h-20 rounded"></div>
+                        <div class="flex-1">
+                            <div class="placeholder-text h-4 w-full rounded mb-1"></div>
+                            <div class="text-xs text-gray-600 mb-2">6 Polar, Hitam</div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center">
+                                        <i class="fas fa-minus text-xs"></i>
+                                    </button>
+                                    <span class="text-sm">1</span>
+                                    <button class="w-6 h-6 rounded-full border flex items-center justify-center">
+                                        <i class="fas fa-plus text-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="text-red-500 font-semibold">Rp3.200.000</div>
+                            </div>
+                        </div>
+                        <button class="text-gray-400">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Voucher Section -->
+                <div class="p-4 border-b">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-ticket-alt text-orange-500"></i>
+                            <span class="text-sm font-medium">Gunakan Voucher</span>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400 text-sm"></i>
+                    </div>
+                    <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <div class="text-sm font-medium text-orange-700">DISKON50RB</div>
+                                <div class="text-xs text-gray-600">Min. belanja Rp100.000</div>
+                            </div>
+                            <button class="text-orange-600 text-sm">Pakai</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Cart Summary Fixed Bottom -->
+            <div class="absolute bottom-0 left-0 right-0 bg-white border-t">
+                <div class="p-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Subtotal (2 barang)</span>
+                        <span>Rp5.650.000</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span class="text-gray-600">Diskon</span>
+                        <span class="text-green-600">-Rp565.000</span>
+                    </div>
+                    <div class="flex justify-between font-semibold text-base border-t pt-2">
+                        <span>Total</span>
+                        <span class="text-red-500">Rp5.085.000</span>
+                    </div>
+                </div>
+                
+                <!-- Checkout Button -->
+                <div class="p-4 bg-white border-t">
+                    <button class="w-full tokopedia-green text-white py-3 rounded-lg font-medium text-lg">
+                        Checkout (2)
+                    </button>
+                    <button onclick="toggleCart()" class="w-full mt-3 text-green-600 text-sm">
+                        + Tambah Barang Lainnya
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Variant Bottom Sheet (Hidden by default) -->
+    <div id="variantSheet" class="fixed inset-0 z-50 hidden">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black bg-opacity-50" onclick="closeVariantSheet()"></div>
+        
+        <!-- Variant Sheet Content -->
+        <div class="variant-sheet absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[90vh] overflow-hidden">
+            <!-- Variant Header -->
+            <div class="flex items-center justify-between p-4 border-b">
+                <div class="flex items-center gap-3">
+                    <button onclick="closeVariantSheet()" class="text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <h3 class="text-lg font-semibold">Pilih Varian</h3>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="flex gap-3 p-4 border-b">
+                <div class="placeholder-image w-20 h-20 rounded"></div>
+                <div class="flex-1">
+                    <div class="placeholder-text h-5 w-full rounded mb-1"></div>
+                    <div class="flex items-baseline gap-2">
+                        <div class="text-xl font-bold text-red-500">Rp2.450.000</div>
+                        <div class="text-sm text-gray-500 line-through">Rp3.500.000</div>
+                        <span class="bg-red-100 text-red-600 text-xs px-2 py-1 rounded">30%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Variant Options -->
+            <div class="p-4 overflow-y-auto" style="max-height: calc(90vh - 280px);">
+                <!-- Tipe Variant -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium mb-3">Tipe</h4>
+                    <div class="space-y-2">
+                        <button class="variant-option w-full p-3 border rounded-lg text-left flex items-center justify-between selected" onclick="selectVariant(this, '3 Polar')">
+                            <span>3 Polar</span>
+                            <i class="fas fa-check text-green-600"></i>
+                        </button>
+                        <button class="variant-option w-full p-3 border rounded-lg text-left flex items-center justify-between" onclick="selectVariant(this, '6 Polar')">
+                            <span>6 Polar</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Warna Variant -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium mb-3">Warna</h4>
+                    <div class="space-y-2">
+                        <button class="variant-option w-full p-3 border rounded-lg text-left flex items-center justify-between selected" onclick="selectVariant(this, 'Putih')">
+                            <span>Putih</span>
+                            <i class="fas fa-check text-green-600"></i>
+                        </button>
+                        <button class="variant-option w-full p-3 border rounded-lg text-left flex items-center justify-between" onclick="selectVariant(this, 'Hitam')">
+                            <span>Hitam</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quantity -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-medium mb-3">Jumlah</h4>
+                    <div class="flex items-center justify-between p-3 border rounded-lg">
+                        <span class="text-sm">Jumlah</span>
+                        <div class="flex items-center gap-3">
+                            <button class="w-8 h-8 rounded-full border flex items-center justify-center" onclick="updateVariantQuantity(-1)">
+                                <i class="fas fa-minus text-xs"></i>
+                            </button>
+                            <span class="font-medium" id="variantQuantity">1</span>
+                            <button class="w-8 h-8 rounded-full border flex items-center justify-center" onclick="updateVariantQuantity(1)">
+                                <i class="fas fa-plus text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stock Info -->
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
+                    <div class="flex items-center gap-2 text-green-700 text-sm">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Stok tersisa 50+ barang</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Variant Actions -->
+            <div class="border-t p-4 bg-white">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm text-gray-600">Subtotal</span>
+                    <span class="text-lg font-bold text-red-500" id="variantSubtotal">Rp2.450.000</span>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-3">
+                    <button onclick="addToCart()" class="flex-1 bg-white border border-green-600 text-green-600 py-3 rounded-lg font-medium">
+                        <i class="fas fa-shopping-cart mr-2"></i>
+                        Masukkan Keranjang
+                    </button>
+                    <button onclick="buyNow()" class="flex-1 tokopedia-green text-white py-3 rounded-lg font-medium">
+                        Beli Sekarang
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t">
+        <!-- Extra Protection -->
+        <div class="flex items-center justify-between px-4 py-2 bg-blue-50">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-shield-alt text-blue-600"></i>
+                <div class="placeholder-text h-3 w-48 rounded"></div>
+            </div>
+            <button class="text-blue-600 text-xs">
+                <i class="fas fa-info-circle"></i>
+            </button>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="p-4 flex gap-3">
+            <button onclick="openVariantSheet('cart')" class="flex-1 bg-white border border-green-600 text-green-600 py-3 rounded-lg font-medium">
+                <i class="fas fa-shopping-cart mr-2"></i>
+                Masukkan Keranjang
+            </button>
+            <button onclick="openVariantSheet('buy')" class="flex-1 tokopedia-green text-white py-3 rounded-lg font-medium">
+                Beli Sekarang
+            </button>
+        </div>
+        
+        <!-- Report Button -->
+        <div class="px-4 pb-2 text-center">
+            <button class="text-gray-500 text-xs">
+                <i class="fas fa-flag mr-1"></i>
+                Laporkan
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Cart functions
+        function toggleCart() {
+            const cartSection = document.getElementById('cartSection');
+            cartSection.classList.toggle('hidden');
+            
+            // Add/remove active class for animation
+            const cartOverlay = cartSection.querySelector('.fullscreen-cart');
+            if (!cartSection.classList.contains('hidden')) {
+                setTimeout(() => {
+                    cartOverlay.classList.add('active');
+                }, 10);
+            } else {
+                cartOverlay.classList.remove('active');
+            }
+        }
+        
+        // Variant selection functions
+        function selectVariant(button) {
+            // Remove selected state from siblings
+            const siblings = button.parentElement.querySelectorAll('.variant-option');
+            siblings.forEach(sibling => {
+                sibling.classList.remove('selected');
+                sibling.querySelector('.fas')?.remove();
+            });
+            
+            // Add selected state to clicked button
+            button.classList.add('selected');
+            const checkIcon = document.createElement('i');
+            checkIcon.className = 'fas fa-check text-green-600';
+            button.appendChild(checkIcon);
+        }
+        
+        // Quantity update functions
+        function updateQuantity(change) {
+            const quantityElement = document.getElementById('quantity');
+            let currentQuantity = parseInt(quantityElement.textContent);
+            currentQuantity += change;
+            
+            if (currentQuantity < 1) currentQuantity = 1;
+            if (currentQuantity > 10) currentQuantity = 10;
+            
+            quantityElement.textContent = currentQuantity;
+        }
+        
+        // Variant sheet functions
+        let variantAction = 'cart'; // 'cart' or 'buy'
+        let selectedVariant = {
+            tipe: '3 Polar',
+            warna: 'Putih',
+            quantity: 1,
+            price: 2450000
+        };
+        
+        function openVariantSheet(action) {
+            variantAction = action;
+            const variantSheet = document.getElementById('variantSheet');
+            variantSheet.classList.remove('hidden');
+            
+            // Add active class for animation
+            setTimeout(() => {
+                variantSheet.querySelector('.variant-sheet').classList.add('active');
+            }, 10);
+        }
+        
+        function closeVariantSheet() {
+            const variantSheet = document.getElementById('variantSheet');
+            const sheet = variantSheet.querySelector('.variant-sheet');
+            sheet.classList.remove('active');
+            
+            setTimeout(() => {
+                variantSheet.classList.add('hidden');
+            }, 300);
+        }
+        
+        function selectVariant(button, value) {
+            // Remove selected state from siblings
+            const parent = button.parentElement;
+            parent.querySelectorAll('.variant-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.fas')?.remove();
+            });
+            
+            // Add selected state to clicked button
+            button.classList.add('selected');
+            const checkIcon = document.createElement('i');
+            checkIcon.className = 'fas fa-check text-green-600';
+            button.appendChild(checkIcon);
+            
+            // Update selected variant
+            if (parent.previousElementSibling?.textContent === 'Tipe') {
+                selectedVariant.tipe = value;
+            } else if (parent.previousElementSibling?.textContent === 'Warna') {
+                selectedVariant.warna = value;
+            }
+            
+            // Update subtotal
+            updateVariantSubtotal();
+        }
+        
+        function updateVariantQuantity(change) {
+            const quantityElement = document.getElementById('variantQuantity');
+            let currentQuantity = parseInt(quantityElement.textContent);
+            currentQuantity += change;
+            
+            if (currentQuantity < 1) currentQuantity = 1;
+            if (currentQuantity > 10) currentQuantity = 10;
+            
+            quantityElement.textContent = currentQuantity;
+            selectedVariant.quantity = currentQuantity;
+            
+            // Update subtotal
+            updateVariantSubtotal();
+        }
+        
+        function updateVariantSubtotal() {
+            const subtotal = selectedVariant.price * selectedVariant.quantity;
+            document.getElementById('variantSubtotal').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+        }
+        
+        function addToCart() {
+            // Here you would normally add the item to cart
+            alert(`Produk ditambahkan ke keranjang:\n${selectedVariant.tipe}, ${selectedVariant.warna}\nJumlah: ${selectedVariant.quantity}`);
+            closeVariantSheet();
+        }
+        
+        function buyNow() {
+            // Here you would normally proceed to checkout
+            alert(`Melanjutkan ke pembayaran:\n${selectedVariant.tipe}, ${selectedVariant.warna}\nJumlah: ${selectedVariant.quantity}\nTotal: Rp${(selectedVariant.price * selectedVariant.quantity).toLocaleString('id-ID')}`);
+            closeVariantSheet();
+        }
+        
+        // Discussion functions
+        function showDiscussionForm() {
+            document.getElementById('discussionForm').classList.remove('hidden');
+        }
+        
+        function hideDiscussionForm() {
+            document.getElementById('discussionForm').classList.add('hidden');
+        }
+        
+        function submitDiscussion() {
+            // Here you would normally submit the discussion
+            alert('Diskusi berhasil dikirim!');
+            hideDiscussionForm();
+        }
+    </script>
+</body>
+</html>
