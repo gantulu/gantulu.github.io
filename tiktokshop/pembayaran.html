@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembayaran - Tokopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Tokopedia Colors */
+        :root {
+            --tokopedia-green: #00AA5B;
+            --tokopedia-dark-green: #00803F;
+            --tokopedia-red: #E51B23;
+            --tokopedia-orange: #FF7F23;
+            --tokopedia-light-gray: #F0F0F0;
+            --tokopedia-gray: #757575;
+        }
+        
+        .tokopedia-green { background-color: var(--tokopedia-green); }
+        .tokopedia-dark-green { background-color: var(--tokopedia-dark-green); }
+        .tokopedia-red { background-color: var(--tokopedia-red); }
+        .tokopedia-orange { background-color: var(--tokopedia-orange); }
+        
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom animations */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Copy button */
+        .copy-button {
+            transition: all 0.2s ease;
+        }
+        
+        .copy-button:hover {
+            background-color: var(--tokopedia-green);
+            color: white;
+        }
+        
+        .copy-button.copied {
+            background-color: var(--tokopedia-green);
+            color: white;
+        }
+        
+        /* Payment status badge */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-pending {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+        
+        .status-success {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+        
+        /* Countdown timer */
+        .countdown {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: var(--tokopedia-red);
+        }
+        
+        /* Payment steps */
+        .step-item {
+            position: relative;
+            padding-left: 32px;
+        }
+        
+        .step-item::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: #e0e0e0;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .step-item.active::before {
+            background-color: var(--tokopedia-green);
+            border-color: var(--tokopedia-green);
+        }
+        
+        .step-item.completed::before {
+            background-color: var(--tokopedia-green);
+            border-color: var(--tokopedia-green);
+        }
+        
+        .step-item.completed::after {
+            content: '✓';
+            position: absolute;
+            left: 12px;
+            top: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Virtual account card */
+        .va-card {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .va-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        }
+        
+        /* Bank logo */
+        .bank-logo-large {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: white;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: var(--tokopedia-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Floating action button */
+        .fab {
+            position: fixed;
+            bottom: 80px;
+            right: 16px;
+            z-index: 40;
+        }
+        
+        /* Button hover effects */
+        .btn-hover {
+            transition: all 0.2s ease;
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-md mx-auto bg-white min-h-screen relative">
+        <!-- Header -->
+        <header class="tokopedia-green text-white sticky top-0 z-50">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 -ml-2" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <h1 class="text-base font-semibold">Pembayaran</h1>
+                </div>
+                <button class="p-2">
+                    <i class="fas fa-question-circle text-lg"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Payment Status Banner -->
+        <div class="bg-yellow-50 border-b border-yellow-200 px-4 py-3">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-clock text-yellow-600"></i>
+                <div class="flex-1">
+                    <p class="text-sm font-medium text-yellow-800">Selesaikan pembayaran dalam</p>
+                    <p class="countdown text-lg" id="countdown">23:59:59</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="pb-32">
+            <!-- Order Information -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Informasi Pesanan</h2>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="text-xs text-gray-500">Nomor Pesanan</p>
+                            <p class="text-sm font-semibold" id="orderNumber">ORD-1234567890</p>
+                        </div>
+                        <span class="status-badge status-pending" id="paymentStatus">Menunggu Pembayaran</span>
+                    </div>
+                    
+                    <div class="space-y-3" id="orderItems">
+                        <!-- Order items will be dynamically added here -->
+                    </div>
+                    
+                    <div class="border-t pt-3 mt-3">
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span id="subtotal">Rp0</span>
+                        </div>
+                        <div class="flex justify-between text-sm mb-1">
+                            <span class="text-gray-600">Ongkos Kirim</span>
+                            <span id="shippingCost">Rp0</span>
+                        </div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="text-gray-600">Voucher</span>
+                            <span class="text-red-500" id="voucherDiscount">-Rp0</span>
+                        </div>
+                        <div class="flex justify-between font-semibold pt-2 border-t">
+                            <span>Total Pembayaran</span>
+                            <span class="text-lg text-red-500" id="totalPayment">Rp0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Metode Pembayaran</h2>
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center space-x-3">
+                        <img id="paymentBankLogo" src="" class="w-12 h-12 object-contain rounded" alt="Bank">
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold" id="paymentBankName">Virtual Account</p>
+                            <p class="text-xs text-gray-500" id="paymentType">Pembayaran melalui ATM/Internet Banking/Mobile Banking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virtual Account Information -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Detail Pembayaran</h2>
+                </div>
+                <div class="p-4">
+                    <div class="va-card mb-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <p class="text-xs text-gray-600 mb-1">Nomor Virtual Account</p>
+                                <p class="text-2xl font-bold" id="vaNumber">000000000000</p>
+                            </div>
+                            <img id="vaBankLogo" src="" class="bank-logo-large" alt="Bank">
+                        </div>
+                        <button onclick="copyVANumber()" class="copy-button w-full py-2 px-4 border-2 border-gray-300 rounded-lg font-medium text-sm flex items-center justify-center space-x-2" id="copyButton">
+                            <i class="fas fa-copy"></i>
+                            <span id="copyButtonText">Salin Nomor VA</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Payment Instructions -->
+                    <div class="space-y-4">
+                        <h3 class="text-sm font-semibold">Cara Pembayaran</h3>
+                        
+                        <!-- ATM Instructions -->
+                        <div class="border rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-credit-card text-green-600"></i>
+                                <h4 class="text-sm font-medium">Melalui ATM</h4>
+                            </div>
+                            <ol class="space-y-1 text-xs text-gray-700 list-decimal list-inside">
+                                <li>Masukkan kartu ATM dan PIN</li>
+                                <li>Pilih menu <strong>Transaksi Lainnya</strong> → <strong>Transfer</strong> → <strong>Ke Rekening Bank Lain</strong></li>
+                                <li>Masukkan nomor Virtual Account: <strong id="vaNumberATM">000000000000</strong></li>
+                                <li>Masukkan jumlah pembayaran sesuai total tagihan</li>
+                                <li>Konfirmasi detail pembayaran dan selesaikan transaksi</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- Internet Banking Instructions -->
+                        <div class="border rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-globe text-blue-600"></i>
+                                <h4 class="text-sm font-medium">Melalui Internet Banking</h4>
+                            </div>
+                            <ol class="space-y-1 text-xs text-gray-700 list-decimal list-inside">
+                                <li>Login ke Internet Banking</li>
+                                <li>Pilih menu <strong>Transfer</strong> → <strong>Transfer ke Rekening Bank Lain</strong></li>
+                                <li>Pilih bank tujuan dan masukkan nomor Virtual Account: <strong id="vaNumberIB">000000000000</strong></li>
+                                <li>Masukkan jumlah pembayaran sesuai total tagihan</li>
+                                <li>Ikuti instruksi untuk menyelesaikan pembayaran</li>
+                            </ol>
+                        </div>
+                        
+                        <!-- Mobile Banking Instructions -->
+                        <div class="border rounded-lg p-3">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <i class="fas fa-mobile-alt text-purple-600"></i>
+                                <h4 class="text-sm font-medium">Melalui Mobile Banking</h4>
+                            </div>
+                            <ol class="space-y-1 text-xs text-gray-700 list-decimal list-inside">
+                                <li>Buka aplikasi Mobile Banking</li>
+                                <li>Pilih menu <strong>Transfer</strong> → <strong>Antar Bank</strong></li>
+                                <li>Masukkan nomor Virtual Account: <strong id="vaNumberMB">000000000000</strong></li>
+                                <li>Masukkan jumlah pembayaran sesuai total tagihan</li>
+                                <li>Masukkan PIN dan konfirmasi pembayaran</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Important Notes -->
+            <div class="bg-blue-50 border border-blue-200 mb-2">
+                <div class="px-4 py-3">
+                    <div class="flex items-start space-x-2">
+                        <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+                        <div>
+                            <h3 class="text-sm font-semibold text-blue-800 mb-1">Penting</h3>
+                            <ul class="text-xs text-blue-700 space-y-1">
+                                <li>• Pastikan nomor Virtual Account benar sebelum melakukan pembayaran</li>
+                                <li>• Pembayaran akan diproses secara otomatis setelah transfer berhasil</li>
+                                <li>• Simpan bukti pembayaran sebagai arsip</li>
+                                <li>• Jika ada kendala, hubungi customer service</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Service -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Butuh Bantuan?</h2>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button class="btn-hover bg-green-50 text-green-700 py-3 px-4 rounded-lg text-sm font-medium flex flex-col items-center space-y-1">
+                            <i class="fas fa-comments text-lg"></i>
+                            <span>Live Chat</span>
+                        </button>
+                        <button class="btn-hover bg-blue-50 text-blue-700 py-3 px-4 rounded-lg text-sm font-medium flex flex-col items-center space-y-1">
+                            <i class="fas fa-phone text-lg"></i>
+                            <span>Call Center</span>
+                        </button>
+                    </div>
+                    <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                        <p class="text-xs text-gray-600 mb-1">Jam Operasional:</p>
+                        <p class="text-xs font-medium">Senin - Minggu: 08:00 - 22:00 WIB</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Action Bar -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t max-w-md mx-auto shadow-lg">
+            <div class="p-4">
+                <button onclick="checkPaymentStatus()" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors btn-hover">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Cek Status Pembayaran
+                </button>
+                <p class="text-xs text-center text-gray-500 mt-2">
+                    Pembayaran akan dikonfirmasi maksimal 10 menit setelah transfer
+                </p>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <div class="fab">
+            <button class="w-14 h-14 bg-green-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-green-700 transition-all btn-hover">
+                <i class="fas fa-headset text-xl"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Bank data for logos
+        const bankLogos = {
+            'danamon': 'https://armadatownsquare.com/wp-content/uploads/2015/06/download-logo-bank-danamon.png',
+            'maybank': 'https://lokerbumn.com/wp-content/uploads/2024/01/PT-Bank-Maybank-Indonesia-Tbk.jpg',
+            'permata': 'https://files.klob.id/public/mco01/kudgzpfx/Logo_Bank_Permata_(1).png',
+            'cimb_niaga': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/CIMB_Niaga_logo.svg/2560px-CIMB_Niaga_logo.svg.png',
+            'bni_va': 'https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/1280px-BNI_logo.svg.png',
+            'mandiri_va': 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1200px-Bank_Mandiri_logo_2016.svg.png',
+            'briva': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHVgSISwM9A9WhH7aV2RKjSOJT7ML-aB6yPA&s'
+        };
+        
+        // Get order data from localStorage
+        let orderData = null;
+        let virtualAccount = null;
+        let countdownInterval = null;
+        
+        // Initialize payment page
+        function initPaymentPage() {
+            // Get the latest order
+            const orders = JSON.parse(localStorage.getItem('tokopediaOrders') || '[]');
+            if (orders.length === 0) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            orderData = orders[orders.length - 1]; // Get the latest order
+            
+            // Get virtual account data
+            const savedVA = localStorage.getItem('selectedVirtualAccount');
+            if (savedVA) {
+                virtualAccount = JSON.parse(savedVA);
+            } else {
+                // Default VA if not found
+                virtualAccount = {
+                    bank: 'bni_va',
+                    vaNumber: '8848066565404096'
+                };
+            }
+            
+            renderPaymentInfo();
+            startCountdown();
+        }
+        
+        // Render payment information
+        function renderPaymentInfo() {
+            // Order number
+            document.getElementById('orderNumber').textContent = orderData.id;
+            
+            // Order items
+            const orderItemsContainer = document.getElementById('orderItems');
+            let orderItemsHTML = '';
+            
+            orderData.items.forEach(item => {
+                orderItemsHTML += `
+                    <div class="flex items-start space-x-3">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium line-clamp-2 mb-1">${item.name}</h4>
+                            <p class="text-xs text-gray-500 mb-1">Varian: ${item.variant}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">${item.quantity} barang</span>
+                                <span class="text-sm font-bold">Rp${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            orderItemsContainer.innerHTML = orderItemsHTML;
+            
+            // Payment details
+            const subtotal = orderData.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            document.getElementById('subtotal').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('shippingCost').textContent = `Rp${orderData.shippingCost.toLocaleString('id-ID')}`;
+            document.getElementById('voucherDiscount').textContent = `-Rp${orderData.voucherDiscount.toLocaleString('id-ID')}`;
+            document.getElementById('totalPayment').textContent = `Rp${orderData.total.toLocaleString('id-ID')}`;
+            
+            // Payment method
+            const bankName = virtualAccount.bank.replace(/_/g, ' ').toUpperCase();
+            document.getElementById('paymentBankName').textContent = bankName;
+            document.getElementById('paymentBankLogo').src = bankLogos[virtualAccount.bank] || '';
+            document.getElementById('vaBankLogo').src = bankLogos[virtualAccount.bank] || '';
+            
+            // Virtual account number
+            document.getElementById('vaNumber').textContent = virtualAccount.vaNumber;
+            document.getElementById('vaNumberATM').textContent = virtualAccount.vaNumber;
+            document.getElementById('vaNumberIB').textContent = virtualAccount.vaNumber;
+            document.getElementById('vaNumberMB').textContent = virtualAccount.vaNumber;
+        }
+        
+        // Copy VA number
+        function copyVANumber() {
+            const vaNumber = virtualAccount.vaNumber;
+            navigator.clipboard.writeText(vaNumber).then(() => {
+                const button = document.getElementById('copyButton');
+                const buttonText = document.getElementById('copyButtonText');
+                
+                button.classList.add('copied');
+                buttonText.innerHTML = '<i class="fas fa-check mr-1"></i>Tersalin!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    buttonText.innerHTML = '<i class="fas fa-copy mr-1"></i>Salin Nomor VA';
+                }, 2000);
+            }).catch(err => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = vaNumber;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                const button = document.getElementById('copyButton');
+                const buttonText = document.getElementById('copyButtonText');
+                
+                button.classList.add('copied');
+                buttonText.innerHTML = '<i class="fas fa-check mr-1"></i>Tersalin!';
+                
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    buttonText.innerHTML = '<i class="fas fa-copy mr-1"></i>Salin Nomor VA';
+                }, 2000);
+            });
+        }
+        
+        // Start countdown timer
+        function startCountdown() {
+            // Set expiry time to 24 hours from now
+            const expiryTime = new Date(orderData.date).getTime() + (24 * 60 * 60 * 1000);
+            
+            countdownInterval = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = expiryTime - now;
+                
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('countdown').textContent = 'Kadaluarsa';
+                    document.getElementById('paymentStatus').textContent = 'Kadaluarsa';
+                    document.getElementById('paymentStatus').className = 'status-badge';
+                    return;
+                }
+                
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('countdown').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        // Check payment status
+        function checkPaymentStatus() {
+            // Show loading state
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner spinner mr-2"></i>Mengecek...';
+            button.disabled = true;
+            
+            // Simulate payment check (in real app, this would call an API)
+            setTimeout(() => {
+                // Randomly simulate payment success for demo
+                const isPaid = Math.random() > 0.7; // 30% chance of payment success
+                
+                if (isPaid) {
+                    // Update order status
+                    orderData.status = 'paid';
+                    orderData.paidAt = new Date().toISOString();
+                    
+                    // Update in localStorage
+                    const orders = JSON.parse(localStorage.getItem('tokopediaOrders') || '[]');
+                    const orderIndex = orders.findIndex(o => o.id === orderData.id);
+                    if (orderIndex !== -1) {
+                        orders[orderIndex] = orderData;
+                        localStorage.setItem('tokopediaOrders', JSON.stringify(orders));
+                    }
+                    
+                    // Show success message
+                    showNotification('Pembayaran berhasil! Mengalihkan ke halaman sukses...', 'success');
+                    
+                    // Redirect to success page
+                    setTimeout(() => {
+                        window.location.href = '/order-success.html';
+                    }, 2000);
+                } else {
+                    // Show pending message
+                    showNotification('Pembayaran belum diterima. Silakan coba lagi beberapa saat.', 'warning');
+                    
+                    // Reset button
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            }, 2000);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            let bgColor = 'bg-blue-600';
+            let icon = 'fa-info-circle';
+            
+            if (type === 'success') {
+                bgColor = 'bg-green-600';
+                icon = 'fa-check-circle';
+            } else if (type === 'warning') {
+                bgColor = 'bg-yellow-600';
+                icon = 'fa-exclamation-triangle';
+            } else if (type === 'error') {
+                bgColor = 'bg-red-600';
+                icon = 'fa-exclamation-circle';
+            }
+            
+            notification.className = `fixed top-20 left-4 right-4 ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg z-50 slide-up`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${icon}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Auto-check payment status every 30 seconds
+        function autoCheckPayment() {
+            setInterval(() => {
+                // Only check if order is still pending
+                if (orderData && orderData.status === 'pending') {
+                    // In real app, this would call an API to check payment status
+                    console.log('Auto-checking payment status...');
+                }
+            }, 30000); // Check every 30 seconds
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initPaymentPage();
+            autoCheckPayment();
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+        });
+    </script>
+</body>
+</html>

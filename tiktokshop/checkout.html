@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Tokopedia</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom Tokopedia Colors */
+        :root {
+            --tokopedia-green: #00AA5B;
+            --tokopedia-dark-green: #00803F;
+            --tokopedia-red: #E51B23;
+            --tokopedia-orange: #FF7F23;
+            --tokopedia-light-gray: #F0F0F0;
+            --tokopedia-gray: #757575;
+        }
+        
+        .tokopedia-green { background-color: var(--tokopedia-green); }
+        .tokopedia-dark-green { background-color: var(--tokopedia-dark-green); }
+        .tokopedia-red { background-color: var(--tokopedia-red); }
+        .tokopedia-orange { background-color: var(--tokopedia-orange); }
+        
+        /* Hide scrollbar but keep functionality */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Custom animations */
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Radio button custom style */
+        .radio-custom {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .radio-custom:checked {
+            border-color: var(--tokopedia-green);
+        }
+        
+        .radio-custom:checked::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 8px;
+            height: 8px;
+            background-color: var(--tokopedia-green);
+            border-radius: 50%;
+        }
+        
+        /* Checkbox custom style */
+        .checkbox-custom {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .checkbox-custom:checked {
+            border-color: var(--tokopedia-green);
+            background-color: var(--tokopedia-green);
+        }
+        
+        .checkbox-custom:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+        }
+        
+        /* Input field focus style */
+        .input-field {
+            transition: all 0.2s ease;
+        }
+        
+        .input-field:focus {
+            border-color: var(--tokopedia-green);
+            box-shadow: 0 0 0 3px rgba(0, 170, 91, 0.1);
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+        
+        .card-hover:hover {
+            border-color: var(--tokopedia-green);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        /* Step indicator */
+        .step-indicator {
+            position: relative;
+        }
+        
+        .step-indicator::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 100%;
+            height: 2px;
+            background-color: #e0e0e0;
+            z-index: -1;
+        }
+        
+        .step-indicator:last-child::after {
+            display: none;
+        }
+        
+        .step-indicator.active::after {
+            background-color: var(--tokopedia-green);
+        }
+        
+        /* Payment method card */
+        .payment-method {
+            transition: all 0.2s ease;
+        }
+        
+        .payment-method:hover {
+            border-color: var(--tokopedia-green);
+        }
+        
+        .payment-method.selected {
+            border-color: var(--tokopedia-green);
+            background-color: rgba(0, 170, 91, 0.05);
+        }
+        
+        /* Disabled payment method */
+        .payment-method.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .payment-method.disabled:hover {
+            border-color: #e0e0e0;
+            box-shadow: none;
+        }
+        
+        /* Bank logo styling */
+        .bank-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 4px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bank-logo-text {
+            font-size: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        /* Shipping dropdown */
+        .shipping-dropdown {
+            position: relative;
+        }
+        
+        .shipping-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            z-index: 20;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .shipping-dropdown.active .shipping-dropdown-content {
+            display: block;
+        }
+        
+        .courier-option {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .courier-option:hover {
+            background-color: #f8f8f8;
+        }
+        
+        .courier-option:last-child {
+            border-bottom: none;
+        }
+        
+        .courier-option.selected {
+            background-color: rgba(0, 170, 91, 0.05);
+        }
+        
+        /* Service dropdown */
+        .service-dropdown {
+            position: relative;
+        }
+        
+        .service-dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 30;
+            margin-top: 4px;
+        }
+        
+        .service-dropdown.active .service-dropdown-content {
+            display: block;
+        }
+        
+        .service-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 13px;
+        }
+        
+        .service-option:hover {
+            background-color: #f8f8f8;
+        }
+        
+        .service-option.selected {
+            background-color: rgba(0, 170, 91, 0.05);
+            color: var(--tokopedia-green);
+            font-weight: 500;
+        }
+        
+        /* Courier logo */
+        .courier-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+        
+        /* Price range */
+        .price-range {
+            font-size: 11px;
+            color: #757575;
+        }
+        
+        /* Expand icon */
+        .expand-icon {
+            transition: transform 0.2s;
+        }
+        
+        .shipping-dropdown.active .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .service-dropdown.active .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Address form overlay */
+        .address-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 100;
+            display: none;
+        }
+        
+        .address-form-overlay.active {
+            display: block;
+        }
+        
+        /* Address form page */
+        .address-form-page {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            max-width: 100%;
+            background-color: white;
+            z-index: 110;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-out;
+            overflow-y: auto;
+        }
+        
+        .address-form-page.active {
+            transform: translateX(0);
+        }
+        
+        /* Form input styling */
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .form-input:focus {
+            border-color: var(--tokopedia-green);
+            box-shadow: 0 0 0 3px rgba(0, 170, 91, 0.1);
+            outline: none;
+        }
+        
+        .form-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        /* Map placeholder */
+        .map-placeholder {
+            height: 200px;
+            background-color: #f0f0f0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+        
+        /* Button styling */
+        .btn-primary {
+            background-color: var(--tokopedia-green);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--tokopedia-dark-green);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--tokopedia-green);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            border: 1px solid var(--tokopedia-green);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(0, 170, 91, 0.05);
+        }
+        
+        /* Empty address state */
+        .empty-address {
+            text-align: center;
+            padding: 24px;
+            color: #757575;
+        }
+        
+        .empty-address-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            color: #e0e0e0;
+        }
+        
+        /* Loading state */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0,0,0,.1);
+            border-radius: 50%;
+            border-top-color: var(--tokopedia-green);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-md mx-auto bg-white min-h-screen relative">
+        <!-- Header -->
+        <header class="tokopedia-green text-white sticky top-0 z-50">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 -ml-2" onclick="window.history.back()">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <h1 class="text-base font-semibold">Checkout</h1>
+                </div>
+            </div>
+        </header>
+
+        <!-- Progress Steps -->
+        <div class="bg-white px-4 py-3 border-b">
+            <div class="flex items-center justify-between">
+                <div class="step-indicator active flex flex-col items-center flex-1">
+                    <div class="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center text-xs font-semibold mb-1">
+                        1
+                    </div>
+                    <span class="text-xs text-green-600">Pengiriman</span>
+                </div>
+                <div class="step-indicator flex flex-col items-center flex-1">
+                    <div class="w-8 h-8 bg-gray-300 text-white rounded-full flex items-center justify-center text-xs font-semibold mb-1">
+                        2
+                    </div>
+                    <span class="text-xs text-gray-500">Pembayaran</span>
+                </div>
+                <div class="step-indicator flex flex-col items-center flex-1">
+                    <div class="w-8 h-8 bg-gray-300 text-white rounded-full flex items-center justify-center text-xs font-semibold mb-1">
+                        3
+                    </div>
+                    <span class="text-xs text-gray-500">Selesai</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="pb-24">
+            <!-- Shipping Address Section -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Alamat Pengiriman</h2>
+                </div>
+                <div class="p-4">
+                    <div id="addressContainer">
+                        <div class="empty-address">
+                            <div class="empty-address-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <p class="text-sm mb-3">Anda belum memiliki alamat pengiriman</p>
+                            <button onclick="openAddressForm()" class="w-full text-green-600 text-sm font-medium py-2 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
+                                <i class="fas fa-plus mr-1"></i> Tambah Alamat Baru
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Options Section -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Pengiriman</h2>
+                </div>
+                <div class="p-4 space-y-3">
+                    <!-- Reguler Shipping Dropdown -->
+                    <div class="shipping-dropdown" id="regulerDropdown">
+                        <div class="border rounded-lg p-3 cursor-pointer" onclick="toggleDropdown('regulerDropdown')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="shipping" class="radio-custom" value="reguler" checked>
+                                    <div>
+                                        <span class="text-sm font-medium">Reguler</span>
+                                        <p class="text-xs text-gray-600" id="regulerEstimate">Estimasi tiba 2-4 hari</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-bold text-green-600" id="regulerPrice">Rp18.000</span>
+                                    <p class="text-xs text-gray-500" id="regulerCourier">JNE REG</p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="shipping-dropdown-content" id="regulerCouriers">
+                            <!-- Couriers will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <!-- Express Shipping Dropdown -->
+                    <div class="shipping-dropdown" id="expressDropdown">
+                        <div class="border rounded-lg p-3 cursor-pointer" onclick="toggleDropdown('expressDropdown')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="shipping" class="radio-custom" value="express">
+                                    <div>
+                                        <span class="text-sm font-medium">Express</span>
+                                        <p class="text-xs text-gray-600" id="expressEstimate">Estimasi tiba 1 hari</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-bold text-green-600" id="expressPrice">Rp28.000</span>
+                                    <p class="text-xs text-gray-500" id="expressCourier">JNE YES</p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="shipping-dropdown-content" id="expressCouriers">
+                            <!-- Couriers will be dynamically added here -->
+                        </div>
+                    </div>
+
+                    <!-- Instant Courier Dropdown -->
+                    <div class="shipping-dropdown" id="instantDropdown">
+                        <div class="border rounded-lg p-3 cursor-pointer" onclick="toggleDropdown('instantDropdown')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <input type="radio" name="shipping" class="radio-custom" value="instant">
+                                    <div>
+                                        <span class="text-sm font-medium">Instant Courier</span>
+                                        <p class="text-xs text-gray-600" id="instantEstimate">Estimasi tiba 2-4 jam</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-sm font-bold text-green-600" id="instantPrice">Rp50.000</span>
+                                    <p class="text-xs text-gray-500" id="instantCourier">GoSend</p>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 expand-icon"></i>
+                            </div>
+                        </div>
+                        <div class="shipping-dropdown-content">
+                            <div class="courier-option" onclick="selectInstantCourier('GoSend', 50000, '2-4 jam')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="courier-badge badge-gosend">GoSend</span>
+                                        <div>
+                                            <p class="text-sm font-medium">GoSend Instant</p>
+                                            <p class="text-xs text-gray-600">Estimasi tiba 2-4 jam</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-bold">Rp50.000</span>
+                                </div>
+                            </div>
+                            <div class="courier-option" onclick="selectInstantCourier('GrabExpress', 55000, '2-4 jam')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="courier-badge badge-grab">Grab</span>
+                                        <div>
+                                            <p class="text-sm font-medium">GrabExpress Instant</p>
+                                            <p class="text-xs text-gray-600">Estimasi tiba 2-4 jam</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-bold">Rp55.000</span>
+                                </div>
+                            </div>
+                            <div class="courier-option" onclick="selectInstantCourier('Maxim', 48000, '3-5 jam')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="courier-badge badge-maxim">Maxim</span>
+                                        <div>
+                                            <p class="text-sm font-medium">Maxim Delivery</p>
+                                            <p class="text-xs text-gray-600">Estimasi tiba 3-5 jam</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-bold">Rp48.000</span>
+                                </div>
+                            </div>
+                            <div class="courier-option" onclick="selectInstantCourier('Paxel', 60000, '2-3 jam')">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="courier-badge badge-paxel">Paxel</span>
+                                        <div>
+                                            <p class="text-sm font-medium">Paxel Same Day</p>
+                                            <p class="text-xs text-gray-600">Estimasi tiba 2-3 jam</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-sm font-bold">Rp60.000</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Items Section -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Detail Pesanan</h2>
+                </div>
+                <div class="p-4 space-y-3" id="orderItems">
+                    <!-- Order items will be dynamically added here -->
+                </div>
+            </div>
+
+            <!-- Voucher Section -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Voucher</h2>
+                </div>
+                <div class="p-4">
+                    <div class="flex space-x-2">
+                        <input type="text" placeholder="Masukkan kode voucher" 
+                               class="flex-1 px-3 py-2 border rounded-lg text-sm input-field">
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
+                            Gunakan
+                        </button>
+                    </div>
+                    <div class="mt-3 space-y-2">
+                        <div class="flex items-center justify-between p-2 bg-orange-50 rounded-lg">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-tag text-orange-500"></i>
+                                <span class="text-sm">Flash Sale 10%</span>
+                            </div>
+                            <span class="text-sm font-bold text-orange-600">-Rp191.538</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Section -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Metode Pembayaran</h2>
+                </div>
+                <div class="p-4 space-y-3">
+                    <!-- E-Wallet Section (Disabled) -->
+                    <div class="mb-3">
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">E-Wallet</h3>
+                        <div class="space-y-2">
+                            <div class="payment-method disabled border rounded-lg p-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 bg-gray-300 rounded flex items-center justify-center">
+                                        <i class="fas fa-wallet text-white"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <span class="text-sm">E-Wallet tidak tersedia untuk produk ini</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Virtual Account Section -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-700 mb-2">Virtual Account</h3>
+                        <div class="space-y-2" id="virtualAccounts">
+                            <!-- Virtual accounts will be dynamically added here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary Section (Not Fixed) -->
+            <div class="bg-white mb-2">
+                <div class="px-4 py-3 border-b">
+                    <h2 class="text-base font-semibold">Ringkasan Belanja</h2>
+                </div>
+                <div class="p-4">
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Subtotal</span>
+                            <span id="subtotal">Rp0</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Ongkos Kirim</span>
+                            <span id="shippingCost">Rp18.000</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-600">Voucher</span>
+                            <span class="text-red-500" id="voucherDiscount">-Rp191.538</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fixed Bottom Bar with Total and Checkout Button -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white border-t max-w-md mx-auto shadow-lg">
+            <div class="p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="font-semibold">Total</span>
+                    <span class="text-xl font-bold text-red-500" id="total">Rp0</span>
+                </div>
+                <button onclick="processCheckout()" 
+                        class="w-full bg-green-600 text-white py-3 rounded-lg font-medium hover:bg-green-700 transition-colors">
+                    Buat Pesanan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Address Form Overlay -->
+    <div class="address-form-overlay" id="addressFormOverlay" onclick="closeAddressForm()"></div>
+
+    <!-- Address Form Page -->
+    <div class="address-form-page" id="addressFormPage">
+        <div class="sticky top-0 bg-white z-10 border-b">
+            <div class="flex items-center justify-between px-4 py-3">
+                <div class="flex items-center space-x-3">
+                    <button class="p-2 -ml-2" onclick="closeAddressForm()">
+                        <i class="fas fa-arrow-left text-lg"></i>
+                    </button>
+                    <h1 class="text-base font-semibold">Tambah Alamat Baru</h1>
+                </div>
+            </div>
+        </div>
+        
+        <div class="p-4">
+            <form id="addressForm">
+                <div class="form-group">
+                    <label class="form-label">Nama Penerima</label>
+                    <input type="text" class="form-input" id="recipientName" placeholder="Contoh: Andi Pratama" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Nomor Telepon</label>
+                    <input type="tel" class="form-input" id="phoneNumber" placeholder="Contoh: 08123456789" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Provinsi</label>
+                    <select class="form-input" id="pilih-provinsi" required>
+                        <option value="">--Pilih Provinsi--</option>
+                    </select>
+                    <input type="hidden" id="provinsi" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Kabupaten/Kota</label>
+                    <select class="form-input" id="pilih-kabupaten" required disabled>
+                        <option value="">--Pilih Kabupaten--</option>
+                    </select>
+                    <input type="hidden" id="kabupaten" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Kecamatan</label>
+                    <select class="form-input" id="pilih-kecamatan" required disabled>
+                        <option value="">--Pilih Kecamatan--</option>
+                    </select>
+                    <input type="hidden" id="kecamatan" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Kelurahan</label>
+                    <select class="form-input" id="pilih-kelurahan" required disabled>
+                        <option value="">--Pilih Kelurahan--</option>
+                    </select>
+                    <input type="hidden" id="kelurahan" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Kode Pos</label>
+                    <input type="text" class="form-input" id="kodepos" placeholder="Kode pos akan diisi otomatis" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Alamat Lengkap</label>
+                    <textarea class="form-input" id="fullAddress" rows="3" placeholder="Contoh: Jl. Sudirman No. 123, RT 04/RW 05" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Patokan (Opsional)</label>
+                    <input type="text" class="form-input" id="landmark" placeholder="Contoh: Dekat mall, depan warna hijau">
+                </div>
+                
+                <div class="form-group">
+                    <label class="flex items-center space-x-2">
+                        <input type="checkbox" class="checkbox-custom" id="isMainAddress">
+                        <span class="text-sm">Jadikan sebagai alamat utama</span>
+                    </label>
+                </div>
+                
+                <div class="map-placeholder">
+                    <div class="text-center">
+                        <i class="fas fa-map-marked-alt text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-sm text-gray-500">Pilih lokasi di peta</p>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-3 mt-6">
+                    <button type="button" onclick="closeAddressForm()" class="flex-1 btn-secondary">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 btn-primary">
+                        Simpan Alamat
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // API Configuration
+        const baseAPI = "https://alamat.thecloudalert.com/api";
+        
+        // Shipping data
+        const shippingData = {
+            "reguler": [
+                {
+                    "nama": "JNE",
+                    "layanan": ["REG", "OKE"],
+                    "jangkauan": "Nasional & Internasional",
+                    "biayaPengiriman": [18000, 30000],
+                    "estimasi": "2-4 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rasb-m3elkjsfixy0e0"
+                },
+                {
+                    "nama": "J&T Express",
+                    "layanan": ["EZ", "ECO"],
+                    "jangkauan": "Nasional & Internasional",
+                    "biayaPengiriman": [20000, 32000],
+                    "estimasi": "2-4 hari",
+                    "logo": "https://i.pinimg.com/736x/72/23/3c/72233c7d51fe3ffde3cb3c345a7f7731.jpg"
+                },
+                {
+                    "nama": "SiCepat",
+                    "layanan": ["REG", "GOKIL"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [16000, 24000],
+                    "estimasi": "2-4 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rase-m3ell0woh4yg37"
+                },
+                {
+                    "nama": "AnterAja",
+                    "layanan": ["Regular"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [16000, 24000],
+                    "estimasi": "2-4 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rasj-m3elk3axne8sa2"
+                },
+                {
+                    "nama": "ID Express",
+                    "layanan": ["Reguler"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [16000, 22000],
+                    "estimasi": "2-4 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7ras9-m3elkbmvgj1460"
+                }
+            ],
+            "express": [
+                {
+                    "nama": "JNE",
+                    "layanan": ["YES"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [28000, 44000],
+                    "estimasi": "1 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rasb-m3elkjsfixy0e0"
+                },
+                {
+                    "nama": "SiCepat",
+                    "layanan": ["BEST"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [24000, 36000],
+                    "estimasi": "1 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rase-m3ell0woh4yg37"
+                },
+                {
+                    "nama": "J&T Express",
+                    "layanan": ["J&T International Priority"],
+                    "jangkauan": "Internasional",
+                    "biayaPengiriman": [40000, 70000],
+                    "estimasi": "2-5 hari",
+                    "logo": "https://i.pinimg.com/736x/72/23/3c/72233c7d51fe3ffde3cb3c345a7f7731.jpg"
+                },
+                {
+                    "nama": "AnterAja",
+                    "layanan": ["Next Day", "Same Day"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [26000, 38000],
+                    "estimasi": "1 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rasj-m3elk3axne8sa2"
+                },
+                {
+                    "nama": "Ninja Xpress",
+                    "layanan": ["Same Day", "COD Express"],
+                    "jangkauan": "Nasional",
+                    "biayaPengiriman": [24000, 34000],
+                    "estimasi": "1 hari",
+                    "logo": "https://down-id.img.susercontent.com/file/id-11134258-7rasg-m3elktb3lhlk9e"
+                }
+            ]
+        };
+        
+        // Virtual Account data
+        const virtualAccounts = [
+            {
+                "name": "Danamon",
+                "nomor_virtual_account": "7915025565404096",
+                "img_src": "https://armadatownsquare.com/wp-content/uploads/2015/06/download-logo-bank-danamon.png"
+            },
+            {
+                "name": "Maybank",
+                "nomor_virtual_account": "7812025565404096",
+                "img_src": "https://lokerbumn.com/wp-content/uploads/2024/01/PT-Bank-Maybank-Indonesia-Tbk.jpg"
+            },
+            {
+                "name": "Atm Bersama",
+                "nomor_virtual_account": "8625025552798084",
+                "img_src": null
+            },
+            {
+                "name": "Permata",
+                "nomor_virtual_account": "8625025565404096",
+                "img_src": "https://files.klob.id/public/mco01/kudgzpfx/Logo_Bank_Permata_(1).png"
+            },
+            {
+                "name": "CIMB Niaga",
+                "nomor_virtual_account": "591902555404096",
+                "img_src": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/38/CIMB_Niaga_logo.svg/2560px-CIMB_Niaga_logo.svg.png"
+            },
+            {
+                "name": "BNI VA",
+                "nomor_virtual_account": "8848066565404096",
+                "img_src": "https://upload.wikimedia.org/wikipedia/id/thumb/5/55/BNI_logo.svg/1280px-BNI_logo.svg.png"
+            },
+            {
+                "name": "Mandiri VA",
+                "nomor_virtual_account": "8804925565404096",
+                "img_src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Bank_Mandiri_logo_2016.svg/1200px-Bank_Mandiri_logo_2016.svg.png"
+            },
+            {
+                "name": "BRIVA",
+                "nomor_virtual_account": "7878925565404096",
+                "img_src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHVgSISwM9A9WhH7aV2RKjSOJT7ML-aB6yPA&s"
+            }
+        ];
+        
+        // Get cart from localStorage
+        let cart = [];
+        let shippingCost = 18000;
+        let voucherDiscount = 191538;
+        let selectedPaymentMethod = null;
+        let selectedShipping = {
+            type: 'reguler',
+            courier: 'JNE',
+            service: 'REG',
+            price: 18000,
+            estimate: '2-4 hari'
+        };
+        let address = null;
+        
+        // Initialize checkout page
+        function initCheckout() {
+            const savedCart = localStorage.getItem('tokopediaCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+            
+            if (cart.length === 0) {
+                // Redirect to home if cart is empty
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            renderOrderItems();
+            renderVirtualAccounts();
+            renderCouriers();
+            calculateTotal();
+            
+            // Check if there's a saved address
+            const savedAddress = localStorage.getItem('userAddress');
+            if (savedAddress) {
+                address = JSON.parse(savedAddress);
+                renderAddress();
+            }
+            
+            // Add event listeners for payment methods
+            document.querySelectorAll('input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.payment-method').forEach(method => {
+                        method.classList.remove('selected');
+                    });
+                    this.closest('.payment-method').classList.add('selected');
+                    
+                    // Store selected payment method
+                    selectedPaymentMethod = this.value;
+                    calculateTotal();
+                });
+            });
+            
+            // Add event listeners for shipping type radio buttons
+            document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Close all dropdowns
+                    document.querySelectorAll('.shipping-dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('active');
+                    });
+                    
+                    // Update selected shipping type
+                    const shippingType = this.value;
+                    if (shippingType === 'reguler') {
+                        selectedShipping = {
+                            type: 'reguler',
+                            courier: 'JNE',
+                            service: 'REG',
+                            price: 18000,
+                            estimate: '2-4 hari'
+                        };
+                    } else if (shippingType === 'express') {
+                        selectedShipping = {
+                            type: 'express',
+                            courier: 'JNE',
+                            service: 'YES',
+                            price: 28000,
+                            estimate: '1 hari'
+                        };
+                    } else if (shippingType === 'instant') {
+                        selectedShipping = {
+                            type: 'instant',
+                            courier: 'GoSend',
+                            service: 'Instant',
+                            price: 50000,
+                            estimate: '2-4 jam'
+                        };
+                    }
+                    
+                    shippingCost = selectedShipping.price;
+                    calculateTotal();
+                });
+            });
+            
+            // Add form submit event listener
+            document.getElementById('addressForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveAddress();
+            });
+        }
+        
+        // Render address
+        function renderAddress() {
+            const addressContainer = document.getElementById('addressContainer');
+            
+            if (!address) {
+                addressContainer.innerHTML = `
+                    <div class="empty-address">
+                        <div class="empty-address-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <p class="text-sm mb-3">Anda belum memiliki alamat pengiriman</p>
+                        <button onclick="openAddressForm()" class="w-full text-green-600 text-sm font-medium py-2 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
+                            <i class="fas fa-plus mr-1"></i> Tambah Alamat Baru
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            addressContainer.innerHTML = `
+                <div class="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <span class="text-sm font-semibold">${address.recipientName}</span>
+                                ${address.isMainAddress ? '<span class="bg-green-600 text-white text-xs px-2 py-0.5 rounded">Utama</span>' : ''}
+                            </div>
+                            <p class="text-sm text-gray-700">${address.phoneNumber}</p>
+                            <p class="text-sm text-gray-700 mt-1">
+                                ${address.fullAddress}, ${address.kelurahan}, ${address.kecamatan}, ${address.kabupaten}, ${address.provinsi} ${address.kodepos}
+                            </p>
+                        </div>
+                        <div class="flex flex-col space-y-2">
+                            <button class="text-green-600 text-sm font-medium" onclick="openAddressForm()">
+                                Ubah
+                            </button>
+                            <button class="text-red-500 text-sm font-medium" onclick="deleteAddress()">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="openAddressForm()" class="w-full text-green-600 text-sm font-medium py-2 border border-green-600 rounded-lg hover:bg-green-50 transition-colors">
+                    <i class="fas fa-plus mr-1"></i> Tambah Alamat Baru
+                </button>
+            `;
+        }
+        
+        // Open address form
+        function openAddressForm() {
+            document.getElementById('addressFormOverlay').classList.add('active');
+            document.getElementById('addressFormPage').classList.add('active');
+            
+            // If editing existing address, populate form
+            if (address) {
+                document.getElementById('recipientName').value = address.recipientName || '';
+                document.getElementById('phoneNumber').value = address.phoneNumber || '';
+                document.getElementById('fullAddress').value = address.fullAddress || '';
+                document.getElementById('landmark').value = address.landmark || '';
+                document.getElementById('isMainAddress').checked = address.isMainAddress || false;
+            }
+            
+            // Load provinces
+            loadProvinsi();
+        }
+        
+        // Close address form
+        function closeAddressForm() {
+            document.getElementById('addressFormOverlay').classList.remove('active');
+            document.getElementById('addressFormPage').classList.remove('active');
+        }
+        
+        // Save address
+        function saveAddress() {
+            address = {
+                recipientName: document.getElementById('recipientName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                provinsi: document.getElementById('provinsi').value,
+                kabupaten: document.getElementById('kabupaten').value,
+                kecamatan: document.getElementById('kecamatan').value,
+                kelurahan: document.getElementById('kelurahan').value,
+                kodepos: document.getElementById('kodepos').value,
+                fullAddress: document.getElementById('fullAddress').value,
+                landmark: document.getElementById('landmark').value,
+                isMainAddress: document.getElementById('isMainAddress').checked
+            };
+            
+            // Save to localStorage
+            localStorage.setItem('userAddress', JSON.stringify(address));
+            
+            // Close form and render address
+            closeAddressForm();
+            renderAddress();
+            
+            // Show success notification
+            showNotification('Alamat berhasil disimpan!', 'success');
+        }
+        
+        // Delete address
+        function deleteAddress() {
+            if (confirm('Apakah Anda yakin ingin menghapus alamat ini?')) {
+                address = null;
+                localStorage.removeItem('userAddress');
+                renderAddress();
+                showNotification('Alamat berhasil dihapus!', 'success');
+            }
+        }
+        
+        // API Functions
+        // Ambil provinsi
+        async function loadProvinsi() {
+            try {
+                const res = await fetch(`${baseAPI}/provinsi/get/`);
+                const data = await res.json();
+                const select = document.getElementById('pilih-provinsi');
+                select.innerHTML = '<option value="">--Pilih Provinsi--</option>';
+                data.result.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.id;
+                    option.textContent = p.text;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                showNotification('Gagal memuat provinsi', 'error');
+            }
+        }
+
+        // Ambil kabupaten
+        async function loadKabupaten(provId) {
+            try {
+                const res = await fetch(`${baseAPI}/kabkota/get/?d_provinsi_id=${provId}`);
+                const data = await res.json();
+                const select = document.getElementById('pilih-kabupaten');
+                select.innerHTML = '<option value="">--Pilih Kabupaten--</option>';
+                data.result.forEach(k => {
+                    const option = document.createElement('option');
+                    option.value = k.id;
+                    option.textContent = k.text;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+            } catch (err) {
+                showNotification('Gagal memuat kabupaten', 'error');
+            }
+        }
+
+        // Ambil kecamatan
+        async function loadKecamatan(kabId) {
+            try {
+                const res = await fetch(`${baseAPI}/kecamatan/get/?d_kabkota_id=${kabId}`);
+                const data = await res.json();
+                const select = document.getElementById('pilih-kecamatan');
+                select.innerHTML = '<option value="">--Pilih Kecamatan--</option>';
+                data.result.forEach(k => {
+                    const option = document.createElement('option');
+                    option.value = k.id;
+                    option.textContent = k.text;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+            } catch (err) {
+                showNotification('Gagal memuat kecamatan', 'error');
+            }
+        }
+
+        // Ambil kelurahan
+        async function loadKelurahan(kecId) {
+            try {
+                const res = await fetch(`${baseAPI}/kelurahan/get/?d_kecamatan_id=${kecId}`);
+                const data = await res.json();
+                const select = document.getElementById('pilih-kelurahan');
+                select.innerHTML = '<option value="">--Pilih Kelurahan--</option>';
+                data.result.forEach(k => {
+                    const option = document.createElement('option');
+                    option.value = k.text;
+                    option.textContent = k.text;
+                    select.appendChild(option);
+                });
+                select.disabled = false;
+            } catch (err) {
+                showNotification('Gagal memuat kelurahan', 'error');
+            }
+        }
+
+        // Ambil kodepos
+        async function loadKodepos(kabId, kecId) {
+            try {
+                const res = await fetch(`${baseAPI}/kodepos/get/?d_kabkota_id=${kabId}&d_kecamatan_id=${kecId}`);
+                const data = await res.json();
+                const kodeposInput = document.getElementById('kodepos');
+                kodeposInput.value = data.result.length > 0 ? data.result[0].text : '';
+            } catch (err) {
+                showNotification('Gagal memuat kode pos', 'error');
+            }
+        }
+        
+        // Render couriers
+        function renderCouriers() {
+            // Render Reguler Couriers
+            const regulerContainer = document.getElementById('regulerCouriers');
+            let regulerHTML = '';
+            
+            shippingData.reguler.forEach((courier, index) => {
+                const minPrice = Math.min(...courier.biayaPengiriman);
+                const maxPrice = Math.max(...courier.biayaPengiriman);
+                const priceText = minPrice === maxPrice ? `Rp${minPrice.toLocaleString('id-ID')}` : `Rp${minPrice.toLocaleString('id-ID')} - Rp${maxPrice.toLocaleString('id-ID')}`;
+                
+                regulerHTML += `
+                    <div class="courier-option" onclick="toggleServiceDropdown('reguler', ${index})">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="${courier.logo}" class="courier-logo" alt="${courier.nama}">
+                                <div>
+                                    <p class="text-sm font-medium">${courier.nama}</p>
+                                    <p class="text-xs text-gray-600">${courier.jangkauan}</p>
+                                    <p class="text-xs text-gray-500">${courier.estimasi}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-bold">${priceText}</span>
+                                <div class="service-dropdown" id="reguler-service-${index}">
+                                    <div class="flex items-center space-x-1 cursor-pointer" onclick="event.stopPropagation()">
+                                        <span class="text-xs text-gray-600" id="reguler-selected-${index}">${courier.layanan[0]}</span>
+                                        <i class="fas fa-chevron-down text-gray-400 text-xs expand-icon"></i>
+                                    </div>
+                                    <div class="service-dropdown-content">
+                                        ${courier.layanan.map(service => `
+                                            <div class="service-option" onclick="selectService('reguler', ${index}, '${service}', ${courier.biayaPengiriman[courier.layanan.indexOf(service)]})">
+                                                ${service} - Rp${courier.biayaPengiriman[courier.layanan.indexOf(service)].toLocaleString('id-ID')}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            regulerContainer.innerHTML = regulerHTML;
+            
+            // Render Express Couriers
+            const expressContainer = document.getElementById('expressCouriers');
+            let expressHTML = '';
+            
+            shippingData.express.forEach((courier, index) => {
+                const minPrice = Math.min(...courier.biayaPengiriman);
+                const maxPrice = Math.max(...courier.biayaPengiriman);
+                const priceText = minPrice === maxPrice ? `Rp${minPrice.toLocaleString('id-ID')}` : `Rp${minPrice.toLocaleString('id-ID')} - Rp${maxPrice.toLocaleString('id-ID')}`;
+                
+                expressHTML += `
+                    <div class="courier-option" onclick="toggleServiceDropdown('express', ${index})">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <img src="${courier.logo}" class="courier-logo" alt="${courier.nama}">
+                                <div>
+                                    <p class="text-sm font-medium">${courier.nama}</p>
+                                    <p class="text-xs text-gray-600">${courier.jangkauan}</p>
+                                    <p class="text-xs text-gray-500">${courier.estimasi}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-sm font-bold">${priceText}</span>
+                                <div class="service-dropdown" id="express-service-${index}">
+                                    <div class="flex items-center space-x-1 cursor-pointer" onclick="event.stopPropagation()">
+                                        <span class="text-xs text-gray-600" id="express-selected-${index}">${courier.layanan[0]}</span>
+                                        <i class="fas fa-chevron-down text-gray-400 text-xs expand-icon"></i>
+                                    </div>
+                                    <div class="service-dropdown-content">
+                                        ${courier.layanan.map(service => `
+                                            <div class="service-option" onclick="selectService('express', ${index}, '${service}', ${courier.biayaPengiriman[courier.layanan.indexOf(service)]})">
+                                                ${service} - Rp${courier.biayaPengiriman[courier.layanan.indexOf(service)].toLocaleString('id-ID')}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            expressContainer.innerHTML = expressHTML;
+        }
+        
+        // Toggle dropdown
+        function toggleDropdown(dropdownId) {
+            const dropdown = document.getElementById(dropdownId);
+            const isActive = dropdown.classList.contains('active');
+            
+            // Close all dropdowns
+            document.querySelectorAll('.shipping-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Open clicked dropdown if it was closed
+            if (!isActive) {
+                dropdown.classList.add('active');
+                
+                // Select the radio button for this dropdown
+                const radio = dropdown.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.checked = true;
+                    radio.dispatchEvent(new Event('change'));
+                }
+            }
+        }
+        
+        // Toggle service dropdown
+        function toggleServiceDropdown(type, index) {
+            const serviceDropdown = document.getElementById(`${type}-service-${index}`);
+            const isActive = serviceDropdown.classList.contains('active');
+            
+            // Close all service dropdowns
+            document.querySelectorAll('.service-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Open clicked service dropdown if it was closed
+            if (!isActive) {
+                serviceDropdown.classList.add('active');
+            }
+            
+            // Select the courier
+            const courier = shippingData[type][index];
+            const service = courier.layanan[0];
+            const price = courier.biayaPengiriman[0];
+            
+            selectedShipping = {
+                type: type,
+                courier: courier.nama,
+                service: service,
+                price: price,
+                estimate: courier.estimasi
+            };
+            
+            // Update display
+            updateShippingDisplay(type, courier.nama, service, price, courier.estimasi);
+            
+            // Update shipping cost
+            shippingCost = price;
+            calculateTotal();
+            
+            // Update selected state
+            document.querySelectorAll('.courier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // Select service
+        function selectService(type, index, service, price) {
+            const courier = shippingData[type][index];
+            
+            selectedShipping = {
+                type: type,
+                courier: courier.nama,
+                service: service,
+                price: price,
+                estimate: courier.estimasi
+            };
+            
+            // Update display
+            updateShippingDisplay(type, courier.nama, service, price, courier.estimasi);
+            
+            // Update selected service text
+            document.getElementById(`${type}-selected-${index}`).textContent = service;
+            
+            // Update shipping cost
+            shippingCost = price;
+            calculateTotal();
+            
+            // Close service dropdown
+            document.getElementById(`${type}-service-${index}`).classList.remove('active');
+            
+            // Update selected state
+            document.querySelectorAll('.service-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // Update shipping display
+        function updateShippingDisplay(type, courier, service, price, estimate) {
+            const typeLower = type.toLowerCase();
+            document.getElementById(`${typeLower}Courier`).textContent = `${courier} ${service}`;
+            document.getElementById(`${typeLower}Price`).textContent = `Rp${price.toLocaleString('id-ID')}`;
+            document.getElementById(`${typeLower}Estimate`).textContent = `Estimasi tiba ${estimate}`;
+        }
+        
+        // Select instant courier
+        function selectInstantCourier(courier, price, estimate) {
+            selectedShipping = {
+                type: 'instant',
+                courier: courier,
+                service: 'Instant',
+                price: price,
+                estimate: estimate
+            };
+            
+            // Update display
+            document.getElementById('instantCourier').textContent = courier;
+            document.getElementById('instantPrice').textContent = `Rp${price.toLocaleString('id-ID')}`;
+            document.getElementById('instantEstimate').textContent = `Estimasi tiba ${estimate}`;
+            
+            // Update shipping cost
+            shippingCost = price;
+            calculateTotal();
+            
+            // Close dropdown
+            document.getElementById('instantDropdown').classList.remove('active');
+            
+            // Update selected state
+            document.querySelectorAll('.courier-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+        
+        // Render order items
+        function renderOrderItems() {
+            const orderItemsContainer = document.getElementById('orderItems');
+            let orderItemsHTML = '';
+            
+            cart.forEach(item => {
+                orderItemsHTML += `
+                    <div class="flex items-start space-x-3">
+                        <img src="${item.image}" class="w-16 h-16 object-cover rounded-lg">
+                        <div class="flex-1">
+                            <h4 class="text-sm font-medium line-clamp-2 mb-1">${item.name}</h4>
+                            <p class="text-xs text-gray-500 mb-1">Varian: ${item.variant}</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm text-gray-600">${item.quantity} barang</span>
+                                <span class="text-sm font-bold">Rp${(item.price * item.quantity).toLocaleString('id-ID')}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            orderItemsContainer.innerHTML = orderItemsHTML;
+        }
+        
+        // Render virtual accounts
+        function renderVirtualAccounts() {
+            const virtualAccountsContainer = document.getElementById('virtualAccounts');
+            let virtualAccountsHTML = '';
+            
+            virtualAccounts.forEach((bank, index) => {
+                const bankLogo = bank.img_src ? 
+                    `<img src="${bank.img_src}" class="w-10 h-10 object-contain rounded" alt="${bank.name}">` :
+                    `<div class="bank-logo"><span class="bank-logo-text">${bank.name.substring(0, 3)}</span></div>`;
+                
+                virtualAccountsHTML += `
+                    <label class="payment-method block border rounded-lg p-3 cursor-pointer">
+                        <div class="flex items-center space-x-3">
+                            <input type="radio" name="payment" class="radio-custom" value="${bank.name.toLowerCase().replace(' ', '_')}" data-va="${bank.nomor_virtual_account}">
+                            ${bankLogo}
+                            <span class="text-sm">${bank.name}</span>
+                        </div>
+                    </label>
+                `;
+            });
+            
+            virtualAccountsContainer.innerHTML = virtualAccountsHTML;
+            
+            // Add event listeners to virtual account radios
+            document.querySelectorAll('#virtualAccounts input[name="payment"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    document.querySelectorAll('.payment-method').forEach(method => {
+                        method.classList.remove('selected');
+                    });
+                    this.closest('.payment-method').classList.add('selected');
+                    
+                    // Store selected payment method and VA number
+                    selectedPaymentMethod = this.value;
+                    const vaNumber = this.getAttribute('data-va');
+                    
+                    // Save VA number to localStorage
+                    localStorage.setItem('selectedVirtualAccount', JSON.stringify({
+                        bank: this.value,
+                        vaNumber: vaNumber
+                    }));
+                    
+                    calculateTotal();
+                });
+            });
+        }
+        
+        // Calculate total
+        function calculateTotal() {
+            const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            const total = subtotal + shippingCost - voucherDiscount;
+            
+            document.getElementById('subtotal').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
+            document.getElementById('shippingCost').textContent = `Rp${shippingCost.toLocaleString('id-ID')}`;
+            document.getElementById('total').textContent = `Rp${total.toLocaleString('id-ID')}`;
+        }
+        
+        // Process checkout
+        function processCheckout() {
+            // Check if address is available
+            if (!address) {
+                showNotification('Silakan tambahkan alamat pengiriman terlebih dahulu!', 'error');
+                return;
+            }
+            
+            const selectedPayment = document.querySelector('input[name="payment"]:checked');
+            
+            if (!selectedPayment) {
+                showNotification('Silakan pilih metode pembayaran!', 'error');
+                return;
+            }
+            
+            // Create order object
+            const order = {
+                id: 'ORD' + Date.now(),
+                items: cart,
+                address: address,
+                shipping: selectedShipping,
+                shippingCost: shippingCost,
+                voucherDiscount: voucherDiscount,
+                paymentMethod: selectedPayment.value,
+                total: cart.reduce((total, item) => total + (item.price * item.quantity), 0) + shippingCost - voucherDiscount,
+                status: 'pending',
+                date: new Date().toISOString()
+            };
+            
+            // Save order to localStorage
+            const orders = JSON.parse(localStorage.getItem('tokopediaOrders') || '[]');
+            orders.push(order);
+            localStorage.setItem('tokopediaOrders', JSON.stringify(orders));
+            
+            // Clear cart
+            localStorage.removeItem('tokopediaCart');
+            
+            // Show success message
+            showNotification('Pesanan berhasil dibuat!', 'success');
+            
+            // Redirect to payment page
+            setTimeout(() => {
+                window.location.href = '/pembayaran.html';
+            }, 1500);
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            notification.className = `fixed top-20 left-4 right-4 ${bgColor} text-white px-4 py-3 rounded-lg shadow-lg z-50 slide-up`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.shipping-dropdown') && !event.target.closest('.service-dropdown')) {
+                document.querySelectorAll('.shipping-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+                document.querySelectorAll('.service-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                });
+            }
+        });
+        
+        // Event listeners for address form
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize checkout page
+            initCheckout();
+            
+            // Event listeners for address form
+            document.getElementById('pilih-provinsi').addEventListener('change', function() {
+                const provId = this.value;
+                document.getElementById('provinsi').value = this.options[this.selectedIndex].text;
+                loadKabupaten(provId);
+                document.getElementById('kabupaten').value = '';
+                document.getElementById('kecamatan').value = '';
+                document.getElementById('kelurahan').value = '';
+                document.getElementById('kodepos').value = '';
+                document.getElementById('pilih-kecamatan').innerHTML = '<option value="">--Pilih Kecamatan--</option>';
+                document.getElementById('pilih-kecamatan').disabled = true;
+                document.getElementById('pilih-kelurahan').innerHTML = '<option value="">--Pilih Kelurahan--</option>';
+                document.getElementById('pilih-kelurahan').disabled = true;
+            });
+
+            document.getElementById('pilih-kabupaten').addEventListener('change', function() {
+                const kabId = this.value;
+                document.getElementById('kabupaten').value = this.options[this.selectedIndex].text;
+                loadKecamatan(kabId);
+                document.getElementById('kecamatan').value = '';
+                document.getElementById('kelurahan').value = '';
+                document.getElementById('kodepos').value = '';
+                document.getElementById('pilih-kelurahan').innerHTML = '<option value="">--Pilih Kelurahan--</option>';
+                document.getElementById('pilih-kelurahan').disabled = true;
+            });
+
+            document.getElementById('pilih-kecamatan').addEventListener('change', function() {
+                const kecId = this.value;
+                const kabId = document.getElementById('pilih-kabupaten').value;
+                document.getElementById('kecamatan').value = this.options[this.selectedIndex].text;
+                loadKelurahan(kecId);
+                loadKodepos(kabId, kecId);
+                document.getElementById('kelurahan').value = '';
+            });
+
+            document.getElementById('pilih-kelurahan').addEventListener('change', function() {
+                document.getElementById('kelurahan').value = this.value;
+            });
+        });
+    </script>
+</body>
+</html>
