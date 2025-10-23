@@ -1,0 +1,319 @@
+<script>
+function generateReceiptHTML(data) {
+    // Check for data inconsistency
+    const expectedTotal = data.transactionDetails.amount.value + data.transactionDetails.adminFee.value;
+    const hasInconsistency = data.transactionDetails.totalDebit.value !== expectedTotal;
+    
+    let html = `
+    <div class="receipt-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="${data.header.logo}" alt="Bank Mandiri Logo">
+            </div>
+            <div class="title">${data.header.title}</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Warning for inconsistent data -->
+            ${hasInconsistency ? `
+            <div class="warning">
+                <strong>Perhatian:</strong> Terdapat ketidaksesuaian data pada Total Debet. 
+                Seharusnya: Rp ${expectedTotal.toLocaleString('id-ID')},00. 
+                Silakan hubungi customer service untuk konfirmasi.
+            </div>
+            ` : ''}
+            
+            <!-- Transaction Info -->
+            <div class="section">
+                <div class="section-title">Informasi Transaksi</div>
+                <div class="detail-row">
+                    <span class="detail-label">Tanggal & Waktu</span>
+                    <span class="detail-value">${data.transactionInfo.dateTime}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">No. Referensi</span>
+                    <span class="detail-value">${data.transactionInfo.referenceNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status</span>
+                    <span class="detail-value">
+                        <span class="status" style="background-color: ${data.transactionInfo.status.color};">
+                            ${data.transactionInfo.status.text}
+                        </span>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Sender Info -->
+            <div class="section">
+                <div class="section-title">Rekening Pengirim</div>
+                <div class="detail-row">
+                    <span class="detail-label">Nomor Rekening</span>
+                    <span class="detail-value">${data.sender.accountNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Nama Pemilik</span>
+                    <span class="detail-value">${data.sender.accountName}</span>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Recipient Info -->
+            <div class="section">
+                <div class="section-title">Rekening Penerima</div>
+                <div class="detail-row">
+                    <span class="detail-label">Nomor Rekening</span>
+                    <span class="detail-value">${data.recipient.accountNumber}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Nama Pemilik</span>
+                    <span class="detail-value">${data.recipient.accountName}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Bank Tujuan</span>
+                    <span class="detail-value">${data.recipient.bankName}</span>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <!-- Transaction Details -->
+            <div class="section">
+                <div class="section-title">Detail Transaksi</div>
+                <div class="detail-row">
+                    <span class="detail-label">Jenis Transfer</span>
+                    <span class="detail-value">${data.transactionDetails.transferType}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Nominal</span>
+                    <span class="detail-value amount">${data.transactionDetails.amount.formatted}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Biaya Admin</span>
+                    <span class="detail-value">${data.transactionDetails.adminFee.formatted}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Total Debet</span>
+                    <span class="detail-value amount ${hasInconsistency ? 'inconsistent' : ''}">
+                        ${data.transactionDetails.totalDebit.formatted}
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Berita Transfer</span>
+                    <span class="detail-value">${data.transactionDetails.transferNote}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div>${data.footer.slogan}</div>
+            <div class="security-note">
+                ${data.footer.securityNote}
+            </div>
+        </div>
+    </div>
+    `;
+    
+    return html;
+}
+
+// Data JSON yang diberikan
+const receiptData = {
+  "header": {
+    "logo": "https://jasalogocepat.com/wp-content/uploads/2023/12/logo-bank-mandiri-putih-png.png",
+    "title": "Bukti Transfer"
+  },
+  "transactionInfo": {
+    "dateTime": "23 Okt 2023, 17:42:22 WIB",
+    "referenceNumber": "TRX20230928143522",
+    "status": {
+      "text": "PENDING",
+      "color": "#4caf50"
+    }
+  },
+  "sender": {
+    "accountNumber": "137001234###",
+    "accountName": "JNT EXPRESS"
+  },
+  "recipient": {
+    "accountNumber": "1030012127516",
+    "accountName": "OHAN SETIADI",
+    "bankName": "MANDIRI"
+  },
+  "transactionDetails": {
+    "transferType": "ONLINE TRANSFER",
+    "amount": {
+      "value": 10000000,
+      "formatted": "Rp 10.000.000,00"
+    },
+    "adminFee": {
+      "value": 6500,
+      "formatted": "Rp 6.500,00"
+    },
+    "totalDebit": {
+      "value": 5299500,
+      "formatted": "Rp 5.299.500,00"
+    },
+    "transferNote": "KREDIBLITAS"
+  },
+  "footer": {
+    "slogan": "Bank Mandiri | Terpercaya, Tumbuh Bersama Anda",
+    "securityNote": "Dokumen ini adalah bukti sah transaksi yang dilakukan melalui Mandiri Internet Banking. Simpan baik-baik bukti ini."
+  }
+};
+
+// Generate HTML
+const receiptHTML = generateReceiptHTML(receiptData);
+
+// Output HTML ke console (untuk debugging)
+console.log(receiptHTML);
+
+// Cara menggunakan: Masukkan HTML ini ke dalam elemen dengan id="receipt-container"
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('receipt-container');
+    if (container) {
+        container.innerHTML = receiptHTML;
+    }
+});
+</script>
+
+<style>
+/* CSS yang sama seperti sebelumnya */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+    background-color: #f0f2f5;
+    padding: 20px;
+}
+
+.receipt-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.header {
+    background-color: #003d79;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.logo {
+    margin-bottom: 8px;
+}
+
+.logo img {
+    height: 50px;
+    width: auto;
+}
+
+.title {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.content {
+    padding: 25px;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #003d79;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.detail-label {
+    color: #555;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #333;
+    font-weight: 600;
+    text-align: right;
+}
+
+.amount {
+    font-size: 20px;
+    color: #d32f2f;
+    font-weight: bold;
+}
+
+.amount.inconsistent {
+    color: #e53935;
+    text-decoration: underline;
+    text-decoration-style: wavy;
+    text-decoration-color: #e53935;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    color: white;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.footer {
+    background-color: #f5f5f5;
+    padding: 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    border-top: 1px solid #e0e0e0;
+}
+
+.security-note {
+    margin-top: 10px;
+    font-style: italic;
+}
+
+.divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 20px 0;
+}
+
+.warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 12px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+</style>
+
+<!-- Tempat untuk menampilkan bukti transfer -->
+<div id="receipt-container"></div>
