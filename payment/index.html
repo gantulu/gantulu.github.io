@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pembayaran VA Dinamis Duitku</title>
+</head>
+<body>
+    <h2>Pembayaran Virtual Account Dinamis</h2>
+
+    <form id="formPembayaran">
+        <label>Nama:</label><br>
+        <input type="text" id="nama" required><br><br>
+
+        <label>Email:</label><br>
+        <input type="email" id="email" required><br><br>
+
+        <label>Nomor HP:</label><br>
+        <input type="text" id="phone" required><br><br>
+
+        <label>Jumlah (Rp):</label><br>
+        <input type="number" id="amount" required><br><br>
+
+        <button type="submit">Buat Pembayaran</button>
+    </form>
+
+    <div id="hasil"></div>
+
+    <script>
+        const form = document.getElementById("formPembayaran");
+        const hasil = document.getElementById("hasil");
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            hasil.innerHTML = "Memproses pembayaran...";
+
+            const data = {
+                nama: document.getElementById("nama").value,
+                email: document.getElementById("email").value,
+                phone: document.getElementById("phone").value,
+                amount: parseInt(document.getElementById("amount").value)
+            };
+
+            try {
+                const res = await fetch("https://gantulu.github.io/payment/duitku.php", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if(result.paymentUrl) {
+                    hasil.innerHTML = `
+                        <p>Transaksi berhasil dibuat!</p>
+                        <p>Order ID: ${result.merchantOrderId}</p>
+                        <p><a href="${result.paymentUrl}" target="_blank">Klik di sini untuk bayar</a></p>
+                    `;
+                } else {
+                    hasil.innerHTML = `<p>Gagal membuat transaksi 😢</p><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                }
+
+            } catch(err) {
+                hasil.innerHTML = `<p>Terjadi kesalahan: ${err}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
