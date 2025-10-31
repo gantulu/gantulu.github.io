@@ -1090,102 +1090,520 @@
     ]
   },
   {
-  "name": "Kuala Lumpur",
-  "city": [
-    { "name": "Alam Damai", "postcode": ["56000"] },
-    { "name": "Bandar Damai Perdana", "postcode": ["56000"] },
-    { "name": "Bandar Menjalara", "postcode": ["52200"] },
-    { "name": "Bandar Tun Razak", "postcode": ["56000"] },
-    { "name": "Bangsar", "postcode": ["59000"] },
-    { "name": "Bangsar South", "postcode": ["59200"] },
-    { "name": "Batu", "postcode": ["51200"] },
-    { "name": "Brickfields", "postcode": ["50470"] },
-    { "name": "Bukit Bintang", "postcode": ["55100", "50200"] },
-    { "name": "Bukit Jalil", "postcode": ["57000"] },
-    { "name": "Bukit Ledang", "postcode": ["50480"] },
-    { "name": "Bukit Tunku", "postcode": ["50480"] },
-    { "name": "Cheras", "postcode": ["56000"] },
-    { "name": "City Centre (Pusat Bandar)", "postcode": ["50000", "50100", "50200"] },
-    { "name": "Country Heights Damansara", "postcode": ["50480"] },
-    { "name": "Damansara Heights", "postcode": ["50490"] },
-    { "name": "Desa Pandan", "postcode": ["55100"] },
-    { "name": "Desa ParkCity", "postcode": ["52200"] },
-    { "name": "Desa Petaling", "postcode": ["57100"] },
-    { "name": "Gombak", "postcode": ["53100"] },
-    { "name": "Jalan Duta", "postcode": ["50480"] },
-    { "name": "Jalan Klang Lama (Old Klang Road)", "postcode": ["58100", "58200"] },
-    { "name": "Jalan Kuchai Lama", "postcode": ["58200"] },
-    { "name": "Jinjang", "postcode": ["52000"] },
-    { "name": "Kampung Baru", "postcode": ["50300"] },
-    { "name": "Kampung Pandan", "postcode": ["55100"] },
-    { "name": "Kepong", "postcode": ["52100", "52000"] },
-    { "name": "KL Eco City", "postcode": ["59200"] },
-    { "name": "Lembah Pantai", "postcode": ["59200"] },
-    { "name": "Medan Tuanku", "postcode": ["50300"] },
-    { "name": "Menara KL Area", "postcode": ["50250"] },
-    { "name": "Mid Valley City", "postcode": ["59200"] },
-    { "name": "Mont Kiara", "postcode": ["50480"] },
-    { "name": "Pantai Dalam", "postcode": ["59200"] },
-    { "name": "Pudu", "postcode": ["55100"] },
-    { "name": "Salak Selatan", "postcode": ["57100"] },
-    { "name": "Segambut", "postcode": ["51200"] },
-    { "name": "Sentul", "postcode": ["51000"] },
-    { "name": "Seputeh", "postcode": ["58000"] },
-    { "name": "Setapak", "postcode": ["53000"] },
-    { "name": "Setiawangsa", "postcode": ["54200"] },
-    { "name": "Solaris Dutamas", "postcode": ["50480"] },
-    { "name": "Solaris Mont Kiara", "postcode": ["50480"] },
-    { "name": "Sri Hartamas", "postcode": ["50480"] },
-    { "name": "Sri Petaling", "postcode": ["57000"] },
-    { "name": "Sungai Besi", "postcode": ["57000"] },
-    { "name": "Taman Bukit Indah", "postcode": ["68000"] },
-    { "name": "Taman Connaught", "postcode": ["56000"] },
-    { "name": "Taman Desa", "postcode": ["58100"] },
-    { "name": "Taman Melati", "postcode": ["53100"] },
-    { "name": "Taman Melawati", "postcode": ["53100"] },
-    { "name": "Taman Midah", "postcode": ["56000"] },
-    { "name": "Taman OUG (Overseas Union Garden)", "postcode": ["58200"] },
-    { "name": "Taman Permata", "postcode": ["53300"] },
-    { "name": "Taman Seputeh", "postcode": ["58000"] },
-    { "name": "Taman Tun Dr Ismail (TTDI)", "postcode": ["60000"] },
-    { "name": "Titiwangsa", "postcode": ["53200"] },
-    { "name": "Wangsa Maju", "postcode": ["53300"] }
-  ]
-},
-
-  {
-    "name": "Wp Labuan",
+    "name": "Kuala Lumpur",
     "city": [
       {
-        "name": "Labuan",
+        "name": "Alam Damai",
         "postcode": [
-          "87000",
-          "87007",
-          "87008",
-          "87010",
-          "87011",
-          "87012",
-          "87013",
-          "87014",
-          "87015",
-          "87016",
-          "87017",
-          "87018",
-          "87019",
-          "87020",
-          "87021",
-          "87022",
-          "87023",
-          "87024",
-          "87025",
-          "87026",
-          "87027",
-          "87028",
-          "87029",
-          "87030",
-          "87031",
-          "87032",
-          "87033"
+          "56000"
+        ]
+      },
+      {
+        "name": "Bandar Damai Perdana",
+        "postcode": [
+          "56000"
+        ]
+      },
+      {
+        "name": "Bandar Menjalara",
+        "postcode": [
+          "52200"
+        ]
+      },
+      {
+        "name": "Bandar Tun Razak",
+        "postcode": [
+          "56000"
+        ]
+      },
+      {
+        "name": "Bangsar",
+        "postcode": [
+          "59000"
+        ]
+      },
+      {
+        "name": "Bangsar South",
+        "postcode": [
+          "59200"
+        ]
+      },
+      {
+        "name": "Batu",
+        "postcode": [
+          "51200"
+        ]
+      },
+      {
+        "name": "Brickfields",
+        "postcode": [
+          "50470"
+        ]
+      },
+      {
+        "name": "Bukit Bintang",
+        "postcode": [
+          "55100",
+          "50200"
+        ]
+      },
+      {
+        "name": "Bukit Jalil",
+        "postcode": [
+          "57000"
+        ]
+      },
+      {
+        "name": "Bukit Ledang",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Bukit Tunku",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Cheras",
+        "postcode": [
+          "56000"
+        ]
+      },
+      {
+        "name": "City Centre (Pusat Bandar)",
+        "postcode": [
+          "50000",
+          "50100",
+          "50200"
+        ]
+      },
+      {
+        "name": "Country Heights Damansara",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Damansara Heights",
+        "postcode": [
+          "50490"
+        ]
+      },
+      {
+        "name": "Desa Pandan",
+        "postcode": [
+          "55100"
+        ]
+      },
+      {
+        "name": "Desa ParkCity",
+        "postcode": [
+          "52200"
+        ]
+      },
+      {
+        "name": "Desa Petaling",
+        "postcode": [
+          "57100"
+        ]
+      },
+      {
+        "name": "Gombak",
+        "postcode": [
+          "53100"
+        ]
+      },
+      {
+        "name": "Jalan Duta",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Jalan Klang Lama (Old Klang Road)",
+        "postcode": [
+          "58100",
+          "58200"
+        ]
+      },
+      {
+        "name": "Jalan Kuchai Lama",
+        "postcode": [
+          "58200"
+        ]
+      },
+      {
+        "name": "Jinjang",
+        "postcode": [
+          "52000"
+        ]
+      },
+      {
+        "name": "Kampung Baru",
+        "postcode": [
+          "50300"
+        ]
+      },
+      {
+        "name": "Kampung Pandan",
+        "postcode": [
+          "55100"
+        ]
+      },
+      {
+        "name": "Kepong",
+        "postcode": [
+          "52100",
+          "52000"
+        ]
+      },
+      {
+        "name": "KL Eco City",
+        "postcode": [
+          "59200"
+        ]
+      },
+      {
+        "name": "Lembah Pantai",
+        "postcode": [
+          "59200"
+        ]
+      },
+      {
+        "name": "Medan Tuanku",
+        "postcode": [
+          "50300"
+        ]
+      },
+      {
+        "name": "Menara KL Area",
+        "postcode": [
+          "50250"
+        ]
+      },
+      {
+        "name": "Mid Valley City",
+        "postcode": [
+          "59200"
+        ]
+      },
+      {
+        "name": "Mont Kiara",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Pantai Dalam",
+        "postcode": [
+          "59200"
+        ]
+      },
+      {
+        "name": "Pudu",
+        "postcode": [
+          "55100"
+        ]
+      },
+      {
+        "name": "Salak Selatan",
+        "postcode": [
+          "57100"
+        ]
+      },
+      {
+        "name": "Segambut",
+        "postcode": [
+          "51200"
+        ]
+      },
+      {
+        "name": "Sentul",
+        "postcode": [
+          "51000"
+        ]
+      },
+      {
+        "name": "Seputeh",
+        "postcode": [
+          "58000"
+        ]
+      },
+      {
+        "name": "Setapak",
+        "postcode": [
+          "53000"
+        ]
+      },
+      {
+        "name": "Setiawangsa",
+        "postcode": [
+          "54200"
+        ]
+      },
+      {
+        "name": "Solaris Dutamas",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Solaris Mont Kiara",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Sri Hartamas",
+        "postcode": [
+          "50480"
+        ]
+      },
+      {
+        "name": "Sri Petaling",
+        "postcode": [
+          "57000"
+        ]
+      },
+      {
+        "name": "Sungai Besi",
+        "postcode": [
+          "57000"
+        ]
+      },
+      {
+        "name": "Taman Bukit Indah",
+        "postcode": [
+          "68000"
+        ]
+      },
+      {
+        "name": "Taman Connaught",
+        "postcode": [
+          "56000"
+        ]
+      },
+      {
+        "name": "Taman Desa",
+        "postcode": [
+          "58100"
+        ]
+      },
+      {
+        "name": "Taman Melati",
+        "postcode": [
+          "53100"
+        ]
+      },
+      {
+        "name": "Taman Melawati",
+        "postcode": [
+          "53100"
+        ]
+      },
+      {
+        "name": "Taman Midah",
+        "postcode": [
+          "56000"
+        ]
+      },
+      {
+        "name": "Taman OUG (Overseas Union Garden)",
+        "postcode": [
+          "58200"
+        ]
+      },
+      {
+        "name": "Taman Permata",
+        "postcode": [
+          "53300"
+        ]
+      },
+      {
+        "name": "Taman Seputeh",
+        "postcode": [
+          "58000"
+        ]
+      },
+      {
+        "name": "Taman Tun Dr Ismail (TTDI)",
+        "postcode": [
+          "60000"
+        ]
+      },
+      {
+        "name": "Titiwangsa",
+        "postcode": [
+          "53200"
+        ]
+      },
+      {
+        "name": "Wangsa Maju",
+        "postcode": [
+          "53300"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Labuan",
+    "city": [
+      {
+        "name": "Bandar Labuan",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Bebuloh",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Bukit Kalam",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Bukit Kuda",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Durian Tunjung",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Ganggarak",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Kiamsam",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Layang-Layangan",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Lubok Temiang",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Merinding",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Nagalang",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Patau-Patau",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Pohon Batu",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Rancha-Rancha",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Saguking",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Sungai Bedaun",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Sungai Keling",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Sungai Lada",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Sungai Miri",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Sungai Pagar",
+        "postcode": [
+          "87020"
+        ]
+      },
+      {
+        "name": "Taman Perumahan Bukit Kuda",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Taman Perumahan Membedai",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Tanjung Aru",
+        "postcode": [
+          "87010"
+        ]
+      },
+      {
+        "name": "Tanjung Batu",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Tanjung Kubong",
+        "postcode": [
+          "87000"
+        ]
+      },
+      {
+        "name": "Tanjung Purun",
+        "postcode": [
+          "87000"
         ]
       }
     ]
@@ -2967,85 +3385,156 @@
     ]
   },
   {
-    "name": "Wp Putrajaya",
+    "name": "Putrajaya",
     "city": [
       {
-        "name": "Putrajaya",
+        "name": "Presint 1",
         "postcode": [
-          "62000",
-          "62007",
-          "62050",
-          "62052",
-          "62100",
-          "62150",
-          "62200",
-          "62250",
-          "62300",
-          "62500",
-          "62502",
-          "62503",
-          "62504",
-          "62505",
-          "62506",
-          "62510",
-          "62512",
-          "62514",
-          "62516",
-          "62517",
-          "62518",
-          "62519",
-          "62520",
-          "62522",
-          "62524",
-          "62526",
-          "62527",
-          "62529",
-          "62530",
-          "62532",
-          "62536",
-          "62539",
-          "62540",
-          "62542",
-          "62546",
-          "62550",
-          "62551",
-          "62570",
-          "62574",
-          "62576",
-          "62578",
-          "62582",
-          "62584",
-          "62590",
-          "62592",
-          "62594",
-          "62596",
-          "62602",
-          "62604",
-          "62605",
-          "62606",
-          "62616",
-          "62618",
-          "62620",
-          "62623",
-          "62624",
-          "62628",
-          "62630",
-          "62632",
-          "62648",
-          "62652",
-          "62654",
-          "62657",
-          "62662",
-          "62668",
-          "62670",
-          "62674",
-          "62675",
-          "62676",
-          "62677",
-          "62686",
-          "62690",
-          "62692",
-          "62988"
+          "62000"
+        ]
+      },
+      {
+        "name": "Presint 2",
+        "postcode": [
+          "62100"
+        ]
+      },
+      {
+        "name": "Presint 3",
+        "postcode": [
+          "62100"
+        ]
+      },
+      {
+        "name": "Presint 4",
+        "postcode": [
+          "62100"
+        ]
+      },
+      {
+        "name": "Presint 5",
+        "postcode": [
+          "62200"
+        ]
+      },
+      {
+        "name": "Presint 6",
+        "postcode": [
+          "62200"
+        ]
+      },
+      {
+        "name": "Presint 7",
+        "postcode": [
+          "62250"
+        ]
+      },
+      {
+        "name": "Presint 8",
+        "postcode": [
+          "62250"
+        ]
+      },
+      {
+        "name": "Presint 9",
+        "postcode": [
+          "62250"
+        ]
+      },
+      {
+        "name": "Presint 10",
+        "postcode": [
+          "62250"
+        ]
+      },
+      {
+        "name": "Presint 11",
+        "postcode": [
+          "62300"
+        ]
+      },
+      {
+        "name": "Presint 12",
+        "postcode": [
+          "62300"
+        ]
+      },
+      {
+        "name": "Presint 13",
+        "postcode": [
+          "62300"
+        ]
+      },
+      {
+        "name": "Presint 14",
+        "postcode": [
+          "62300"
+        ]
+      },
+      {
+        "name": "Presint 15",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint 16",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint 17",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint 18",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint 19",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint 20",
+        "postcode": [
+          "62350"
+        ]
+      },
+      {
+        "name": "Presint Diplomatik",
+        "postcode": [
+          "62050"
+        ]
+      },
+      {
+        "name": "Taman Wawasan",
+        "postcode": [
+          "62000"
+        ]
+      },
+      {
+        "name": "Taman Putra Perdana",
+        "postcode": [
+          "62000"
+        ]
+      },
+      {
+        "name": "Taman Warisan Pertanian",
+        "postcode": [
+          "62000"
+        ]
+      },
+      {
+        "name": "Alamanda Putrajaya",
+        "postcode": [
+          "62000"
         ]
       }
     ]
