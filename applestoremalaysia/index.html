@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Commerce Admin Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for beautiful dashboard aesthetics */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+    <script>
+        // Tailwind CSS theme configuration (optional dark mode setup)
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        shopify: {
+                            green: '#008060',
+                            darkGreen: '#004c3f',
+                            lightGreen: '#f4f6f8',
+                            border: '#e1e3e5',
+                            textDark: '#202223'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen transition-colors duration-200 dark:bg-slate-900 dark:text-slate-100">
+
+    <!-- MAIN CONTAINER -->
+    <div class="flex flex-col min-h-screen">
+        
+        <!-- HEADER / NAVIGATION -->
+        <header class="bg-white border-b border-slate-200 dark:bg-slate-800 dark:border-slate-700 sticky top-0 z-30 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <!-- Brand / Logo -->
+                    <div class="flex items-center space-x-3">
+                        <div class="bg-emerald-600 text-white p-2 rounded-lg">
+                            <i data-lucide="shopping-bag" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold tracking-tight text-slate-900 dark:text-white">Shopify Admin</h1>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Manajemen Produk Terpusat</p>
+                        </div>
+                    </div>
+
+                    <!-- Connection Status Badge & Dark Mode Button -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Mode Status indicator -->
+                        <div id="modeBadge" class="hidden sm:flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-medium">
+                            <span class="w-2 h-2 rounded-full animate-pulse"></span>
+                            <span id="modeText">Menghubungkan...</span>
+                        </div>
+
+                        <!-- Dark Mode Toggle Button -->
+                        <button onclick="toggleDarkMode()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 dark:border-slate-700 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors" title="Toggle Tema">
+                            <i data-lucide="sun" id="sunIcon" class="w-5 h-5 hidden"></i>
+                            <i data-lucide="moon" id="moonIcon" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Settings Gear -->
+                        <button onclick="openSettingsModal()" class="p-2 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-600 dark:border-slate-700 dark:hover:bg-slate-700 dark:text-slate-300 transition-colors" title="Pengaturan API">
+                            <i data-lucide="settings" class="w-5 h-5"></i>
+                        </button>
+
+                        <!-- Tambah Produk Button -->
+                        <button onclick="openProductModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:shadow transition-all flex items-center space-x-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Tambah Produk</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            
+            <!-- ALERTS / NOTICES FOR API INTEGRATION -->
+            <div id="apiAlert" class="hidden mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 dark:bg-yellow-950/30 dark:border-yellow-600 rounded-r-lg">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-400 dark:text-yellow-500"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-700 dark:text-yellow-200">
+                            Sedang menggunakan <strong>Mode Sandbox (Lokal)</strong> karena API Web App eksternal belum diatur atau gagal memuat data. Perubahan akan disimpan secara lokal.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS CARDS (SHOPIFY ADMIN LOOK) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <!-- Card 1: Total Produk -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Produk</span>
+                        <div class="bg-blue-50 text-blue-600 p-2 rounded-lg dark:bg-blue-950/50 dark:text-blue-400">
+                            <i data-lucide="box" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statTotalProducts" class="text-2xl font-bold">0</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Kelompok Item</span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Total Varian -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Total Varian Aktif</span>
+                        <div class="bg-emerald-50 text-emerald-600 p-2 rounded-lg dark:bg-emerald-950/50 dark:text-emerald-400">
+                            <i data-lucide="layers" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statTotalVariants" class="text-2xl font-bold">0</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Kombinasi</span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Total Terjual -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Akumulasi Penjualan</span>
+                        <div class="bg-amber-50 text-amber-600 p-2 rounded-lg dark:bg-amber-950/50 dark:text-amber-400">
+                            <i data-lucide="trending-up" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statTotalSold" class="text-2xl font-bold">0</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Unit Produk</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Kepuasan Rating -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm dark:bg-slate-800 dark:border-slate-700">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-sm font-medium text-slate-500 dark:text-slate-400">Rata-rata Rating</span>
+                        <div class="bg-purple-50 text-purple-600 p-2 rounded-lg dark:bg-purple-950/50 dark:text-purple-400">
+                            <i data-lucide="star" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span id="statAvgRating" class="text-2xl font-bold">0.0</span>
+                        <span class="text-xs text-slate-500 dark:text-slate-400">Dari 50 Maks</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER BAR & CONTROLS -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+                <div class="p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <!-- Search & Filter inputs -->
+                    <div class="w-full sm:w-auto flex-1 flex flex-col sm:flex-row gap-3">
+                        <div class="relative flex-grow">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </div>
+                            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Cari berdasarkan nama, brand, atau kategori..." class="block w-full pl-10 pr-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        </div>
+                        <div class="min-w-[160px]">
+                            <select id="categoryFilter" onchange="handleCategoryFilter()" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                                <option value="">Semua Kategori</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="w-full sm:w-auto flex items-center justify-end space-x-2 border-t border-slate-100 sm:border-0 pt-3 sm:pt-0">
+                        <button onclick="loadProducts()" class="p-2 border border-slate-200 dark:border-slate-700 dark:hover:bg-slate-700 rounded-lg hover:bg-slate-50 text-slate-600 dark:text-slate-300 transition-colors" title="Segarkan Data">
+                            <i data-lucide="rotate-cw" class="w-4 h-4" id="refreshIcon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCT TABLE CONTAINER -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden dark:bg-slate-800 dark:border-slate-700">
+                <!-- Loading State Overlay -->
+                <div id="loadingOverlay" class="hidden flex flex-col items-center justify-center py-20 bg-white/70 dark:bg-slate-800/70">
+                    <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-emerald-600 mb-3"></div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Memuat data produk dari server...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden flex flex-col items-center justify-center py-20 px-4">
+                    <div class="bg-slate-100 text-slate-400 p-4 rounded-full mb-4 dark:bg-slate-700 dark:text-slate-500">
+                        <i data-lucide="package" class="w-12 h-12"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Tidak ada produk ditemukan</h3>
+                    <p class="text-slate-500 text-sm mt-1 max-w-sm text-center dark:text-slate-400">Silakan tambahkan produk baru atau periksa filter pencarian Anda.</p>
+                </div>
+
+                <!-- Actual Responsive Table -->
+                <div id="tableContainer" class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 dark:bg-slate-900/50 dark:border-slate-700 text-xs font-semibold uppercase tracking-wider">
+                                <th class="py-4 px-6">Produk</th>
+                                <th class="py-4 px-6">Kategori</th>
+                                <th class="py-4 px-6">Brand</th>
+                                <th class="py-4 px-6">Informasi</th>
+                                <th class="py-4 px-6">Varian</th>
+                                <th class="py-4 px-6">Rating & Terjual</th>
+                                <th class="py-4 px-6 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTableBody" class="divide-y divide-slate-200 dark:divide-slate-700 text-sm">
+                            <!-- Dynamic Content Inserted Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-white border-t border-slate-200 py-6 mt-12 dark:bg-slate-800 dark:border-slate-700">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-500 dark:text-slate-400">
+                <p>&copy; 2026 Admin Dashboard E-Commerce. Built with pure HTML, Tailwind, and Google Apps Script.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- CREATE & EDIT PRODUCT MODAL -->
+    <div id="productModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto transform transition-all dark:bg-slate-800 text-left border border-slate-200 dark:border-slate-700 flex flex-col">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between sticky top-0 bg-white dark:bg-slate-800 z-10">
+                <h2 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white">Tambah Produk Baru</h2>
+                <button onclick="closeProductModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Form) -->
+            <form id="productForm" onsubmit="handleProductSubmit(event)" class="p-6 space-y-6 flex-grow">
+                <!-- SECTIONS 1: GENERAL INFORMATION -->
+                <div class="space-y-4">
+                    <h3 class="text-sm font-semibold uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">1. Informasi Utama</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Item Group ID * (Unik)</label>
+                            <input type="text" id="formGroupId" required placeholder="Contoh: iphone17e" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Judul Produk *</label>
+                            <input type="text" id="formTitle" required placeholder="Contoh: iPhone 17e" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Brand</label>
+                            <input type="text" id="formBrand" placeholder="Contoh: Apple" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Kategori Utama</label>
+                            <input type="text" id="formCategory" placeholder="Contoh: iPhone" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Google Product Category</label>
+                            <input type="text" id="formGoogleCategory" placeholder="Contoh: Electronics > Mobile Phones" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Deskripsi Produk</label>
+                        <textarea id="formDescription" rows="3" placeholder="Tulis deskripsi detail produk..." class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Ketersediaan</label>
+                            <select id="formAvailability" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="in stock">In Stock</option>
+                                <option value="out of stock">Out of Stock</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Kondisi</label>
+                            <select id="formCondition" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                                <option value="new">New</option>
+                                <option value="refurbished">Refurbished</option>
+                                <option value="used">Used</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Link Produk Landing Page</label>
+                            <input type="url" id="formLink" placeholder="https://..." class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTIONS 2: STATS & LABELS -->
+                <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <h3 class="text-sm font-semibold uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">2. Metrik & Label Tambahan</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Rating (1 - 50)</label>
+                            <input type="number" id="formRating" min="1" max="50" placeholder="42" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Total Ulasan (Reviews)</label>
+                            <input type="number" id="formReview" placeholder="100" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Suka (Likes)</label>
+                            <input type="number" id="formLikes" placeholder="50" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Terjual (Sold)</label>
+                            <input type="number" id="formSold" placeholder="10" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Label Kustom 0</label>
+                            <input type="text" id="formCustomLabel0" placeholder="Contoh: flash_sale" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Label Kustom 1</label>
+                            <input type="text" id="formCustomLabel1" placeholder="Contoh: best_seller" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTIONS 3: DYNAMIC VARIANTS FORM -->
+                <div class="space-y-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-semibold uppercase text-emerald-600 dark:text-emerald-400 tracking-wider">3. Varian Produk</h3>
+                        <button type="button" onclick="addNewVariantRow()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-white rounded-lg text-xs font-medium flex items-center space-x-1.5 transition-all">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                            <span>Tambah Varian Baru</span>
+                        </button>
+                    </div>
+
+                    <!-- Variants Wrapper -->
+                    <div id="variantsContainer" class="space-y-4">
+                        <!-- Variant template rows will be injected here -->
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="pt-6 border-t border-slate-200 dark:border-slate-700 flex justify-end space-x-3 bg-white dark:bg-slate-800 sticky bottom-0 z-10">
+                    <button type="button" onclick="closeProductModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium shadow transition-colors flex items-center space-x-2">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        <span id="submitBtnText">Simpan Produk</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- PREVIEW PRODUCT MODAL -->
+    <div id="previewModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl transform transition-all dark:bg-slate-800 text-left border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900">
+                <h2 class="text-md font-bold text-slate-900 dark:text-white">Pratinjau Tampilan Produk</h2>
+                <button onclick="closePreviewModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <!-- Body -->
+            <div class="p-6" id="previewModalContent">
+                <!-- Dynamic Content via Javascript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md transform transition-all dark:bg-slate-800 text-left border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                <h2 class="text-md font-bold text-slate-900 dark:text-white">Pengaturan Sinkronisasi API</h2>
+                <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Pilih Mode Operasional</label>
+                    <select id="settingsMode" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none">
+                        <option value="api">Live API (Sinkronisasi Server)</option>
+                        <option value="sandbox">Sandbox (Penyimpanan Lokal)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Alamat Endpoint Web App API (Apps Script)</label>
+                    <textarea id="settingsUrl" rows="3" class="block w-full px-3 py-2 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded-lg text-sm focus:outline-none" placeholder="Masukan tautan Deployment ID https://script.google.com/..."></textarea>
+                    <p class="text-[10px] text-slate-500 mt-1 dark:text-slate-400">Pastikan status Google Apps Script telah di-deploy secara publik ('Anyone' dapat mengakses).</p>
+                </div>
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end space-x-2">
+                    <button onclick="closeSettingsModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors">Batal</button>
+                    <button onclick="saveSettings()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-medium shadow">Terapkan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="deleteModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm transform transition-all dark:bg-slate-800 text-left border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center space-x-3 text-red-600 mb-4">
+                    <div class="bg-red-50 p-2 rounded-full dark:bg-red-950/50">
+                        <i data-lucide="trash-2" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-lg font-bold">Hapus Produk?</h3>
+                </div>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-6">Apakah Anda yakin ingin menghapus produk <strong id="deleteProductName" class="text-slate-800 dark:text-white">---</strong> secara permanen? Tindakan ini tidak dapat dibatalkan.</p>
+                <div class="flex justify-end space-x-2">
+                    <button onclick="closeDeleteModal()" class="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg text-sm hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-colors">Batal</button>
+                    <button id="confirmDeleteBtn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium shadow">Hapus Sekarang</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 max-w-sm w-full"></div>
+
+
+    <!-- ==========================================
+         JAVASCRIPT LOGIC BLOCK
+         ========================================== -->
+    <script>
+        // ==========================================
+        // 1. STATE MANAGEMENT
+        // ==========================================
+        const state = {
+            products: [],            // Daftar produk asli hasil penarikan data
+            filteredProducts: [],    // Hasil penyaringan filter pencarian
+            categories: [],          // Daftar unik kategori produk
+            searchTerm: '',
+            selectedCategory: '',
+            activeProduct: null,     // Referensi produk ketika masuk tahap edit
+            isEditMode: false,
+            apiEndpoint: localStorage.getItem('product_api_endpoint') || 'https://script.google.com/macros/s/AKfycbwx21LUVNEUYBlVmimZGddEY7TDDIkRyj-pVStaoSjbrxaLswRU6ccunQqmQivxwGSI-g/exec',
+            apiMode: localStorage.getItem('product_api_mode') || 'api', // Mode API Terhubung Default
+            isLoading: false,
+            
+            // Data cadangan simulasi jika API bermasalah atau pengguna di mode sandbox
+            sandboxData: [
+                {
+                    item_group_id: "iphone17e",
+                    title: "iPhone 17e Limited Edition",
+                    description: "Teknologi Apple terbaru dengan integrasi chip A19, kamera ultra slim, dan daya tahan baterai hingga dua hari.",
+                    availability: "in stock",
+                    condition: "new",
+                    brand: "Apple",
+                    link: "https://www.apple.com",
+                    category: "iPhone",
+                    google_product_category: "Electronics > Mobile Phones",
+                    rating: 48,
+                    review: 1250,
+                    likes: 8520,
+                    sold: 450,
+                    custom_label_0: "flash_sale",
+                    custom_label_1: "hot_deal",
+                    variants: [
+                        {
+                            id: "iph17e-black-256",
+                            color: "Space Black",
+                            image_link: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=300&q=80",
+                            additional_image_link: "https://images.unsplash.com/photo-1523206489230-c012c64b2b48?auto=format&fit=crop&w=300&q=80",
+                            size: "256GB",
+                            price: "15999000 IDR",
+                            sale_price: "14500000 IDR"
+                        },
+                        {
+                            id: "iph17e-silver-512",
+                            color: "Titanium Silver",
+                            image_link: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=300&q=80",
+                            additional_image_link: "",
+                            size: "512GB",
+                            price: "18999000 IDR",
+                            sale_price: "17999000 IDR"
+                        }
+                    ]
+                },
+                {
+                    item_group_id: "macbookpro16",
+                    title: "MacBook Pro 16 Inch M4",
+                    description: "Monster performa laptop portabel khusus profesional kreatif dan developer.",
+                    availability: "in stock",
+                    condition: "new",
+                    brand: "Apple",
+                    link: "https://www.apple.com",
+                    category: "Laptop",
+                    google_product_category: "Electronics > Computers",
+                    rating: 49,
+                    review: 610,
+                    likes: 3105,
+                    sold: 120,
+                    custom_label_0: "free_shipping",
+                    custom_label_1: "premium",
+                    variants: [
+                        {
+                            id: "mbp16-m4max-1tb",
+                            color: "Space Gray",
+                            image_link: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=300&q=80",
+                            additional_image_link: "",
+                            size: "32GB RAM / 1TB SSD",
+                            price: "42000000 IDR",
+                            sale_price: "39999000 IDR"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // ==========================================
+        // 2. INITIALIZATION / STARTUP
+        // ==========================================
+        window.onload = function() {
+            // Setup LocalStorage sandbox jika belum ada
+            if(!localStorage.getItem('sandbox_products')) {
+                localStorage.setItem('sandbox_products', JSON.stringify(state.sandboxData));
+            }
+
+            // Sync form settings
+            document.getElementById('settingsUrl').value = state.apiEndpoint;
+            document.getElementById('settingsMode').value = state.apiMode;
+
+            // Initialize Lucide Icons
+            lucide.createIcons();
+
+            // Load data produk
+            loadProducts();
+            
+            // Check Dark Mode preference
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.documentElement.classList.add('dark');
+                document.getElementById('sunIcon').classList.remove('hidden');
+                document.getElementById('moonIcon').classList.add('hidden');
+            }
+        };
+
+        // ==========================================
+        // 3. CORE API OPERATIONS (ASYNC/AWAIT)
+        // ==========================================
+        
+        // Helper untuk memanggil Google Apps Script dengan menghindari isu pre-flight CORS
+        async function fetchFromGas(payload) {
+            // Google Apps Script tidak menangani CORS JSON pre-flight (OPTIONS) dengan baik.
+            // Solusi: Kirim payload POST sebagai raw text string menggunakan header default peramban.
+            const response = await fetch(state.apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP Error Status: ${response.status}`);
+            }
+            return await response.json();
+        }
+
+        async function loadProducts() {
+            state.isLoading = true;
+            updateLoadingUI(true);
+            updateModeIndicator();
+
+            try {
+                if (state.apiMode === 'api' && state.apiEndpoint) {
+                    // Penarikan data dari Endpoint Web App Apps Script
+                    const res = await fetch(state.apiEndpoint);
+                    if (!res.ok) throw new Error("Terjadi kegagalan komunikasi dengan endpoint server.");
+                    
+                    const result = await res.json();
+                    if(result && result.status === "success" && Array.isArray(result.data)) {
+                        state.products = result.data;
+                        showToast("Koneksi Sukses!", "Data produk ditarik langsung dari Live Google Sheets.", "success");
+                        document.getElementById('apiAlert').classList.add('hidden');
+                    } else {
+                        throw new Error("Gagal memproses data. Struktur respons server tidak valid.");
+                    }
+                } else {
+                    // Penarikan data dari Sandbox Lokal
+                    state.products = JSON.parse(localStorage.getItem('sandbox_products')) || [];
+                    document.getElementById('apiAlert').classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error("API error, switching to Sandbox mode:", error);
+                // Fallback otomatis ke Sandbox jika gagal memuat data API
+                state.products = JSON.parse(localStorage.getItem('sandbox_products')) || [];
+                document.getElementById('apiAlert').classList.remove('hidden');
+                showToast("Beralih ke Sandbox", "Tidak dapat terhubung ke URL API. Menggunakan penyimpanan lokal.", "warning");
+            } finally {
+                state.isLoading = false;
+                updateLoadingUI(false);
+                processAndFilterProducts();
+            }
+        }
+
+        async function createProduct(productData) {
+            state.isLoading = true;
+            updateLoadingUI(true);
+            try {
+                if (state.apiMode === 'api' && state.apiEndpoint) {
+                    const payload = {
+                        action: 'create',
+                        items: [productData]
+                    };
+                    const res = await fetchFromGas(payload);
+                    if (res.status === 'success') {
+                        showToast("Produk Disimpan", "Produk baru sukses disimpan ke Google Sheets.", "success");
+                    } else {
+                        throw new Error(res.message || "Gagal menyimpan ke server.");
+                    }
+                } else {
+                    // Sandbox local storage save
+                    let localData = JSON.parse(localStorage.getItem('sandbox_products')) || [];
+                    
+                    // Validasi item_group_id unik
+                    if (localData.some(p => p.item_group_id === productData.item_group_id)) {
+                        throw new Error(`Item Group ID "${productData.item_group_id}" sudah digunakan.`);
+                    }
+
+                    localData.unshift(productData);
+                    localStorage.setItem('sandbox_products', JSON.stringify(localData));
+                    showToast("Simpan Lokal Sukses", "Produk disimpan dalam memori browser lokal.", "success");
+                }
+                closeProductModal();
+                await loadProducts();
+            } catch (error) {
+                showToast("Gagal Menyimpan", error.message, "error");
+            } finally {
+                state.isLoading = false;
+                updateLoadingUI(false);
+            }
+        }
+
+        async function updateProduct(productData) {
+            state.isLoading = true;
+            updateLoadingUI(true);
+            try {
+                if (state.apiMode === 'api' && state.apiEndpoint) {
+                    const payload = {
+                        action: 'update',
+                        items: [productData]
+                    };
+                    const res = await fetchFromGas(payload);
+                    if (res.status === 'success') {
+                        showToast("Produk Diperbarui", "Detail produk sukses diperbarui di Google Sheets.", "success");
+                    } else {
+                        throw new Error(res.message || "Gagal memperbarui ke server.");
+                    }
+                } else {
+                    // Sandbox local storage update
+                    let localData = JSON.parse(localStorage.getItem('sandbox_products')) || [];
+                    const index = localData.findIndex(p => p.item_group_id === productData.item_group_id);
+                    if (index !== -1) {
+                        localData[index] = productData;
+                        localStorage.setItem('sandbox_products', JSON.stringify(localData));
+                        showToast("Update Lokal Sukses", "Detail produk diubah dalam memori browser.", "success");
+                    } else {
+                        throw new Error("ID Produk tidak ditemukan dalam daftar lokal.");
+                    }
+                }
+                closeProductModal();
+                await loadProducts();
+            } catch (error) {
+                showToast("Gagal Memperbarui", error.message, "error");
+            } finally {
+                state.isLoading = false;
+                updateLoadingUI(false);
+            }
+        }
+
+        async function deleteProduct(itemGroupId) {
+            state.isLoading = true;
+            updateLoadingUI(true);
+            try {
+                if (state.apiMode === 'api' && state.apiEndpoint) {
+                    const payload = {
+                        action: 'delete',
+                        items: [itemGroupId]
+                    };
+                    const res = await fetchFromGas(payload);
+                    if (res.status === 'success') {
+                        showToast("Produk Dihapus", "Produk terhapus dari sistem database Google Sheets.", "success");
+                    } else {
+                        throw new Error(res.message || "Gagal menghapus produk dari server.");
+                    }
+                } else {
+                    // Sandbox local storage delete
+                    let localData = JSON.parse(localStorage.getItem('sandbox_products')) || [];
+                    localData = localData.filter(p => p.item_group_id !== itemGroupId);
+                    localStorage.setItem('sandbox_products', JSON.stringify(localData));
+                    showToast("Hapus Lokal Sukses", "Produk terhapus dari memori browser.", "success");
+                }
+                closeDeleteModal();
+                await loadProducts();
+            } catch (error) {
+                showToast("Gagal Menghapus", error.message, "error");
+            } finally {
+                state.isLoading = false;
+                updateLoadingUI(false);
+            }
+        }
+
+        // ==========================================
+        // 4. RENDER AND VISUAL MANIPULATION
+        // ==========================================
+        
+        // Memproses data mentah (filter, kalkulasi stats, dropdown kategori)
+        function processAndFilterProducts() {
+            // Saring kategori unik
+            const catSet = new Set();
+            state.products.forEach(p => { if(p.category) catSet.add(p.category); });
+            state.categories = Array.from(catSet);
+            renderCategoryFilterDropdown();
+
+            // Saring berdasarkan keyword search & dropdown category
+            state.filteredProducts = state.products.filter(p => {
+                const titleMatch = p.title ? p.title.toLowerCase().includes(state.searchTerm.toLowerCase()) : false;
+                const brandMatch = p.brand ? p.brand.toLowerCase().includes(state.searchTerm.toLowerCase()) : false;
+                const catMatch = p.category ? p.category.toLowerCase().includes(state.searchTerm.toLowerCase()) : false;
+                const matchesKeyword = titleMatch || brandMatch || catMatch;
+
+                const matchesCategory = state.selectedCategory ? p.category === state.selectedCategory : true;
+
+                return matchesKeyword && matchesCategory;
+            });
+
+            // Update statistik
+            calculateAndRenderStats();
+
+            // Render ke tabel
+            renderProducts();
+        }
+
+        function calculateAndRenderStats() {
+            let totalVariants = 0;
+            let totalSold = 0;
+            let sumRating = 0;
+            let ratedItemsCount = 0;
+
+            state.products.forEach(p => {
+                if(p.variants && Array.isArray(p.variants)) {
+                    totalVariants += p.variants.length;
+                }
+                if(p.sold) {
+                    totalSold += parseInt(p.sold) || 0;
+                }
+                if(p.rating) {
+                    sumRating += parseFloat(p.rating) || 0;
+                    ratedItemsCount++;
+                }
+            });
+
+            const avgRating = ratedItemsCount > 0 ? (sumRating / ratedItemsCount).toFixed(1) : "0.0";
+
+            document.getElementById('statTotalProducts').innerText = state.products.length;
+            document.getElementById('statTotalVariants').innerText = totalVariants;
+            document.getElementById('statTotalSold').innerText = totalSold.toLocaleString('id-ID');
+            document.getElementById('statAvgRating').innerText = avgRating;
+        }
+
+        function renderCategoryFilterDropdown() {
+            const dropdown = document.getElementById('categoryFilter');
+            const currentValue = state.selectedCategory;
+            
+            dropdown.innerHTML = '<option value="">Semua Kategori</option>';
+            state.categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.innerText = cat;
+                if(cat === currentValue) opt.selected = true;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function renderProducts() {
+            const tbody = document.getElementById('productTableBody');
+            const tableContainer = document.getElementById('tableContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            tbody.innerHTML = '';
+
+            if (state.filteredProducts.length === 0) {
+                tableContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            tableContainer.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+
+            state.filteredProducts.forEach(prod => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors";
+
+                // Varian Pertama untuk Gambar thumbnail default
+                const firstVariant = (prod.variants && prod.variants.length > 0) ? prod.variants[0] : null;
+                const thumbUrl = (firstVariant && firstVariant.image_link) ? firstVariant.image_link : 'https://placehold.co/100x100/f1f5f9/64748b?text=No+Img';
+                const formattedPrice = firstVariant ? (firstVariant.sale_price || firstVariant.price || '0') : '0';
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-12 h-12 rounded-lg bg-slate-100 dark:bg-slate-700 overflow-hidden flex-shrink-0 border border-slate-200 dark:border-slate-600">
+                                <img src="${thumbUrl}" alt="Product Image" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/100x100/f1f5f9/64748b?text=Err'">
+                            </div>
+                            <div class="max-w-xs sm:max-w-sm">
+                                <h4 class="font-semibold text-slate-900 dark:text-white truncate" title="${prod.title}">${prod.title}</h4>
+                                <span class="text-xs text-slate-500 font-mono block mt-0.5">${prod.item_group_id}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-slate-600 dark:text-slate-300">
+                        ${prod.category || '<span class="text-slate-400 font-italic">-</span>'}
+                    </td>
+                    <td class="py-4 px-6 text-slate-600 dark:text-slate-300">
+                        ${prod.brand || '<span class="text-slate-400 font-italic">-</span>'}
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex flex-col space-y-1">
+                            <span class="inline-flex items-center w-max px-2 py-0.5 rounded text-xs font-medium ${prod.availability === 'in stock' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' : 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400'}">
+                                ${prod.availability === 'in stock' ? 'Tersedia' : 'Habis'}
+                            </span>
+                            <span class="text-xs text-slate-500 capitalize">${prod.condition}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex items-center space-x-1.5">
+                            <span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold font-mono">
+                                ${prod.variants ? prod.variants.length : 0}
+                            </span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6">
+                        <div class="flex flex-col space-y-0.5">
+                            <div class="flex items-center text-amber-500 text-xs">
+                                <i data-lucide="star" class="w-3.5 h-3.5 fill-current"></i>
+                                <span class="ml-1 font-bold">${prod.rating ? (prod.rating / 10).toFixed(1) : '0.0'}</span>
+                                <span class="text-slate-400 text-[10px] ml-1">(${prod.review || 0})</span>
+                            </div>
+                            <span class="text-xs text-slate-500 dark:text-slate-400 font-medium">${prod.sold || 0} Terjual</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-6 text-right">
+                        <div class="flex items-center justify-end space-x-2">
+                            <button onclick="openPreview('${prod.item_group_id}')" class="p-1.5 hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-700 dark:hover:text-blue-400 rounded-lg text-slate-500 transition-colors" title="Pratinjau Toko">
+                                <i data-lucide="eye" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="editProduct('${prod.item_group_id}')" class="p-1.5 hover:bg-slate-100 hover:text-emerald-600 dark:hover:bg-slate-700 dark:hover:text-emerald-400 rounded-lg text-slate-500 transition-colors" title="Ubah Detail">
+                                <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="confirmDelete('${prod.item_group_id}')" class="p-1.5 hover:bg-slate-100 hover:text-red-600 dark:hover:bg-slate-700 dark:hover:text-red-400 rounded-lg text-slate-500 transition-colors" title="Hapus Permanen">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Re-render icons yang di-generate dinamis
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // 5. EVENT HANDLERS & FILTERS
+        // ==========================================
+        function handleSearch() {
+            state.searchTerm = document.getElementById('searchInput').value;
+            processAndFilterProducts();
+        }
+
+        function handleCategoryFilter() {
+            state.selectedCategory = document.getElementById('categoryFilter').value;
+            processAndFilterProducts();
+        }
+
+        // ==========================================
+        // 6. DYNAMIC VARIANT FORM LOGIC
+        // ==========================================
+        let variantIdCounter = 0;
+
+        function addNewVariantRow(data = null) {
+            const container = document.getElementById('variantsContainer');
+            const rowId = `variant_row_${variantIdCounter++}`;
+            
+            const variantDiv = document.createElement('div');
+            variantDiv.id = rowId;
+            variantDiv.className = "p-4 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-900/30 space-y-3 relative group";
+
+            variantDiv.innerHTML = `
+                <!-- Remove Variant Button -->
+                <button type="button" onclick="removeVariantRow('${rowId}')" class="absolute top-3 right-3 text-slate-400 hover:text-red-500 rounded-lg p-1 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all opacity-0 group-hover:opacity-100">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Variant SKU / ID *</label>
+                        <input type="text" class="var-id block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" required placeholder="Contoh: iph17e-black" value="${data ? data.id : ''}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Warna</label>
+                        <input type="text" class="var-color block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" placeholder="Contoh: Space Black" value="${data ? data.color : ''}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Ukuran / Kapasitas</label>
+                        <input type="text" class="var-size block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" placeholder="Contoh: 256GB" value="${data ? data.size : ''}">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Harga Dasar (Price) *</label>
+                        <input type="text" class="var-price block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" required placeholder="Contoh: 15000000" value="${data ? data.price : ''}">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Harga Diskon (Sale Price)</label>
+                        <input type="text" class="var-saleprice block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" placeholder="Contoh: 14000000" value="${data ? data.sale_price : ''}">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Gambar Utama (Link) *</label>
+                        <input type="url" class="var-image block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" required placeholder="https://..." value="${data ? data.image_link : ''}" oninput="updateRowThumbnail('${rowId}')">
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded border border-slate-200 dark:border-slate-700 overflow-hidden bg-slate-100 dark:bg-slate-800 flex-shrink-0">
+                            <img src="${data ? data.image_link : 'https://placehold.co/80x80/f1f5f9/64748b?text=Img'}" class="var-thumb w-full h-full object-cover" onerror="this.src='https://placehold.co/80x80/f1f5f9/64748b?text=Err'">
+                        </div>
+                        <span class="text-[10px] text-slate-400">Pratinjau</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-500 mb-0.5">Gambar Tambahan (Pisahkan dengan Koma)</label>
+                    <input type="text" class="var-addimages block w-full px-2 py-1 border border-slate-200 dark:border-slate-700 dark:bg-slate-900 rounded text-xs focus:outline-none" placeholder="https://url1.com, https://url2.com" value="${data ? data.additional_image_link : ''}">
+                </div>
+            `;
+            container.appendChild(variantDiv);
+            lucide.createIcons();
+        }
+
+        function removeVariantRow(rowId) {
+            const row = document.getElementById(rowId);
+            const container = document.getElementById('variantsContainer');
+            if (container.children.length > 1) {
+                row.remove();
+            } else {
+                showToast("Batas Minimum", "Anda wajib menyertakan minimal 1 varian produk.", "warning");
+            }
+        }
+
+        function updateRowThumbnail(rowId) {
+            const row = document.getElementById(rowId);
+            const inputVal = row.querySelector('.var-image').value;
+            const thumbImg = row.querySelector('.var-thumb');
+            if (inputVal && inputVal.startsWith('http')) {
+                thumbImg.src = inputVal;
+            } else {
+                thumbImg.src = 'https://placehold.co/80x80/f1f5f9/64748b?text=Img';
+            }
+        }
+
+        // ==========================================
+        // 7. MODALS WORKFLOW
+        // ==========================================
+        function openProductModal() {
+            state.isEditMode = false;
+            state.activeProduct = null;
+
+            document.getElementById('modalTitle').innerText = "Tambah Produk Baru";
+            document.getElementById('submitBtnText').innerText = "Simpan Produk";
+            document.getElementById('productForm').reset();
+            document.getElementById('formGroupId').disabled = false;
+            document.getElementById('variantsContainer').innerHTML = '';
+
+            // Buat row varian default
+            addNewVariantRow();
+
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function closeProductModal() {
+            document.getElementById('productModal').classList.add('hidden');
+        }
+
+        function editProduct(itemGroupId) {
+            const prod = state.products.find(p => p.item_group_id === itemGroupId);
+            if (!prod) return;
+
+            state.isEditMode = true;
+            state.activeProduct = prod;
+
+            document.getElementById('modalTitle').innerText = `Edit Produk: ${prod.title}`;
+            document.getElementById('submitBtnText').innerText = "Perbarui Detail";
+            
+            // Isi Formulir
+            document.getElementById('formGroupId').value = prod.item_group_id;
+            document.getElementById('formGroupId').disabled = true; // Kunci ID saat Edit
+            document.getElementById('formTitle').value = prod.title || '';
+            document.getElementById('formBrand').value = prod.brand || '';
+            document.getElementById('formCategory').value = prod.category || '';
+            document.getElementById('formGoogleCategory').value = prod.google_product_category || '';
+            document.getElementById('formDescription').value = prod.description || '';
+            document.getElementById('formAvailability').value = prod.availability || 'in stock';
+            document.getElementById('formCondition').value = prod.condition || 'new';
+            document.getElementById('formLink').value = prod.link || '';
+            document.getElementById('formRating').value = prod.rating || '';
+            document.getElementById('formReview').value = prod.review || '';
+            document.getElementById('formLikes').value = prod.likes || '';
+            document.getElementById('formSold').value = prod.sold || '';
+            document.getElementById('formCustomLabel0').value = prod.custom_label_0 || '';
+            document.getElementById('formCustomLabel1').value = prod.custom_label_1 || '';
+
+            // Generate rincian varian
+            const container = document.getElementById('variantsContainer');
+            container.innerHTML = '';
+            if (prod.variants && prod.variants.length > 0) {
+                prod.variants.forEach(variant => addNewVariantRow(variant));
+            } else {
+                addNewVariantRow();
+            }
+
+            document.getElementById('productModal').classList.remove('hidden');
+        }
+
+        function handleProductSubmit(event) {
+            event.preventDefault();
+
+            // Kumpulkan Varian data dari baris dinamis
+            const variantRows = document.getElementById('variantsContainer').children;
+            const variantsData = [];
+
+            for (let row of variantRows) {
+                const id = row.querySelector('.var-id').value.trim();
+                const color = row.querySelector('.var-color').value.trim();
+                const size = row.querySelector('.var-size').value.trim();
+                const price = row.querySelector('.var-price').value.trim();
+                const sale_price = row.querySelector('.var-saleprice').value.trim();
+                const image_link = row.querySelector('.var-image').value.trim();
+                const additional_image_link = row.querySelector('.var-addimages').value.trim();
+
+                variantsData.push({
+                    id,
+                    color,
+                    size,
+                    price,
+                    sale_price,
+                    image_link,
+                    additional_image_link
+                });
+            }
+
+            // Kumpulkan Informasi Utama
+            const productPayload = {
+                item_group_id: document.getElementById('formGroupId').value.trim(),
+                title: document.getElementById('formTitle').value.trim(),
+                description: document.getElementById('formDescription').value.trim(),
+                availability: document.getElementById('formAvailability').value,
+                condition: document.getElementById('formCondition').value,
+                brand: document.getElementById('formBrand').value.trim(),
+                link: document.getElementById('formLink').value.trim(),
+                category: document.getElementById('formCategory').value.trim(),
+                google_product_category: document.getElementById('formGoogleCategory').value.trim(),
+                rating: parseInt(document.getElementById('formRating').value) || 0,
+                review: parseInt(document.getElementById('formReview').value) || 0,
+                likes: parseInt(document.getElementById('formLikes').value) || 0,
+                sold: parseInt(document.getElementById('formSold').value) || 0,
+                custom_label_0: document.getElementById('formCustomLabel0').value.trim(),
+                custom_label_1: document.getElementById('formCustomLabel1').value.trim(),
+                variants: variantsData
+            };
+
+            if (state.isEditMode) {
+                updateProduct(productPayload);
+            } else {
+                createProduct(productPayload);
+            }
+        }
+
+        // Preview Tampilan Produk (Simulasi Halaman Toko E-Commerce)
+        function openPreview(itemGroupId) {
+            const prod = state.products.find(p => p.item_group_id === itemGroupId);
+            if (!prod) return;
+
+            const modalContent = document.getElementById('previewModalContent');
+            const defaultVar = (prod.variants && prod.variants.length > 0) ? prod.variants[0] : null;
+
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Gallery Area -->
+                    <div class="space-y-4">
+                        <div class="aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700">
+                            <img id="prevMainImg" src="${defaultVar ? defaultVar.image_link : ''}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex gap-2 overflow-x-auto pb-2" id="prevThumbList">
+                            <!-- Thumbnails dynamically loaded -->
+                        </div>
+                    </div>
+
+                    <!-- Details Area -->
+                    <div class="flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center space-x-2 text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-2">
+                                <span>${prod.brand || 'No Brand'}</span>
+                                <span>&bull;</span>
+                                <span>${prod.category || 'No Category'}</span>
+                            </div>
+                            <h3 class="text-xl font-bold mb-2">${prod.title}</h3>
+                            
+                            <!-- Rating -->
+                            <div class="flex items-center space-x-2 text-xs mb-4">
+                                <div class="flex text-amber-500">
+                                    <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                </div>
+                                <span class="font-bold">${prod.rating ? (prod.rating / 10).toFixed(1) : '0.0'}</span>
+                                <span class="text-slate-400">(${prod.review} ulasan)</span>
+                            </div>
+
+                            <!-- Price -->
+                            <div class="mb-4" id="prevPriceArea">
+                                <!-- Price loaded dynamically -->
+                            </div>
+
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">${prod.description || 'Tidak ada deskripsi tersedia untuk produk ini.'}</p>
+
+                            <!-- Variant Selectors -->
+                            <div class="space-y-3 mb-6">
+                                <label class="block text-xs font-bold text-slate-600 dark:text-slate-300">Pilih Varian Produk</label>
+                                <div class="flex flex-wrap gap-2" id="prevVariantSelector">
+                                    <!-- Selectors loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action -->
+                        <div class="pt-4 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                            <a href="${prod.link || '#'}" target="_blank" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-center py-2.5 rounded-lg text-sm font-semibold shadow transition-all flex items-center justify-center space-x-2">
+                                <i data-lucide="external-link" class="w-4 h-4"></i>
+                                <span>Kunjungi Landing Page</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Render selectors varian
+            const selectorContainer = document.getElementById('prevVariantSelector');
+            if (prod.variants && prod.variants.length > 0) {
+                prod.variants.forEach((v, index) => {
+                    const btn = document.createElement('button');
+                    btn.type = "button";
+                    btn.className = `px-3 py-1.5 border text-xs font-medium rounded-lg transition-all ${index === 0 ? 'border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400' : 'border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700'}`;
+                    btn.innerText = `${v.color || ''} ${v.size || ''}`.trim() || `Varian ${index + 1}`;
+                    btn.onclick = () => selectPreviewVariant(prod, v, btn);
+                    selectorContainer.appendChild(btn);
+                });
+            }
+
+            // Atur varian pertama aktif pertama kali
+            if (defaultVar) {
+                selectPreviewVariant(prod, defaultVar, selectorContainer.children[0]);
+            }
+
+            document.getElementById('previewModal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function selectPreviewVariant(product, variant, element) {
+            // Ubah style tombol aktif
+            const buttons = document.getElementById('prevVariantSelector').children;
+            for(let btn of buttons) {
+                btn.className = 'px-3 py-1.5 border text-xs font-medium rounded-lg border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all text-slate-700 dark:text-slate-300';
+            }
+            if(element) {
+                element.className = 'px-3 py-1.5 border text-xs font-medium rounded-lg border-emerald-500 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 font-semibold';
+            }
+
+            // Ganti Gambar utama & Harga
+            document.getElementById('prevMainImg').src = variant.image_link || 'https://placehold.co/300x300/f1f5f9/64748b?text=No+Img';
+            
+            const priceArea = document.getElementById('prevPriceArea');
+            if (variant.sale_price) {
+                priceArea.innerHTML = `
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-2xl font-black text-emerald-600">${variant.sale_price}</span>
+                        <span class="text-sm text-slate-400 line-through">${variant.price}</span>
+                    </div>
+                    <span class="inline-flex mt-1 text-[10px] font-bold tracking-wide uppercase px-1.5 py-0.5 bg-red-100 text-red-700 rounded-md">Promo Diskon</span>
+                `;
+            } else {
+                priceArea.innerHTML = `
+                    <span class="text-2xl font-black text-slate-900 dark:text-white">${variant.price}</span>
+                `;
+            }
+
+            // Render Galeri thumbnail kecil pendukung
+            const thumbList = document.getElementById('prevThumbList');
+            thumbList.innerHTML = '';
+
+            // Thumbnail gambar utama
+            const mainThumb = createGalleryThumb(variant.image_link);
+            mainThumb.onclick = () => { document.getElementById('prevMainImg').src = variant.image_link; };
+            thumbList.appendChild(mainThumb);
+
+            // Thumbnail gambar tambahan
+            if (variant.additional_image_link) {
+                const addImgs = variant.additional_image_link.split(',');
+                addImgs.forEach(img => {
+                    const cleanImg = img.trim();
+                    if(cleanImg) {
+                        const t = createGalleryThumb(cleanImg);
+                        t.onclick = () => { document.getElementById('prevMainImg').src = cleanImg; };
+                        thumbList.appendChild(t);
+                    }
+                });
+            }
+        }
+
+        function createGalleryThumb(url) {
+            const btn = document.createElement('button');
+            btn.className = "w-12 h-12 rounded border border-slate-200 dark:border-slate-700 overflow-hidden flex-shrink-0 bg-white hover:border-emerald-500 transition-all";
+            btn.innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
+            return btn;
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').classList.add('hidden');
+        }
+
+        // Modals Hapus
+        let activeDeleteId = null;
+        function confirmDelete(itemGroupId) {
+            const prod = state.products.find(p => p.item_group_id === itemGroupId);
+            if (!prod) return;
+
+            activeDeleteId = itemGroupId;
+            document.getElementById('deleteProductName').innerText = prod.title;
+            document.getElementById('confirmDeleteBtn').onclick = () => { deleteProduct(activeDeleteId); };
+            
+            document.getElementById('deleteModal').classList.remove('hidden');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.add('hidden');
+            activeDeleteId = null;
+        }
+
+        // Modals Pengaturan
+        function openSettingsModal() {
+            document.getElementById('settingsUrl').value = state.apiEndpoint;
+            document.getElementById('settingsMode').value = state.apiMode;
+            document.getElementById('settingsModal').classList.remove('hidden');
+        }
+
+        function saveSettings() {
+            const url = document.getElementById('settingsUrl').value.trim();
+            const mode = document.getElementById('settingsMode').value;
+
+            state.apiEndpoint = url;
+            state.apiMode = mode;
+
+            localStorage.setItem('product_api_endpoint', url);
+            localStorage.setItem('product_api_mode', mode);
+
+            closeSettingsModal();
+            loadProducts();
+            showToast("Pengaturan Disimpan", "Aplikasi memperbarui mode operasional dan memuat ulang data.", "info");
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // 8. HELPERS, UTILITIES & NOTIFICATIONS
+        // ==========================================
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+                localStorage.setItem('darkMode', 'false');
+            } else {
+                html.classList.add('dark');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+                localStorage.setItem('darkMode', 'true');
+            }
+        }
+
+        function updateLoadingUI(loading) {
+            const overlay = document.getElementById('loadingOverlay');
+            const icon = document.getElementById('refreshIcon');
+            
+            if (loading) {
+                overlay.classList.remove('hidden');
+                if (icon) icon.classList.add('animate-spin');
+            } else {
+                overlay.classList.add('hidden');
+                if (icon) icon.classList.remove('animate-spin');
+            }
+        }
+
+        function updateModeIndicator() {
+            const badge = document.getElementById('modeBadge');
+            const text = document.getElementById('modeText');
+
+            badge.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-700', 'dark:bg-emerald-950/40', 'dark:text-emerald-400', 'bg-yellow-50', 'text-yellow-700', 'dark:bg-yellow-950/40', 'dark:text-yellow-400');
+
+            if (state.apiMode === 'api' && state.apiEndpoint) {
+                badge.classList.add('bg-emerald-50', 'text-emerald-700', 'dark:bg-emerald-950/40', 'dark:text-emerald-400');
+                text.innerText = "Terhubung Live API";
+            } else {
+                badge.classList.add('bg-yellow-50', 'text-yellow-700', 'dark:bg-yellow-950/40', 'dark:text-yellow-400');
+                text.innerText = "Mode Sandbox";
+            }
+        }
+
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            // Konfigurasi icon & border berdasarkan jenis toast
+            let icon = 'info';
+            let iconColor = 'text-blue-500';
+            let bgClass = 'bg-white border-blue-500';
+            
+            if (type === 'success') {
+                icon = 'check-circle';
+                iconColor = 'text-emerald-500';
+                bgClass = 'bg-white border-emerald-500';
+            } else if (type === 'warning') {
+                icon = 'alert-triangle';
+                iconColor = 'text-amber-500';
+                bgClass = 'bg-white border-amber-500';
+            } else if (type === 'error') {
+                icon = 'x-circle';
+                iconColor = 'text-red-500';
+                bgClass = 'bg-white border-red-500';
+            }
+
+            toast.className = `flex p-4 rounded-xl border-l-4 shadow-xl transform translate-y-2 opacity-0 transition-all duration-300 dark:bg-slate-800 dark:text-white ${bgClass}`;
+            toast.innerHTML = `
+                <div class="${iconColor} mr-3">
+                    <i data-lucide="${icon}" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h4 class="font-bold text-xs text-slate-900 dark:text-white">${title}</h4>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${message}</p>
+                </div>
+            `;
+
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            // Trigger Transition animation
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            // Hapus toast otomatis setelah 4 detik
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-4');
+                setTimeout(() => { toast.remove(); }, 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
