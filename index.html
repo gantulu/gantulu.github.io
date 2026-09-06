@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no"
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>BSN User</title>
@@ -16,9 +16,14 @@
         margin: 0;
       }
 
+      html {
+        touch-action: manipulation;
+      }
+
       body {
         -webkit-text-size-adjust: 100%;
         touch-action: manipulation;
+        overscroll-behavior: none;
       }
     </style>
   </head>
