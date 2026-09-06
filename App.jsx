@@ -208,6 +208,38 @@ function App() {
   });
 
   React.useEffect(() => {
+    const preventZoom = (event) => event.preventDefault();
+    const preventGestureZoom = (event) => event.preventDefault();
+    const preventDoubleTapZoom = (event) => event.preventDefault();
+
+    document.addEventListener("gesturestart", preventGestureZoom, { passive: false });
+    document.addEventListener("gesturechange", preventGestureZoom, { passive: false });
+    document.addEventListener("gestureend", preventGestureZoom, { passive: false });
+    document.addEventListener("dblclick", preventDoubleTapZoom, { passive: false });
+
+    let lastTouchEnd = 0;
+    const handleTouchEnd = (event) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    };
+
+    document.addEventListener("touchend", handleTouchEnd, { passive: false });
+    document.addEventListener("wheel", preventZoom, { passive: false });
+
+    return () => {
+      document.removeEventListener("gesturestart", preventGestureZoom);
+      document.removeEventListener("gesturechange", preventGestureZoom);
+      document.removeEventListener("gestureend", preventGestureZoom);
+      document.removeEventListener("dblclick", preventDoubleTapZoom);
+      document.removeEventListener("touchend", handleTouchEnd);
+      document.removeEventListener("wheel", preventZoom);
+    };
+  }, []);
+
+  React.useEffect(() => {
     const timer = window.setTimeout(() => setSplash(false), 800);
     return () => window.clearTimeout(timer);
   }, []);
