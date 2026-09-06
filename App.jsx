@@ -67,7 +67,7 @@ function AuthPage({ onLogin }) {
   }
 
   return (
-    <main className="flex h-full min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6">
+    <main className="flex h-full min-h-0 flex-1 items-center justify-center overflow-y-auto overscroll-contain px-4 py-6">
       <form onSubmit={login} className="w-full max-w-sm space-y-4">
         <div>
           <h2 className="text-2xl font-semibold">Login</h2>
@@ -143,7 +143,7 @@ function ProfileView({ user }) {
 
 function Main({ activeView, user }) {
   return (
-    <main className="flex-1 overflow-y-auto px-4 py-5">
+    <main className="flex min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5">
       <div className="mx-auto w-full max-w-lg">
         {activeView === "home" && <HomeView user={user} />}
         {activeView === "loan" && <LoanView />}
@@ -185,7 +185,7 @@ function AppShell({ user }) {
   function handleNotification() {}
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white">
       <Header
         logo={<span className="text-lg font-semibold">BSN User</span>}
         onNotification={handleNotification}
