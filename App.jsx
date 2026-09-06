@@ -8,7 +8,7 @@ function Header() {
 
 function Main() {
   return (
-    <main>
+    <main className="flex-1 overflow-y-auto">
       <h2>Main</h2>
       <p>React App berhasil berjalan.</p>
     </main>
@@ -26,7 +26,7 @@ function BottomNav() {
 
 function App() {
   return (
-    <div>
+    <div className="flex min-h-screen flex-col">
       <Header />
       <Main />
       <BottomNav />
