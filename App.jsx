@@ -28,20 +28,24 @@ function SplashScreen() {
   );
 }
 
-function Header({ user, onLogout }) {
+function Header({ logo, onNotification }) {
   return (
-    <header className="flex shrink-0 items-center justify-between border-b bg-white p-4">
-      <h1 className="text-lg font-semibold">BSN User</h1>
-      {user && (
-        <button type="button" onClick={onLogout} className="min-h-10 px-3 text-sm">
-          Logout
-        </button>
-      )}
+    <header className="flex shrink-0 items-center justify-between border-b bg-white px-4 py-3">
+      <div className="flex items-center">{logo}</div>
+
+      <button
+        type="button"
+        onClick={onNotification}
+        aria-label="Notifications"
+        className="flex h-10 w-10 items-center justify-center rounded-full"
+      >
+        🔔
+      </button>
     </header>
   );
 }
 
-function Auth({ onLogin }) {
+function AuthPage({ onLogin }) {
   const [phone, setPhone] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
@@ -63,7 +67,7 @@ function Auth({ onLogin }) {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center overflow-y-auto px-4 py-6">
+    <main className="flex h-full min-h-0 flex-1 items-center justify-center overflow-y-auto px-4 py-6">
       <form onSubmit={login} className="w-full max-w-sm space-y-4">
         <div>
           <h2 className="text-2xl font-semibold">Login</h2>
@@ -109,38 +113,86 @@ function Auth({ onLogin }) {
   );
 }
 
-function Main({ user }) {
+function HomeView({ user }) {
+  return (
+    <section className="space-y-4">
+      <div>
+        <h2 className="text-xl font-semibold">Welcome</h2>
+        <p className="text-sm text-gray-500">{user.personal?.full_name || user.phone}</p>
+      </div>
+    </section>
+  );
+}
+
+function LoanView() {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold">Loan</h2>
+    </section>
+  );
+}
+
+function ProfileView({ user }) {
+  return (
+    <section>
+      <h2 className="text-xl font-semibold">Profile</h2>
+      <p className="mt-2 text-sm text-gray-500">{user.personal?.full_name || user.phone}</p>
+    </section>
+  );
+}
+
+function Main({ activeView, user }) {
   return (
     <main className="flex-1 overflow-y-auto px-4 py-5">
-      <div className="mx-auto w-full max-w-lg space-y-4">
-        <div>
-          <h2 className="text-xl font-semibold">Welcome</h2>
-          <p className="text-sm text-gray-500">{user.personal?.full_name || user.phone}</p>
-        </div>
-
-        <pre className="overflow-x-auto rounded-xl border p-3 text-xs">
-          {JSON.stringify(user, null, 2)}
-        </pre>
+      <div className="mx-auto w-full max-w-lg">
+        {activeView === "home" && <HomeView user={user} />}
+        {activeView === "loan" && <LoanView />}
+        {activeView === "profile" && <ProfileView user={user} />}
       </div>
     </main>
   );
 }
 
-function BottomNav({ authenticated }) {
+function BottomNav({ activeView, onChange }) {
+  const items = [
+    { id: "home", label: "Home" },
+    { id: "loan", label: "Loan" },
+    { id: "profile", label: "Profile" },
+  ];
+
   return (
     <nav className="flex shrink-0 items-center justify-around border-t bg-white p-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
-      <button type="button" className="min-h-11 min-w-16 px-3 text-sm">
-        Home
-      </button>
-      {authenticated && (
-        <button type="button" className="min-h-11 min-w-16 px-3 text-sm">
-          Users
+      {items.map((item) => (
+        <button
+          key={item.id}
+          type="button"
+          onClick={() => onChange(item.id)}
+          aria-current={activeView === item.id ? "page" : undefined}
+          className={`min-h-11 min-w-20 rounded-xl px-3 text-sm ${
+            activeView === item.id ? "font-semibold" : "text-gray-500"
+          }`}
+        >
+          {item.label}
         </button>
-      )}
-      <button type="button" className="min-h-11 min-w-16 px-3 text-sm">
-        Profile
-      </button>
+      ))}
     </nav>
+  );
+}
+
+function AppShell({ user }) {
+  const [activeView, setActiveView] = React.useState("home");
+
+  function handleNotification() {}
+
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-white">
+      <Header
+        logo={<span className="text-lg font-semibold">BSN User</span>}
+        onNotification={handleNotification}
+      />
+      <Main activeView={activeView} user={user} />
+      <BottomNav activeView={activeView} onChange={setActiveView} />
+    </div>
   );
 }
 
@@ -165,28 +217,11 @@ function App() {
     localStorage.setItem("bsn_user", JSON.stringify(data));
   }
 
-  function logout() {
-    setUser(null);
-    localStorage.removeItem("bsn_user");
-  }
-
   if (splash) {
     return <SplashScreen />;
   }
 
-  return (
-    <div className="flex h-full min-h-0 flex-col bg-white">
-      {user ? (
-        <>
-          <Header user={user} onLogout={logout} />
-          <Main user={user} />
-          <BottomNav authenticated />
-        </>
-      ) : (
-        <Auth onLogin={handleLogin} />
-      )}
-    </div>
-  );
+  return user ? <AppShell user={user} /> : <AuthPage onLogin={handleLogin} />;
 }
 
 export default App;
