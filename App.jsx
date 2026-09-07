@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Bell, Home as HomeIcon, Plus, User } from "lucide-react";
 
 const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
 
@@ -96,7 +97,7 @@ function Logo() {
 function NotifButton() {
   return (
     <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 transition active:scale-95">
-      <span className="text-lg">🔔</span>
+      <Bell className="h-5 w-5" />
     </button>
   );
 }
@@ -125,17 +126,21 @@ function ProfileView() {
 
 function BottomNav({ view, setView }) {
   return (
-    <nav className="flex h-16 shrink-0 border-t border-gray-200 bg-white">
+    <nav className="flex h-16 shrink-0 items-center border-t border-gray-200 bg-white">
       <button type="button" onClick={() => setView("home")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "home" ? "text-black" : "text-gray-400"}`}><Home /><span>Home</span></button>
-      <button type="button" onClick={() => setView("loan")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "loan" ? "text-black" : "text-gray-400"}`}><Loan /><span>Loan</span></button>
+      <button type="button" onClick={() => setView("loan")} aria-label="Add" className="flex flex-1 items-center justify-center">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-lg transition active:scale-95">
+          <Plus className="h-6 w-6" />
+        </span>
+      </button>
       <button type="button" onClick={() => setView("profile")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "profile" ? "text-black" : "text-gray-400"}`}><Profile /><span>Profile</span></button>
     </nav>
   );
 }
 
-function Home() { return <span className="text-lg">Home</span>; }
-function Loan() { return <span className="text-lg">Loan</span>; }
-function Profile() { return <span className="text-lg">Profile</span>; }
+function Home() { return <HomeIcon className="h-5 w-5" />; }
+function Loan() { return <Plus className="h-6 w-6" />; }
+function Profile() { return <User className="h-5 w-5" />; }
 
 function Overlay() {
   return (
