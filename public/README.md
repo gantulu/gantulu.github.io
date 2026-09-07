@@ -1,0 +1,1 @@
+Logo assets are provided from Cloudinary. Binary image files are not added by this connector.
