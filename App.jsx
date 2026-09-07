@@ -2,6 +2,19 @@ import { useState } from "react";
 import { Bell, Home as HomeIcon, Plus, User } from "lucide-react";
 
 const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
+const BSN_USER_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/bsn-user";
+
+async function bsnUser(body) {
+  const response = await fetch(BSN_USER_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "Request failed");
+  return result;
+}
 
 export default function App() {
   const [screen, setScreen] = useState("splash");
@@ -47,26 +60,70 @@ function AuthScreen({ onLogin }) {
 }
 
 function LoginView({ onLogin, onRegister }) {
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleLogin() {
+    setError("");
+    setLoading(true);
+    try {
+      const result = await bsnUser({ action: "login", phone, password });
+      localStorage.setItem("bsn_user", JSON.stringify(result.data));
+      onLogin();
+    } catch (err) {
+      setError(err.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Login</h2>
         <p className="mt-1 text-sm text-gray-500">Sign in to continue</p>
       </div>
-      <button type="button" onClick={onLogin} className="w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition active:scale-[0.98]">Login</button>
+      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" autoComplete="current-password" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <button type="button" onClick={handleLogin} disabled={loading} className="w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition active:scale-[0.98] disabled:opacity-50">{loading ? "Logging in..." : "Login"}</button>
       <button type="button" onClick={onRegister} className="w-full rounded-xl border border-gray-300 px-5 py-3 font-semibold text-gray-900 transition active:scale-[0.98]">Register</button>
     </div>
   );
 }
 
 function RegisterView({ onRegister }) {
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function handleRegister() {
+    setError("");
+    setLoading(true);
+    try {
+      await bsnUser({ action: "register", phone, password });
+      onRegister();
+    } catch (err) {
+      setError(err.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       <div>
         <h2 className="text-2xl font-bold text-gray-900">Register</h2>
         <p className="mt-1 text-sm text-gray-500">Create your account</p>
       </div>
-      <button type="button" onClick={onRegister} className="w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition active:scale-[0.98]">Register</button>
+      <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
+      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (min. 6 characters)" autoComplete="new-password" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
+      {error && <p className="text-sm text-red-600">{error}</p>}
+      <button type="button" onClick={handleRegister} disabled={loading} className="w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition active:scale-[0.98] disabled:opacity-50">{loading ? "Registering..." : "Register"}</button>
+      <button type="button" onClick={onRegister} className="w-full rounded-xl border border-gray-300 px-5 py-3 font-semibold text-gray-900 transition active:scale-[0.98]">Back to Login</button>
     </div>
   );
 }
@@ -82,12 +139,7 @@ function AppShell({ view, setView }) {
 }
 
 function Header() {
-  return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4">
-      <Logo />
-      <NotifButton />
-    </header>
-  );
+  return <header className="flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4"><Logo /><NotifButton /></header>;
 }
 
 function Logo() {
@@ -95,21 +147,11 @@ function Logo() {
 }
 
 function NotifButton() {
-  return (
-    <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 transition active:scale-95">
-      <Bell className="h-5 w-5" />
-    </button>
-  );
+  return <button type="button" aria-label="Notifications" className="flex h-10 w-10 items-center justify-center rounded-full text-gray-700 transition active:scale-95"><Bell className="h-5 w-5" /></button>;
 }
 
 function Main({ view }) {
-  return (
-    <main className="flex-1 overflow-y-auto">
-      {view === "home" && <HomeView />}
-      {view === "loan" && <LoanView />}
-      {view === "profile" && <ProfileView />}
-    </main>
-  );
+  return <main className="flex-1 overflow-y-auto">{view === "home" && <HomeView />}{view === "loan" && <LoanView />}{view === "profile" && <ProfileView />}</main>;
 }
 
 function HomeView() {
@@ -128,11 +170,7 @@ function BottomNav({ view, setView }) {
   return (
     <nav className="relative flex h-16 shrink-0 items-center border-t border-gray-200 bg-white">
       <button type="button" onClick={() => setView("home")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "home" ? "text-black" : "text-gray-400"}`}><Home /><span>Home</span></button>
-      <button type="button" onClick={() => setView("loan")} aria-label="Add" className="relative flex h-full flex-1 items-center justify-center">
-        <span className="absolute -top-6 flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-lg transition active:scale-95">
-          <Plus className="h-6 w-6" />
-        </span>
-      </button>
+      <button type="button" onClick={() => setView("loan")} aria-label="Add" className="relative flex h-full flex-1 items-center justify-center"><span className="absolute -top-6 flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-lg transition active:scale-95"><Plus className="h-6 w-6" /></span></button>
       <button type="button" onClick={() => setView("profile")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "profile" ? "text-black" : "text-gray-400"}`}><Profile /><span>Profile</span></button>
     </nav>
   );
@@ -143,75 +181,29 @@ function Loan() { return <Plus className="h-6 w-6" />; }
 function Profile() { return <User className="h-5 w-5" />; }
 
 function Overlay() {
-  return (
-    <div className="pointer-events-none fixed inset-0 z-50 mx-auto w-full max-w-[500px]">
-      <Modal /><BottomSheet /><Dropdown /><Popover /><Toast /><Loading />
-    </div>
-  );
+  return <div className="pointer-events-none fixed inset-0 z-50 mx-auto w-full max-w-[500px]"><Modal /><BottomSheet /><Dropdown /><Popover /><Toast /><Loading /></div>;
 }
 
 function Modal() {
-  return (
-    <div className="hidden">
-      <div className="fixed inset-0 bg-black/50" />
-      <div className="fixed left-1/2 top-1/2 w-[calc(100%-32px)] max-w-[460px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-xl">
-        <div className="border-b border-gray-200 p-4 font-semibold">Modal Header</div>
-        <div className="p-4">Modal Content</div>
-        <div className="flex gap-2 border-t border-gray-200 p-4">Modal Actions</div>
-      </div>
-    </div>
-  );
+  return <div className="hidden"><div className="fixed inset-0 bg-black/50" /><div className="fixed left-1/2 top-1/2 w-[calc(100%-32px)] max-w-[460px] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl bg-white shadow-xl"><div className="border-b border-gray-200 p-4 font-semibold">Modal Header</div><div className="p-4">Modal Content</div><div className="flex gap-2 border-t border-gray-200 p-4">Modal Actions</div></div></div>;
 }
 
 function BottomSheet() {
-  return (
-    <div className="hidden">
-      <div className="fixed inset-0 bg-black/50" />
-      <div className="fixed bottom-0 left-1/2 w-full max-w-[500px] -translate-x-1/2 rounded-t-2xl bg-white shadow-xl">
-        <div className="border-b border-gray-200 p-4 font-semibold">BottomSheet Header</div>
-        <div className="p-4">BottomSheet Content</div>
-        <div className="border-t border-gray-200 p-4">BottomSheet Actions</div>
-      </div>
-    </div>
-  );
+  return <div className="hidden"><div className="fixed inset-0 bg-black/50" /><div className="fixed bottom-0 left-1/2 w-full max-w-[500px] -translate-x-1/2 rounded-t-2xl bg-white shadow-xl"><div className="border-b border-gray-200 p-4 font-semibold">BottomSheet Header</div><div className="p-4">BottomSheet Content</div><div className="border-t border-gray-200 p-4">BottomSheet Actions</div></div></div>;
 }
 
 function Dropdown() {
-  return (
-    <div className="hidden">
-      <button type="button" className="rounded-lg border border-gray-200 px-3 py-2">Dropdown Trigger</button>
-      <div className="mt-2 rounded-xl border border-gray-200 bg-white p-2 shadow-lg">Dropdown Content</div>
-    </div>
-  );
+  return <div className="hidden"><button type="button" className="rounded-lg border border-gray-200 px-3 py-2">Dropdown Trigger</button><div className="mt-2 rounded-xl border border-gray-200 bg-white p-2 shadow-lg">Dropdown Content</div></div>;
 }
 
 function Popover() {
-  return (
-    <div className="hidden">
-      <button type="button" className="rounded-lg border border-gray-200 px-3 py-2">Popover Trigger</button>
-      <div className="mt-2 rounded-xl border border-gray-200 bg-white p-3 shadow-lg">Popover Content</div>
-    </div>
-  );
+  return <div className="hidden"><button type="button" className="rounded-lg border border-gray-200 px-3 py-2">Popover Trigger</button><div className="mt-2 rounded-xl border border-gray-200 bg-white p-3 shadow-lg">Popover Content</div></div>;
 }
 
 function Toast() {
-  return (
-    <div className="hidden">
-      <div className="fixed bottom-20 left-4 right-4 flex items-center gap-3 rounded-xl bg-black p-4 text-white shadow-lg">
-        <div className="shrink-0">Icon</div>
-        <div className="flex-1 text-sm">Toast Content</div>
-        <button type="button" className="shrink-0 text-sm">Close</button>
-      </div>
-    </div>
-  );
+  return <div className="hidden"><div className="fixed bottom-20 left-4 right-4 flex items-center gap-3 rounded-xl bg-black p-4 text-white shadow-lg"><div className="shrink-0">Icon</div><div className="flex-1 text-sm">Toast Content</div><button type="button" className="shrink-0 text-sm">Close</button></div></div>;
 }
 
 function Loading() {
-  return (
-    <div className="hidden">
-      <div className="fixed inset-0 flex items-center justify-center bg-black/30">
-        <div className="rounded-2xl bg-white p-5 shadow-xl">Loading...</div>
-      </div>
-    </div>
-  );
+  return <div className="hidden"><div className="fixed inset-0 flex items-center justify-center bg-black/30"><div className="rounded-2xl bg-white p-5 shadow-xl">Loading...</div></div></div>;
 }
