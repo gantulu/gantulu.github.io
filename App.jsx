@@ -126,10 +126,10 @@ function ProfileView() {
 
 function BottomNav({ view, setView }) {
   return (
-    <nav className="flex h-16 shrink-0 items-center border-t border-gray-200 bg-white">
+    <nav className="relative flex h-16 shrink-0 items-center border-t border-gray-200 bg-white">
       <button type="button" onClick={() => setView("home")} className={`flex flex-1 flex-col items-center justify-center gap-1 text-xs font-medium transition ${view === "home" ? "text-black" : "text-gray-400"}`}><Home /><span>Home</span></button>
-      <button type="button" onClick={() => setView("loan")} aria-label="Add" className="flex flex-1 items-center justify-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-lg transition active:scale-95">
+      <button type="button" onClick={() => setView("loan")} aria-label="Add" className="relative flex h-full flex-1 items-center justify-center">
+        <span className="absolute -top-6 flex h-12 w-12 items-center justify-center rounded-full bg-black text-white shadow-lg transition active:scale-95">
           <Plus className="h-6 w-6" />
         </span>
       </button>
