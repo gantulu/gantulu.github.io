@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
+
 export default function App() {
   const [screen, setScreen] = useState("splash");
   const [view, setView] = useState("home");
@@ -20,7 +22,7 @@ function SplashScreen({ onComplete }) {
   return (
     <section className="flex min-h-screen flex-1 items-center justify-center p-6">
       <div className="flex w-full flex-col items-center gap-6 text-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-black text-xl font-bold text-white">App</div>
+        <img src={APP_LOGO_URL} alt="App Logo" className="h-20 w-20 rounded-2xl object-contain" />
         <h1 className="text-2xl font-bold text-gray-900">App</h1>
         <button type="button" onClick={onComplete} className="w-full rounded-xl bg-black px-5 py-3 font-semibold text-white transition active:scale-[0.98]">Continue</button>
       </div>
@@ -88,7 +90,7 @@ function Header() {
 }
 
 function Logo() {
-  return <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-black text-xs font-bold text-white">Logo</div>;
+  return <img src={APP_LOGO_URL} alt="App Logo" className="h-9 w-9 rounded-lg object-contain" />;
 }
 
 function NotifButton() {
