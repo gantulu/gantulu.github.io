@@ -4,6 +4,69 @@ import { Bell, Home as HomeIcon, Plus, User } from "lucide-react";
 const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
 const BSN_USER_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/bsn-user";
 
+const DEFAULT_USER_DATA = {
+  balance: {
+    pending: 0,
+    currency: "MYR",
+    available: 0,
+  },
+  personal: {
+    email: "",
+    gender: "",
+    address: {
+      city: "",
+      state: "",
+      country: "",
+      postcode: "",
+      address_line: "",
+    },
+    full_name: "",
+    nationality: "",
+    date_of_birth: "",
+  },
+  loan: {
+    id: "",
+    amount: 0,
+    status: "",
+    tenure: 0,
+    approved: false,
+    interest: 0,
+    monthly_payment: 0,
+  },
+  kyc: {
+    status: "",
+    id_type: "",
+    full_name: "",
+    nationality: "",
+    verified_at: "",
+    id_image_url: "",
+    mykad_number: "",
+    date_of_birth: "",
+    face_image_url: "",
+    selfie_image_url: "",
+  },
+  bank: {
+    bank_code: "",
+    bank_name: "",
+    account_name: "",
+    account_number: "",
+  },
+  bills: [
+    {
+      id: "",
+      fee: 0,
+      name: "",
+      amount: 0,
+      method_qr: false,
+      method_bank: false,
+      method_qr_url: "",
+      bill_is_active: false,
+      method_bank_name: "",
+      method_bank_number: "",
+    },
+  ],
+};
+
 async function bsnUser(body) {
   const response = await fetch(BSN_USER_URL, {
     method: "POST",
@@ -104,7 +167,15 @@ function RegisterView({ onRegister }) {
     setError("");
     setLoading(true);
     try {
-      await bsnUser({ action: "register", phone, password });
+      const result = await bsnUser({
+        action: "register",
+        phone,
+        password,
+        ...DEFAULT_USER_DATA,
+      });
+      if (result.data) {
+        localStorage.setItem("bsn_user", JSON.stringify(result.data));
+      }
       onRegister();
     } catch (err) {
       setError(err.message || "Registration failed");
