@@ -1,0 +1,54 @@
+{
+  "App": {
+    "platform": "mobile-only",
+    "max_width": "500px",
+    "width": "100%",
+    "height": "100%",
+    "viewport": {
+      "zoom": false,
+      "user_scalable": false,
+      "touch_action": "manipulation",
+      "overscroll": "none"
+    },
+    "API": {
+      "name": "bsn-user",
+      "type": "supabase-edge-function",
+      "version": 5,
+      "endpoint": "/functions/v1/bsn-user",
+      "database": "public.bsn_user"
+    },
+    "Architecture": {
+      "flow": "UI → Service → bsn-user Edge Function → public.bsn_user",
+      "frontend": "React",
+      "repository": "gantulu/gantulu.github.io"
+    },
+    "User": {
+      "fields": [
+        "phone",
+        "role",
+        "status",
+        "balance",
+        "personal",
+        "loan",
+        "kyc",
+        "bank",
+        "bills",
+        "created_at",
+        "updated_at"
+      ],
+      "password": "never_returned_by_api"
+    },
+    "API_Operations": {
+      "GET": "get_user",
+      "POST": [
+        "login",
+        "register",
+        "change_password",
+        "delete"
+      ],
+      "PATCH": "update_user",
+      "PUT": "update_user",
+      "DELETE": "delete_user"
+    }
+  }
+}
