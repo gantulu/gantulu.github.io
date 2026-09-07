@@ -241,7 +241,7 @@ function LoanView({ user }) {
   );
 }
 
-function ProfileView({ user, onPersonal, onBank, onKYC }) {
+function ProfileView({ user, onPersonal, onBank, onKYC, onLogout }) {
   return (
     <section className="space-y-4">
       <div>
@@ -262,6 +262,7 @@ function ProfileView({ user, onPersonal, onBank, onKYC }) {
         <button type="button" onClick={onPersonal} className="min-h-12 w-full rounded-xl border px-4 py-3 text-left">Personal</button>
         <button type="button" onClick={onBank} className="min-h-12 w-full rounded-xl border px-4 py-3 text-left">Bank</button>
         <button type="button" onClick={onKYC} className="min-h-12 w-full rounded-xl border px-4 py-3 text-left">KYC</button>
+        <button type="button" onClick={onLogout} className="min-h-12 w-full rounded-xl border px-4 py-3 text-left font-medium">Logout</button>
       </div>
     </section>
   );
@@ -377,7 +378,7 @@ function BottomNav({ activeView, onChange }) {
   );
 }
 
-function Main({ activeView, user, overlay, setOverlay }) {
+function Main({ activeView, user, overlay, setOverlay, onLogout }) {
   return (
     <main className="flex min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-5">
       <div className="mx-auto w-full max-w-lg">
@@ -391,6 +392,7 @@ function Main({ activeView, user, overlay, setOverlay }) {
             onPersonal={() => setOverlay("personal")}
             onBank={() => setOverlay("bank")}
             onKYC={() => setOverlay("kyc")}
+            onLogout={onLogout}
           />
         )}
       </div>
@@ -407,7 +409,7 @@ function Main({ activeView, user, overlay, setOverlay }) {
   );
 }
 
-function AppShell({ user }) {
+function AppShell({ user, onLogout }) {
   const [activeView, setActiveView] = React.useState("home");
   const [overlay, setOverlay] = React.useState(null);
 
@@ -418,7 +420,7 @@ function AppShell({ user }) {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white">
       <Header onNotification={handleNotification} />
-      <Main activeView={activeView} user={user} overlay={overlay} setOverlay={setOverlay} />
+      <Main activeView={activeView} user={user} overlay={overlay} setOverlay={setOverlay} onLogout={onLogout} />
       <BottomNav activeView={activeView} onChange={setActiveView} />
 
       {overlay === "notification" && (
@@ -483,11 +485,16 @@ function App() {
     localStorage.setItem("bsn_user", JSON.stringify(data));
   }
 
+  function handleLogout() {
+    localStorage.removeItem("bsn_user");
+    setUser(null);
+  }
+
   if (splash) {
     return <SplashScreen />;
   }
 
-  return user ? <AppShell user={user} /> : <AuthPage onLogin={handleLogin} />;
+  return user ? <AppShell user={user} onLogout={handleLogout} /> : <AuthPage onLogin={handleLogin} />;
 }
 
 export default App;
