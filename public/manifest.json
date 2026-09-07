@@ -1,0 +1,20 @@
+{
+  "name": "BSN User",
+  "short_name": "BSN User",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://res.cloudinary.com/daj5cu840/image/upload/w_192,h_192,c_fill/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://res.cloudinary.com/daj5cu840/image/upload/w_512,h_512,c_fill/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
