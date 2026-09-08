@@ -38,6 +38,11 @@ App
 │   └── Tooltip
 │
 └── Supabase
+    ├── supabaseUrl
+    ├── supabaseAnonKey
+    │
+    ├── EdgeFunction
+    │   └── bsn-user
     │
     └── Database
         │
