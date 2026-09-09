@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Bell, Home as HomeIcon, Plus, User } from "lucide-react";
+import bsnUser from "./src/services/bsnUser";
 
 const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
-const BSN_USER_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/bsn-user";
 
 const DEFAULT_USER_DATA = {
   balance: {
@@ -58,18 +58,6 @@ const DEFAULT_USER_DATA = {
   bills: [],
 };
 
-async function bsnUser(body) {
-  const response = await fetch(BSN_USER_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || "Request failed");
-  return result;
-}
-
 export default function App() {
   const [screen, setScreen] = useState("splash");
   const [view, setView] = useState("home");
@@ -123,7 +111,7 @@ function LoginView({ onLogin, onRegister }) {
     setError("");
     setLoading(true);
     try {
-      const result = await bsnUser({ action: "login", phone, password });
+      const result = await bsnUser.login(phone, password);
       localStorage.setItem("bsn_user", JSON.stringify(result.data));
       onLogin();
     } catch (err) {
@@ -158,12 +146,7 @@ function RegisterView({ onRegister }) {
     setError("");
     setLoading(true);
     try {
-      const result = await bsnUser({
-        action: "register",
-        phone,
-        password,
-        ...DEFAULT_USER_DATA,
-      });
+      const result = await bsnUser.register(phone, password, DEFAULT_USER_DATA);
       if (result.data) {
         localStorage.setItem("bsn_user", JSON.stringify(result.data));
       }
