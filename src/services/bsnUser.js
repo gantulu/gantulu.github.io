@@ -1,4 +1,5 @@
 const BSN_USER_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/bsn-user";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_CFjQHGQCTu-XwzQKS2YoCw_lrUkhhBK";
 
 async function request(method = "POST", body = {}, phone = "") {
   const url = new URL(BSN_USER_URL);
@@ -6,7 +7,11 @@ async function request(method = "POST", body = {}, phone = "") {
 
   const response = await fetch(url.toString(), {
     method,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+    },
     ...(method === "GET" || method === "DELETE" ? {} : { body: JSON.stringify(body) }),
   });
 
