@@ -31,7 +31,11 @@ const DEFAULT_USER_DATA = {
     tenure: 0,
     approved: false,
     interest: 0,
+    tenure_months: 0,
+    applied_amount: 0,
+    approved_amount: 0,
     monthly_payment: 0,
+    monthly_installment: 0,
   },
   kyc: {
     status: "",
@@ -51,20 +55,7 @@ const DEFAULT_USER_DATA = {
     account_name: "",
     account_number: "",
   },
-  bills: [
-    {
-      id: "",
-      fee: 0,
-      name: "",
-      amount: 0,
-      method_qr: false,
-      method_bank: false,
-      method_qr_url: "",
-      bill_is_active: false,
-      method_bank_name: "",
-      method_bank_number: "",
-    },
-  ],
+  bills: [],
 };
 
 async function bsnUser(body) {
