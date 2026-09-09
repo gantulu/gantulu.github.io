@@ -5,56 +5,22 @@ import bsnUser from "./src/services/bsnUser";
 const APP_LOGO_URL = "https://res.cloudinary.com/daj5cu840/image/upload/v1788743341/ChatGPT_Image_Sep_7_2026_09_03_58_AM_dymqv9.png";
 
 const DEFAULT_USER_DATA = {
-  balance: {
-    pending: 0,
-    currency: "MYR",
-    available: 0,
-  },
+  balance: { pending: 0, currency: "MYR", available: 0 },
   personal: {
-    email: "",
-    gender: "",
-    address: {
-      city: "",
-      state: "",
-      country: "",
-      postcode: "",
-      address_line: "",
-    },
-    full_name: "",
-    nationality: "",
-    date_of_birth: "",
+    email: "", gender: "",
+    address: { city: "", state: "", country: "", postcode: "", address_line: "" },
+    full_name: "", nationality: "", date_of_birth: "",
   },
   loan: {
-    id: "",
-    amount: 0,
-    status: "",
-    tenure: 0,
-    approved: false,
-    interest: 0,
-    tenure_months: 0,
-    applied_amount: 0,
-    approved_amount: 0,
-    monthly_payment: 0,
-    monthly_installment: 0,
+    id: "", amount: 0, status: "", tenure: 0, approved: false, interest: 0,
+    tenure_months: 0, applied_amount: 0, approved_amount: 0,
+    monthly_payment: 0, monthly_installment: 0,
   },
   kyc: {
-    status: "",
-    id_type: "",
-    full_name: "",
-    nationality: "",
-    verified_at: "",
-    id_image_url: "",
-    mykad_number: "",
-    date_of_birth: "",
-    face_image_url: "",
-    selfie_image_url: "",
+    status: "", id_type: "", full_name: "", nationality: "", verified_at: "",
+    id_image_url: "", mykad_number: "", date_of_birth: "", face_image_url: "", selfie_image_url: "",
   },
-  bank: {
-    bank_code: "",
-    bank_name: "",
-    account_name: "",
-    account_number: "",
-  },
+  bank: { bank_code: "", bank_name: "", account_name: "", account_number: "" },
   bills: [],
 };
 
@@ -91,11 +57,7 @@ function AuthScreen({ onLogin }) {
   return (
     <section className="flex min-h-screen flex-1 items-center justify-center p-6">
       <div className="w-full">
-        {mode === "login" ? (
-          <LoginView onLogin={onLogin} onRegister={() => setMode("register")} />
-        ) : (
-          <RegisterView onRegister={() => setMode("login")} />
-        )}
+        {mode === "login" ? <LoginView onLogin={onLogin} onRegister={() => setMode("register")} /> : <RegisterView onRegister={() => setMode("login")} />}
       </div>
     </section>
   );
@@ -123,10 +85,7 @@ function LoginView({ onLogin, onRegister }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Login</h2>
-        <p className="mt-1 text-sm text-gray-500">Sign in to continue</p>
-      </div>
+      <div><h2 className="text-2xl font-bold text-gray-900">Login</h2><p className="mt-1 text-sm text-gray-500">Sign in to continue</p></div>
       <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" autoComplete="current-password" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -147,9 +106,7 @@ function RegisterView({ onRegister }) {
     setLoading(true);
     try {
       const result = await bsnUser.register(phone, password, DEFAULT_USER_DATA);
-      if (result.data) {
-        localStorage.setItem("bsn_user", JSON.stringify(result.data));
-      }
+      if (result.data) localStorage.setItem("bsn_user", JSON.stringify(result.data));
       onRegister();
     } catch (err) {
       setError(err.message || "Registration failed");
@@ -160,10 +117,7 @@ function RegisterView({ onRegister }) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Register</h2>
-        <p className="mt-1 text-sm text-gray-500">Create your account</p>
-      </div>
+      <div><h2 className="text-2xl font-bold text-gray-900">Register</h2><p className="mt-1 text-sm text-gray-500">Create your account</p></div>
       <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" autoComplete="tel" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
       <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password (min. 6 characters)" autoComplete="new-password" className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-black" />
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -174,13 +128,7 @@ function RegisterView({ onRegister }) {
 }
 
 function AppShell({ view, setView }) {
-  return (
-    <section className="flex min-h-screen flex-1 flex-col">
-      <Header />
-      <Main view={view} />
-      <BottomNav view={view} setView={setView} />
-    </section>
-  );
+  return <section className="flex min-h-screen flex-1 flex-col"><Header /><Main view={view} /><BottomNav view={view} setView={setView} /></section>;
 }
 
 function Header() {
@@ -199,16 +147,91 @@ function Main({ view }) {
   return <main className="flex-1 overflow-y-auto">{view === "home" && <HomeView />}{view === "loan" && <LoanView />}{view === "profile" && <ProfileView />}</main>;
 }
 
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem("bsn_user") || "null");
+  } catch {
+    return null;
+  }
+}
+
+function formatMYR(value) {
+  const amount = Number(value || 0);
+  return `RM ${amount.toLocaleString("en-MY", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+function displayValue(value, fallback = "-") {
+  return value === undefined || value === null || value === "" ? fallback : value;
+}
+
 function HomeView() {
-  return <section className="p-4"><div className="rounded-2xl bg-gray-50 p-5"><h2 className="text-xl font-bold text-gray-900">Home</h2></div></section>;
+  const user = getStoredUser() || DEFAULT_USER_DATA;
+  const balance = user.balance || DEFAULT_USER_DATA.balance;
+  const loan = user.loan || DEFAULT_USER_DATA.loan;
+  const bills = Array.isArray(user.bills) ? user.bills : [];
+  const name = user.personal?.full_name || "Welcome";
+
+  return (
+    <section className="space-y-4 p-4">
+      <div><p className="text-sm text-gray-500">Welcome</p><h2 className="text-2xl font-bold text-gray-900">{name}</h2></div>
+      <div className="rounded-2xl bg-black p-5 text-white">
+        <p className="text-sm text-gray-300">Available Balance</p>
+        <p className="mt-2 text-3xl font-bold">{formatMYR(balance.available)}</p>
+        <div className="mt-4 flex items-center justify-between border-t border-white/20 pt-3 text-sm"><span className="text-gray-300">Pending</span><span>{formatMYR(balance.pending)}</span></div>
+      </div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <div className="flex items-center justify-between"><h3 className="font-semibold text-gray-900">Loan Summary</h3><span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">{displayValue(loan.status, "No loan")}</span></div>
+        <div className="mt-4 grid grid-cols-2 gap-4">
+          <InfoItem label="Approved Amount" value={formatMYR(loan.approved_amount)} />
+          <InfoItem label="Monthly Installment" value={formatMYR(loan.monthly_installment)} />
+        </div>
+      </div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5">
+        <div className="flex items-center justify-between"><h3 className="font-semibold text-gray-900">Bills</h3><span className="text-sm text-gray-500">{bills.length}</span></div>
+        {bills.length === 0 ? <p className="mt-4 text-sm text-gray-500">No bills available.</p> : <div className="mt-3 space-y-3">{bills.map((bill, index) => <div key={bill.id || index} className="flex items-center justify-between rounded-xl bg-gray-50 p-3"><div><p className="font-medium text-gray-900">{displayValue(bill.name)}</p><p className="text-xs text-gray-500">{displayValue(bill.id)}</p></div><span className="font-semibold text-gray-900">{formatMYR(bill.amount)}</span></div>)}</div>}
+      </div>
+    </section>
+  );
 }
 
 function LoanView() {
-  return <section className="p-4"><div className="rounded-2xl bg-gray-50 p-5"><h2 className="text-xl font-bold text-gray-900">Loan</h2></div></section>;
+  const user = getStoredUser() || DEFAULT_USER_DATA;
+  const loan = user.loan || DEFAULT_USER_DATA.loan;
+
+  return (
+    <section className="space-y-4 p-4">
+      <div><p className="text-sm text-gray-500">Account</p><h2 className="text-2xl font-bold text-gray-900">Loan</h2></div>
+      <div className="rounded-2xl bg-black p-5 text-white"><p className="text-sm text-gray-300">Loan Status</p><div className="mt-2 flex items-center justify-between"><p className="text-2xl font-bold">{displayValue(loan.status, "No loan")}</p><span className="rounded-full bg-white/10 px-3 py-1 text-xs">{loan.approved ? "Approved" : "Not approved"}</span></div></div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5"><h3 className="font-semibold text-gray-900">Amount</h3><div className="mt-4 grid grid-cols-2 gap-4"><InfoItem label="Applied" value={formatMYR(loan.applied_amount)} /><InfoItem label="Approved" value={formatMYR(loan.approved_amount)} /></div></div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5"><h3 className="font-semibold text-gray-900">Loan Detail</h3><div className="mt-4 space-y-4"><InfoItem label="Loan ID" value={displayValue(loan.id)} /><InfoItem label="Tenure" value={loan.tenure_months ? `${loan.tenure_months} months` : "-"} /><InfoItem label="Interest" value={loan.interest ? `${loan.interest}%` : "-"} /><InfoItem label="Monthly Installment" value={formatMYR(loan.monthly_installment)} /></div></div>
+    </section>
+  );
 }
 
 function ProfileView() {
-  return <section className="p-4"><div className="rounded-2xl bg-gray-50 p-5"><h2 className="text-xl font-bold text-gray-900">Profile</h2></div></section>;
+  const user = getStoredUser() || DEFAULT_USER_DATA;
+  const personal = user.personal || DEFAULT_USER_DATA.personal;
+  const kyc = user.kyc || DEFAULT_USER_DATA.kyc;
+  const bank = user.bank || DEFAULT_USER_DATA.bank;
+  const address = personal.address || DEFAULT_USER_DATA.personal.address;
+
+  return (
+    <section className="space-y-4 p-4">
+      <div><p className="text-sm text-gray-500">Account</p><h2 className="text-2xl font-bold text-gray-900">Profile</h2></div>
+      <div className="rounded-2xl border border-gray-200 bg-white p-5"><div className="flex items-center gap-4"><div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-xl font-bold text-gray-700">{(personal.full_name || "U").charAt(0).toUpperCase()}</div><div><h3 className="font-semibold text-gray-900">{displayValue(personal.full_name, "User")}</h3><p className="text-sm text-gray-500">{displayValue(user.phone)}</p></div></div></div>
+      <ProfileSection title="Personal Information"><InfoItem label="Email" value={displayValue(personal.email)} /><InfoItem label="Gender" value={displayValue(personal.gender)} /><InfoItem label="Date of Birth" value={displayValue(personal.date_of_birth)} /><InfoItem label="Nationality" value={displayValue(personal.nationality)} /><InfoItem label="Address" value={displayValue(address.address_line)} /><InfoItem label="City" value={displayValue(address.city)} /><InfoItem label="State" value={displayValue(address.state)} /><InfoItem label="Postcode" value={displayValue(address.postcode)} /><InfoItem label="Country" value={displayValue(address.country)} /></ProfileSection>
+      <ProfileSection title="KYC"><InfoItem label="Status" value={displayValue(kyc.status)} /><InfoItem label="ID Type" value={displayValue(kyc.id_type)} /></ProfileSection>
+      <ProfileSection title="Bank"><InfoItem label="Bank Name" value={displayValue(bank.bank_name)} /><InfoItem label="Account Name" value={displayValue(bank.account_name)} /><InfoItem label="Account Number" value={displayValue(bank.account_number)} /></ProfileSection>
+    </section>
+  );
+}
+
+function InfoItem({ label, value }) {
+  return <div><p className="text-xs text-gray-500">{label}</p><p className="mt-1 font-medium text-gray-900">{value}</p></div>;
+}
+
+function ProfileSection({ title, children }) {
+  return <div className="rounded-2xl border border-gray-200 bg-white p-5"><h3 className="font-semibold text-gray-900">{title}</h3><div className="mt-4 space-y-4">{children}</div></div>;
 }
 
 function BottomNav({ view, setView }) {
