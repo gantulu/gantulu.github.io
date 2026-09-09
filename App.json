@@ -13,7 +13,7 @@
     "API": {
       "name": "bsn-user",
       "type": "supabase-edge-function",
-      "version": 5,
+      "version": 6,
       "endpoint": "/functions/v1/bsn-user",
       "database": "public.bsn_user"
     },
@@ -23,32 +23,30 @@
       "repository": "gantulu/gantulu.github.io"
     },
     "User": {
-      "fields": [
-        "phone",
-        "role",
-        "status",
-        "balance",
-        "personal",
-        "loan",
-        "kyc",
-        "bank",
-        "bills",
-        "created_at",
-        "updated_at"
-      ],
-      "password": "never_returned_by_api"
+      "primary_key": "phone",
+      "password": "stored_in_database_but_never_returned_by_api",
+      "fields": {
+        "phone": { "type": "text" },
+        "password": { "type": "text", "api_response": false },
+        "role": { "type": "text", "default": "customer" },
+        "status": { "type": "text", "default": "active" },
+        "balance": { "type": "jsonb", "default": { "pending": 0, "currency": "MYR", "available": 0 } },
+        "personal": { "type": "jsonb" },
+        "loan": { "type": "jsonb" },
+        "kyc": { "type": "jsonb" },
+        "bank": { "type": "jsonb" },
+        "bills": { "type": "jsonb", "default": [] },
+        "created_at": { "type": "timestamptz" },
+        "updated_at": { "type": "timestamptz" }
+      }
     },
     "API_Operations": {
       "GET": "get_user",
-      "POST": [
-        "login",
-        "register",
-        "change_password",
-        "delete"
-      ],
+      "POST": ["login", "register", "change_password", "delete"],
       "PATCH": "update_user",
       "PUT": "update_user",
       "DELETE": "delete_user"
-    }
+    },
+    "UpdateableFields": ["balance", "personal", "loan", "kyc", "bank", "bills"]
   }
 }
