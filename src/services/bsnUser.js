@@ -4,7 +4,6 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_CFjQHGQCTu-XwzQKS2YoCw_lrUkhhBK
 async function request(method = "POST", body = {}, phone = "") {
   const url = new URL(BSN_USER_URL);
   if (phone) url.searchParams.set("phone", String(phone).trim());
-
   const response = await fetch(url.toString(), {
     method,
     headers: {
@@ -14,7 +13,6 @@ async function request(method = "POST", body = {}, phone = "") {
     },
     ...(method === "GET" || method === "DELETE" ? {} : { body: JSON.stringify(body) }),
   });
-
   const result = await response.json().catch(() => ({}));
   if (!response.ok) {
     const error = new Error(result.error || "Request failed");
@@ -26,37 +24,14 @@ async function request(method = "POST", body = {}, phone = "") {
 }
 
 export const bsnUser = {
-  // GET /functions/v1/bsn-user?phone=...
   getUser: (phone) => request("GET", {}, phone),
-
-  // POST actions implemented by bsn-user v6
   login: (phone, password) => request("POST", { action: "login", phone, password }),
-  register: (phone, password, data = {}) => request("POST", {
-    action: "register",
-    phone,
-    password,
-    ...data,
-  }),
+  register: (name, phone, password) => request("POST", { action: "register", name, phone, password }),
   changePassword: (phone, currentPassword, newPassword) => request("POST", {
-    action: "change_password",
-    phone,
-    current_password: currentPassword,
-    new_password: newPassword,
+    action: "change_password", phone, current_password: currentPassword, new_password: newPassword,
   }),
-  deleteUser: (phone, password) => request("POST", {
-    action: "delete",
-    phone,
-    password,
-  }),
-
-  // PATCH / PUT update only: balance, personal, loan, kyc, bank, bills
-  updateUser: (phone, password, data, method = "PATCH") => request(method, {
-    phone,
-    password,
-    ...data,
-  }, phone),
-
-  // DELETE /functions/v1/bsn-user?phone=...
+  deleteUser: (phone, password) => request("POST", { action: "delete", phone, password }),
+  updateUser: (phone, password, data, method = "PATCH") => request(method, { phone, password, ...data }, phone),
   deleteByMethod: (phone, password) => request("DELETE", { phone, password }, phone),
 };
 
