@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root { font-family: Inter, system-ui, sans-serif; color: #17343a; background: #eef5f6; font-synthesis: none; }
+* { box-sizing: border-box; }
+html, body, #root { margin: 0; min-height: 100%; }
+body { min-height: 100vh; background: #eef5f6; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: .55; }
+
+.viewport { min-height: 100vh; display: flex; justify-content: center; background: #eef5f6; }
+.app { width: min(100%, 500px); min-height: 100vh; background: #f8fbfb; position: relative; padding-bottom: 82px; }
+.splash-bg, .auth-bg { align-items: center; padding: 24px; }
+.splash-content { text-align: center; }
+.logo-mark { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 20px; display: grid; place-items: center; background: #0f766e; color: white; font-size: 30px; font-weight: 700; box-shadow: 0 12px 30px rgba(15,118,110,.2); }
+.logo-mark.small { width: 42px; height: 42px; margin: 0; border-radius: 13px; font-size: 21px; }
+.splash-content h1 { margin: 0; font-size: 30px; }
+.splash-content p, .auth-copy p, .card p { color: #71858a; }
+.auth-card { width: min(100%, 420px); padding: 28px; background: white; border: 1px solid #e2ebec; border-radius: 24px; box-shadow: 0 20px 50px rgba(25,65,70,.08); }
+.brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 36px; font-size: 18px; }
+.auth-copy h1 { margin: 0 0 8px; font-size: 28px; }
+.auth-copy { margin-bottom: 24px; }
+.field { display: block; margin: 14px 0; }
+.field span, .eyebrow, .hero-card > span, .balance-card > span { display: block; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #71858a; }
+.field input { width: 100%; margin-top: 7px; padding: 14px 15px; border: 1px solid #d7e3e5; border-radius: 12px; outline: none; background: #fbfdfd; color: #17343a; }
+.field input:focus { border-color: #0f766e; box-shadow: 0 0 0 3px rgba(15,118,110,.1); }
+.button { border: 0; border-radius: 12px; padding: 14px 18px; background: #0f766e; color: white; font-weight: 700; }
+.full { width: 100%; }
+.auth-switch { display: flex; justify-content: center; gap: 7px; margin-top: 20px; color: #71858a; font-size: 13px; }
+.text-button, .link-button { border: 0; background: none; color: #0f766e; font-weight: 700; padding: 0; }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 24px 20px 16px; background: #f8fbfb; position: sticky; top: 0; z-index: 5; }
+.header h2 { margin: 4px 0 0; font-size: 22px; }
+.avatar, .profile-avatar { border: 0; border-radius: 50%; background: #d9efed; color: #0f766e; font-weight: 700; }
+.avatar { width: 42px; height: 42px; }
+.main { padding: 4px 18px 24px; }
+.screen-stack { display: grid; gap: 14px; }
+.hero-card, .balance-card { padding: 22px; border-radius: 20px; color: white; background: #0f766e; box-shadow: 0 12px 28px rgba(15,118,110,.18); }
+.hero-card > span, .balance-card > span { color: rgba(255,255,255,.7); }
+.hero-card strong, .balance-card strong { display: block; margin-top: 10px; font-size: 30px; }
+.hero-card p { margin-bottom: 0; color: rgba(255,255,255,.78); }
+.section-heading { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.section-heading h3, .screen-stack > h3 { margin: 0; font-size: 17px; }
+.loan-card, .list-card, .action-card, .card { width: 100%; border: 1px solid #e1eaeb; background: white; border-radius: 16px; }
+.loan-card, .list-card { display: flex; align-items: center; gap: 13px; padding: 15px; text-align: left; color: #17343a; }
+.loan-icon { flex: 0 0 42px; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 12px; background: #e5f4f2; color: #0f766e; font-weight: 700; }
+.loan-info, .list-main { display: grid; gap: 4px; flex: 1; }
+.loan-info span, .loan-info small, .list-main span, .list-main small, .payment-row small { color: #71858a; font-size: 12px; }
+.quick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.action-card { padding: 18px 14px; color: #0f766e; font-weight: 700; }
+.card { padding: 18px; }
+.payment-row { display: flex; justify-content: space-between; gap: 12px; }
+.payment-row > div { display: grid; gap: 5px; }
+.check-row { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 18px; font-size: 13px; }
+.profile-card { text-align: center; }
+.profile-avatar { width: 72px; height: 72px; margin: 0 auto 12px; display: grid; place-items: center; font-size: 24px; }
+.profile-card h3 { margin: 0; }
+.logout { border: 1px solid #e1eaeb; background: white; color: #b42318; padding: 14px; border-radius: 12px; font-weight: 700; }
+.bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 500px); display: grid; grid-template-columns: repeat(5, 1fr); padding: 9px 8px calc(9px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.96); border-top: 1px solid #e1eaeb; z-index: 10; backdrop-filter: blur(12px); }
+.bottom-nav button { border: 0; background: none; color: #8a9b9f; display: grid; gap: 3px; justify-items: center; font-size: 17px; }
+.bottom-nav button.active { color: #0f766e; }
+.bottom-nav small { font-size: 10px; text-transform: capitalize; }
+.overlay { position: fixed; inset: 0; z-index: 20; display: grid; align-items: end; background: rgba(16,36,40,.42); }
+.modal { width: min(100%, 500px); margin: 0 auto; padding: 20px; background: white; border-radius: 22px 22px 0 0; box-shadow: 0 -15px 50px rgba(0,0,0,.15); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; }
+.modal-head h3 { margin: 0; }
+.modal-head button { border: 0; background: #edf3f3; border-radius: 50%; width: 34px; height: 34px; font-size: 20px; }
+.modal > strong { display: block; margin-top: 20px; font-size: 28px; }
+.modal > p { color: #71858a; }
+.toast { position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%); z-index: 30; width: max-content; max-width: calc(100% - 36px); padding: 11px 15px; border-radius: 999px; background: #17343a; color: white; font-size: 13px; box-shadow: 0 8px 25px rgba(0,0,0,.18); }
+@media (min-width: 501px) { .app { box-shadow: 0 0 40px rgba(20,60,65,.08); } }
