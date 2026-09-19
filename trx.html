@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TRX WA</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f7f9;color:#16343a}
+    .app{width:100%;max-width:500px;min-height:100vh;margin:auto;background:#fff}
+    header{position:sticky;top:0;z-index:10;padding:16px;border-bottom:1px solid #e5eaec;background:#fff}
+    h1{margin:0;font-size:20px}.sub{margin-top:4px;color:#6b7c80;font-size:12px}
+    .status{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px}
+    .dot{width:8px;height:8px;border-radius:50%;background:#9aa7aa}.dot.on{background:#16a34a}
+    main{padding:12px}
+    .card{border:1px solid #e5eaec;border-radius:14px;padding:12px;margin-bottom:10px;background:#fff}
+    .meta{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#718084;margin-bottom:7px}
+    .name{font-weight:700;font-size:14px}.message{margin-top:6px;white-space:pre-wrap;line-height:1.45;font-size:14px}
+    .badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#eef7f8;color:#087f94;font-size:10px}
+    .empty{text-align:center;padding:50px 20px;color:#7a898d}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>TRX WA</h1>
+      <div class="sub">Supabase Realtime · trx_wa</div>
+      <div class="status"><span id="dot" class="dot"></span><span id="status">Connecting…</span></div>
+    </header>
+    <main id="list"><div class="empty">Menunggu pesan…</div></main>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://oszqantvugvbvydlizix.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_CFjQHGQCTu-XwzQKS2YoCw_lrUkhhBK";
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+    const list = document.getElementById("list");
+    const dot = document.getElementById("dot");
+    const statusEl = document.getElementById("status");
+    const rows = new Map();
+
+    function roleOf(row) {
+      return row.role || (row.agent_name && String(row.agent_name).trim() ? "admin" : "user");
+    }
+
+    function render() {
+      const data = [...rows.values()].sort((a,b) =>
+        new Date(b.created_at || b.updated_at || 0) - new Date(a.created_at || a.updated_at || 0)
+      );
+      list.innerHTML = data.length ? data.map(row => {
+        const role = roleOf(row);
+        const time = row.created_at ? new Date(row.created_at).toLocaleString("id-ID") : "—";
+        return `
+          <article class="card">
+            <div class="meta">
+              <span>${row.first_name || row.subscriber_id || row.chat_id || "Unknown"}</span>
+              <span>${time}</span>
+            </div>
+            <div class="name">${role === "admin" ? "Admin" : "User"} <span class="badge">${row.message_status || row.webhook_type || "message"}</span></div>
+            <div class="message">${escapeHtml(row.user_message || "")}</div>
+          </article>`;
+      }).join("") : '<div class="empty">Belum ada transaksi.</div>';
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+    function addRow(row) {
+      const key = row.wa_message_id || row.id || crypto.randomUUID();
+      rows.set(key, row);
+      render();
+    }
+
+    async function init() {
+      const channel = supabase
+        .channel("trx-wa-realtime")
+        .on("postgres_changes",
+          { event:"INSERT", schema:"public", table:"trx_wa" },
+          payload => addRow(payload.new)
+        )
+        .on("postgres_changes",
+          { event:"UPDATE", schema:"public", table:"trx_wa" },
+          payload => addRow(payload.new)
+        )
+        .subscribe((status) => {
+          const connected = status === "SUBSCRIBED";
+          dot.classList.toggle("on", connected);
+          statusEl.textContent = connected ? "Connected" : status;
+        });
+
+      window.addEventListener("beforeunload", () => supabase.removeChannel(channel));
+    }
+
+    init().catch(error => {
+      statusEl.textContent = "Error: " + error.message;
+    });
+  </script>
+</body>
+</html>
