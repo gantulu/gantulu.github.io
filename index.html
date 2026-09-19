@@ -33,7 +33,7 @@
   <script>
     const SUPABASE_URL = "https://oszqantvugvbvydlizix.supabase.co";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_CFjQHGQCTu-XwzQKS2YoCw_lrUkhhBK";
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+    const { createClient } = window.supabase;\n    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
     const list = document.getElementById("list");
     const dot = document.getElementById("dot");
     const statusEl = document.getElementById("status");
@@ -74,7 +74,20 @@
       render();
     }
 
+    async function loadInitialRows() {
+      const { data, error } = await supabase
+        .from("trx_wa")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      data.forEach(addRow);
+    }
+
     async function init() {
+      await loadInitialRows();
+
       const channel = supabase.channel("trx-wa-realtime")
         .on("postgres_changes", {event:"INSERT", schema:"public", table:"trx_wa"}, payload => addRow(payload.new))
         .on("postgres_changes", {event:"UPDATE", schema:"public", table:"trx_wa"}, payload => addRow(payload.new))
@@ -87,7 +100,9 @@
     }
 
     init().catch(error => {
+      dot.classList.remove("on");
       statusEl.textContent = "Error: " + error.message;
+      list.innerHTML = '<div class="empty">Gagal memuat trx_wa.<br><small>' + escapeHtml(error.message) + '</small></div>';
     });
   </script>
 </body>
