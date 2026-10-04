@@ -1,19 +1,34 @@
 # LV 0 — MINIMAL
 
-## Structure
+## Purpose
 
-- ROLE
-- TASK
-- CONTEXT
-- OUTPUT
+The smallest instruction contract for a simple, deterministic task.
 
-## Use when
+## Variables
 
-The task is simple, deterministic, and requires minimal control.
+- `{{ROLE}}`
+- `{{TASK}}`
+- `{{CONTEXT}}`
+- `{{OUTPUT}}`
 
-## Contract
+## Variable Template
 
-ROLE:
-TASK:
-CONTEXT:
-OUTPUT:
+```text
+ROLE: {{ROLE}}
+TASK: {{TASK}}
+CONTEXT: {{CONTEXT}}
+OUTPUT: {{OUTPUT}}
+```
+
+## Example — YouTube Shorts Title
+
+```text
+ROLE: YouTube Shorts title writer
+TASK: Create 5 short titles for the provided topic.
+CONTEXT: The content is a factual 20-second YouTube Short.
+OUTPUT: Return 5 titles, each under 60 characters.
+```
+
+## When to use
+
+Use LV 0 when the task is simple and does not require explicit workflow, validation, evidence handling, or complex constraints.
