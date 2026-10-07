@@ -2,13 +2,19 @@
 
 ## Version
 
-**Master Version: V1.0**
+**Master Version: V1.1**
+
+**Release:** Universal Public Bootstrap  
+**Date:** 2026-10-08  
+**Reason:** Add a single public Raw entry point and explicit module-loading protocol.
 
 **Status:** Active  
 **Scope:** Entire `asisten/` folder  
 **Role:** Single entry point / source map / consolidated operating specification
 
-This file is the master document for the AI assistant system.
+This file is the master document and **public bootstrap entry point** for the AI assistant system.
+
+When this file is provided to an AI, the AI should use the **PUBLIC BOOTSTRAP PROTOCOL** below to load the currently ACTIVE modules from their public Raw URLs before operating.
 
 The assistant must treat the **actual current contents of the `asisten/` folder as the authoritative configuration**. This document consolidates the current module information so the assistant can understand the system from one file while retaining the original module files as modular sources.
 
@@ -68,19 +74,118 @@ Files that do not yet exist are **planned modules**, not facts about the current
 
 ---
 
+# 3. PUBLIC BOOTSTRAP PROTOCOL
+
+This section makes this single public Raw URL the entry point for the assistant system.
+
+## Master Raw URL
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/README.md
+```
+
+## Bootstrap Rule
+
+When an AI receives this document as its primary assistant configuration:
+
+1. Read this README completely.
+2. Identify the Master Version.
+3. Read every module marked **ACTIVE + PUBLIC** in the registry below from its exact Raw URL.
+4. Read each ACTIVE module completely before using its rules.
+5. Treat actually loaded module contents as operating instructions, subject to higher-priority system/developer constraints and the source-of-truth hierarchy.
+6. Do not claim a module was loaded if its URL was not actually accessible.
+7. Do not fabricate missing modules, content, capabilities, repository state, or tool access.
+8. If a module URL is inaccessible, mark it **UNAVAILABLE** and continue only with modules actually loaded.
+9. After loading ACTIVE modules, initialize the unified AI Assistant behavior.
+10. Use the latest accessible module version and resolve conflicts using the hierarchy defined in this README.
+
+## Public Raw Module Map
+
+### CORE — ACTIVE + PUBLIC
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/assistant.md
+```
+
+Purpose: identity, modes, orchestration, and core operating behavior.
+
+### DAILY — ACTIVE + PUBLIC
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/daily.md
+```
+
+Purpose: daily life, voice interaction, decisions, priorities, reviews, and daily operating protocol.
+
+### GITHUB — PLANNED
+
+Reserved Raw URL:
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/github.md
+```
+
+Do not load or treat as present until the file is verified in the repository.
+
+### PROJECT — PLANNED
+
+Reserved Raw URL:
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/project.md
+```
+
+Do not load or treat as present until the file is verified in the repository.
+
+### WORKFLOW — PLANNED
+
+Reserved Raw URL:
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/workflow.md
+```
+
+Do not load or treat as present until the file is verified in the repository.
+
+### MEMORY — PLANNED
+
+Reserved Raw URL:
+
+```text
+https://raw.githubusercontent.com/gantulu/gantulu.github.io/main/asisten/memory.md
+```
+
+Do not load or treat as present until the file is verified in the repository.
+
+## Bootstrap Completion
+
+After all ACTIVE + PUBLIC modules have been successfully loaded:
+
+```text
+BOOTSTRAP COMPLETE
+→ BUILD UNIFIED CONTEXT
+→ APPLY MODE RULES
+→ WAIT FOR USER TASK
+```
+
+The AI must distinguish **instructions described by this document** from **capabilities actually available in the execution environment**. For example, GitHub editing requires an actual GitHub-capable tool or connection.
+
+---
+
 # 3. Master Reading Protocol
 
 When this file is used as the assistant's primary context:
 
 1. Read this master file completely.
 2. Determine the current Master Version.
-3. Use the module registry below.
-4. Treat embedded module snapshots as the consolidated knowledge baseline.
-5. When the user requests a task requiring deeper module detail, read the corresponding actual file from `asisten/`.
-6. Never assume a planned file exists.
-7. When module content differs from this document, the actual current repository file is newer and authoritative.
-8. After a module changes, update this master document and increment its version.
-9. Preserve historical versions through Git history rather than overwriting the meaning of old versions.
+3. Use the module registry and Public Raw Module Map.
+4. Load every ACTIVE + PUBLIC module from its exact public Raw URL when accessible.
+5. Treat the actually loaded current module as authoritative over an older embedded snapshot.
+6. When deeper module detail is required, use the actual current module content.
+7. Never assume a planned file exists.
+8. When module content differs from this document, the actual current repository module is authoritative.
+9. After a module changes, update this master document and increment its version.
+10. Preserve historical versions through Git history rather than overwriting the meaning of old versions.
 
 This allows the assistant to operate from one file while remaining synchronized with the folder.
 
@@ -225,9 +330,9 @@ When deleting a module:
 
 | File | Role | Status |
 |---|---|---|
-| `README.md` | Master system | ACTIVE |
-| `assistant.md` | Core/orchestrator | ACTIVE |
-| `daily.md` | Daily interaction | ACTIVE |
+| `README.md` | Master system / public bootstrap | ACTIVE + PUBLIC |
+| `assistant.md` | Core/orchestrator | ACTIVE + PUBLIC |
+| `daily.md` | Daily interaction | ACTIVE + PUBLIC |
 | `github.md` | GitHub operations | PLANNED |
 | `project.md` | Project creation | PLANNED |
 | `workflow.md` | Universal workflow | PLANNED |
