@@ -80,7 +80,7 @@
         <section class="p-4 bg-white border-b border-gray-100">
             <form id="searchForm" class="space-y-3">
                 <label for="resiInput" class="sr-only">Nomor resi</label>
-                <input type="text" id="resiInput" value="NSTCG0012555774" placeholder="Masukkan Nomor Resi..." required autocomplete="off" class="w-full bg-white text-gray-900 border border-gray-300 font-semibold text-sm px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ncRed focus:border-ncRed transition" />
+                <input type="text" id="resiInput" value="NSTCGO0125557744" placeholder="Masukkan Nomor Resi..." required autocomplete="off" class="w-full bg-white text-gray-900 border border-gray-300 font-semibold text-sm px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ncRed focus:border-ncRed transition" />
                 <button type="submit" class="w-full bg-ncRed hover:bg-red-700 active:scale-[0.99] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
                     <span>Lacak Sekarang</span>
                 </button>
@@ -90,8 +90,9 @@
         <div id="errorAlert" role="alert" aria-live="polite" class="hidden mx-4 mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
             Nomor resi <strong id="invalidResiCode"></strong> tidak ditemukan. Silakan periksa kembali nomor resi Anda.
         </div>
+        <div id="statusAlert" role="status" aria-live="polite" class="hidden mx-4 mt-3 p-3 bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-lg"></div>
 
-        <section id="trackingResult" class="flex-1 bg-white">
+        <section id="trackingResult" class="hidden flex-1 bg-white">
             <div class="px-4 py-3 bg-gray-50 flex justify-between items-center border-t border-b border-gray-200/80">
                 <div>
                     <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">NO. RESI</div>
@@ -179,44 +180,8 @@
     </main>
 
     <script>
-        // Data contoh statis. Belum terhubung ke database atau API.
-        const MOCK_SHIPMENTS = {
-            "NSTCG0012555774": {
-                noResi: "NSTCG0012555774",
-                origin: "JAKARTA",
-                destination: "JAWA BARAT",
-                sender: {
-                    name: "BRILink Indonesia",
-                    phone: "+6281534341003",
-                    address: "Jl. Jenderal Gatot Soebroto Kav. 71 - 73, Pancoran Jakarta, Jakarta Selatan 12870."
-                },
-                recipient: {
-                    name: "WASTIM",
-                    phone: "+62882001715955",
-                    address: "Desa Karanganyar, RT 04/RW 02, Kec. Kandanghaur, Kab. Indramayu, Prov. Jawa Barat 45213."
-                },
-                itemDetails: {
-                    type: "Mesin EDC BRILink",
-                    weight: "0.60 Kg",
-                    serviceType: "Express",
-                    shippingMethod: "Pengiriman Udara"
-                },
-                history: [
-                    {
-                        status: "Barang diproses",
-                        description: "Paket sedang diproses di JAKARTA.",
-                        date: "10 Oktober 2026, 14:07:18",
-                        active: true
-                    },
-                    {
-                        status: "Pesanan dibuat",
-                        description: "Data pengiriman dibuat dan telah diterima oleh pihak cargo.",
-                        date: "10 Oktober 2026, 14:03:39",
-                        active: false
-                    }
-                ]
-            }
-        };
+        const API_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/get-dakota";
+        let latestSearchId = 0;
 
         function toggleMenu() {
             const menu = document.getElementById('mobileMenu');
@@ -225,47 +190,104 @@
             button.setAttribute('aria-expanded', String(!isHidden));
         }
 
-        function renderTrackingData(data) {
-            document.getElementById('displayResiNo').textContent = data.noResi;
-            document.getElementById('displayOrigin').textContent = data.origin;
-            document.getElementById('displayDestination').textContent = data.destination;
-            document.getElementById('displaySenderName').textContent = data.sender.name;
-            document.getElementById('displaySenderPhone').textContent = data.sender.phone;
-            document.getElementById('displaySenderAddress').textContent = data.sender.address;
-            document.getElementById('displayRecipientName').textContent = data.recipient.name;
-            document.getElementById('displayRecipientPhone').textContent = data.recipient.phone;
-            document.getElementById('displayRecipientAddress').textContent = data.recipient.address;
-            document.getElementById('displayItemType').textContent = data.itemDetails.type;
-            document.getElementById('displayItemWeight').textContent = data.itemDetails.weight;
-            document.getElementById('displayServiceType').textContent = data.itemDetails.serviceType;
-            document.getElementById('displayShippingMethod').textContent = data.itemDetails.shippingMethod;
+        function displayValue(value) {
+            return value === null || value === undefined || value === '' ? '—' : String(value);
+        }
+
+        function clearTrackingData() {
+            [
+                'displayResiNo', 'displayOrigin', 'displayDestination',
+                'displaySenderName', 'displaySenderPhone', 'displaySenderAddress',
+                'displayRecipientName', 'displayRecipientPhone', 'displayRecipientAddress',
+                'displayItemType', 'displayItemWeight', 'displayServiceType', 'displayShippingMethod'
+            ].forEach((id) => {
+                document.getElementById(id).textContent = '—';
+            });
+            document.getElementById('historyTimeline').replaceChildren();
+        }
+
+        function validateShipmentPayload(payload, requestedResi) {
+            if (!payload || typeof payload !== 'object' || payload.success !== true ||
+                !Array.isArray(payload.data) || payload.data.length !== 1) {
+                return null;
+            }
+
+            const shipment = payload.data[0];
+            const requiredFields = [
+                'no_resi', 'asal', 'tujuan', 'pengirim_nama', 'pengirim_no_hp',
+                'pengirim_alamat', 'penerima_nama', 'penerima_no_hp', 'penerima_alamat',
+                'barang_jenis', 'berat_kg', 'jenis_pengiriman', 'layanan',
+                'status_terkini', 'keterangan_status', 'riwayat_pengiriman'
+            ];
+
+            if (!shipment || typeof shipment !== 'object' ||
+                shipment.no_resi !== requestedResi ||
+                !requiredFields.every((field) => Object.prototype.hasOwnProperty.call(shipment, field)) ||
+                !Array.isArray(shipment.riwayat_pengiriman)) {
+                return null;
+            }
+
+            const validHistory = shipment.riwayat_pengiriman.every((entry) =>
+                entry && typeof entry === 'object' &&
+                ['tanggal', 'waktu', 'status', 'keterangan'].every((field) =>
+                    Object.prototype.hasOwnProperty.call(entry, field)
+                )
+            );
+
+            return validHistory ? shipment : null;
+        }
+
+        function renderTrackingData(shipment) {
+            document.getElementById('displayResiNo').textContent = displayValue(shipment.no_resi);
+            document.getElementById('displayOrigin').textContent = displayValue(shipment.asal);
+            document.getElementById('displayDestination').textContent = displayValue(shipment.tujuan);
+            document.getElementById('displaySenderName').textContent = displayValue(shipment.pengirim_nama);
+            document.getElementById('displaySenderPhone').textContent = displayValue(shipment.pengirim_no_hp);
+            document.getElementById('displaySenderAddress').textContent = displayValue(shipment.pengirim_alamat);
+            document.getElementById('displayRecipientName').textContent = displayValue(shipment.penerima_nama);
+            document.getElementById('displayRecipientPhone').textContent = displayValue(shipment.penerima_no_hp);
+            document.getElementById('displayRecipientAddress').textContent = displayValue(shipment.penerima_alamat);
+            document.getElementById('displayItemType').textContent = displayValue(shipment.barang_jenis);
+
+            const weight = shipment.berat_kg;
+            document.getElementById('displayItemWeight').textContent =
+                weight === null || weight === undefined || weight === ''
+                    ? '—'
+                    : (Number.isFinite(Number(weight)) ? Number(weight).toFixed(2) + ' Kg' : displayValue(weight));
+
+            document.getElementById('displayServiceType').textContent = displayValue(shipment.jenis_pengiriman);
+            document.getElementById('displayShippingMethod').textContent = displayValue(shipment.layanan);
 
             const timeline = document.getElementById('historyTimeline');
             timeline.replaceChildren();
 
-            data.history.forEach((hist) => {
+            shipment.riwayat_pengiriman.forEach((historyEntry) => {
+                const isCurrent = historyEntry.status === shipment.status_terkini;
                 const item = document.createElement('div');
                 item.className = 'ml-5 relative';
 
                 const marker = document.createElement('div');
                 marker.className = 'absolute -left-[30px] top-0.5 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center ' +
-                    (hist.active ? 'border-ncRed ring-4 ring-red-100' : 'border-emerald-500');
+                    (isCurrent ? 'border-ncRed ring-4 ring-red-100' : 'border-emerald-500');
 
                 const dot = document.createElement('div');
-                dot.className = 'w-1.5 h-1.5 rounded-full ' + (hist.active ? 'bg-ncRed' : 'bg-emerald-500');
+                dot.className = 'w-1.5 h-1.5 rounded-full ' + (isCurrent ? 'bg-ncRed' : 'bg-emerald-500');
                 marker.appendChild(dot);
 
                 const status = document.createElement('div');
-                status.className = 'font-bold text-xs ' + (hist.active ? 'text-ncRed' : 'text-emerald-700');
-                status.textContent = hist.status;
+                status.className = 'font-bold text-xs ' + (isCurrent ? 'text-ncRed' : 'text-emerald-700');
+                status.textContent = displayValue(historyEntry.status);
 
                 const description = document.createElement('div');
                 description.className = 'text-gray-600 text-xs mt-1 leading-relaxed';
-                description.textContent = hist.description;
+                description.textContent = displayValue(historyEntry.keterangan);
 
                 const date = document.createElement('div');
                 date.className = 'text-gray-400 text-[10px] mt-1.5 font-medium';
-                date.textContent = hist.date;
+                date.textContent = [historyEntry.tanggal, historyEntry.waktu]
+                    .filter((value) => value !== null && value !== undefined && value !== '')
+                    .map(String)
+                    .join(' • ') || '—';
 
                 const content = document.createElement('div');
                 content.append(status, description, date);
@@ -274,25 +296,85 @@
             });
         }
 
-        document.getElementById('searchForm').addEventListener('submit', (event) => {
+        document.getElementById('searchForm').addEventListener('submit', async (event) => {
             event.preventDefault();
-            const inputVal = document.getElementById('resiInput').value.trim().toUpperCase();
-            const data = MOCK_SHIPMENTS[inputVal];
-            const errorAlert = document.getElementById('errorAlert');
-            const trackingResult = document.getElementById('trackingResult');
 
-            if (data) {
-                errorAlert.classList.add('hidden');
-                trackingResult.classList.remove('hidden');
-                renderTrackingData(data);
-            } else {
-                document.getElementById('invalidResiCode').textContent = inputVal || '(kosong)';
+            const requestedResi = document.getElementById('resiInput').value;
+            const errorAlert = document.getElementById('errorAlert');
+            const statusAlert = document.getElementById('statusAlert');
+            const trackingResult = document.getElementById('trackingResult');
+            const button = event.currentTarget.querySelector('button[type="submit"]');
+            const buttonText = button.querySelector('span');
+            const searchId = ++latestSearchId;
+
+            errorAlert.classList.add('hidden');
+            statusAlert.classList.add('hidden');
+            trackingResult.classList.add('hidden');
+            clearTrackingData();
+
+            if (requestedResi.length === 0) {
+                document.getElementById('invalidResiCode').textContent = '(kosong)';
                 errorAlert.classList.remove('hidden');
-                trackingResult.classList.add('hidden');
+                return;
+            }
+
+            statusAlert.textContent = 'Sedang mencari data pengiriman…';
+            statusAlert.className = 'mx-4 mt-3 p-3 bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-lg';
+            button.setAttribute('aria-busy', 'true');
+            buttonText.textContent = 'Sedang mencari…';
+
+            try {
+                const url = new URL(API_URL);
+                url.searchParams.set('no_resi', requestedResi);
+
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store'
+                });
+
+                let payload;
+                try {
+                    payload = await response.json();
+                } catch {
+                    throw new Error('Respons server bukan JSON yang valid.');
+                }
+
+                if (searchId !== latestSearchId) return;
+
+                if (payload && Array.isArray(payload.data) && payload.data.length === 0) {
+                    document.getElementById('invalidResiCode').textContent = requestedResi;
+                    errorAlert.classList.remove('hidden');
+                    statusAlert.classList.add('hidden');
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error('Server tidak dapat memproses pencarian (HTTP ' + response.status + ').');
+                }
+
+                const shipment = validateShipmentPayload(payload, requestedResi);
+                if (!shipment) {
+                    throw new Error('Struktur respons API tidak sesuai kontrak.');
+                }
+
+                renderTrackingData(shipment);
+                trackingResult.classList.remove('hidden');
+                statusAlert.classList.add('hidden');
+            } catch (error) {
+                if (searchId !== latestSearchId) return;
+                statusAlert.textContent = error instanceof TypeError
+                    ? 'Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.'
+                    : (error && error.message ? error.message : 'Terjadi kesalahan saat mencari data.');
+                statusAlert.className = 'mx-4 mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg';
+                statusAlert.classList.remove('hidden');
+            } finally {
+                if (searchId === latestSearchId) {
+                    button.removeAttribute('aria-busy');
+                    buttonText.textContent = 'Lacak Sekarang';
+                }
             }
         });
-
-        renderTrackingData(MOCK_SHIPMENTS["NSTCG0012555774"]);
     </script>
 </body>
 </html>
