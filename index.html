@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <title>Nusantara Cargo - Cek Resi Pengiriman</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -23,15 +23,44 @@
         }
     </script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; }
+        html, body {
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+        }
+        html {
+            height: 100%;
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+        }
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            overflow-x: hidden;
+            overscroll-behavior-x: none;
+        }
+        .app-shell {
+            width: 100%;
+            max-width: 500px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            margin-inline: auto;
+        }
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
         .dotted-pattern {
             background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
             background-size: 12px 12px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-start text-gray-800 antialiased selection:bg-red-600 selection:text-white">
-    <header class="w-full bg-ncRed text-white text-[11px] sm:text-xs px-4 py-2 flex justify-between items-center z-50">
+<body class="min-h-screen w-full flex flex-col items-center justify-start text-gray-800 antialiased selection:bg-red-600 selection:text-white"><div class="app-shell flex flex-col">
+    <header class="app-header w-full bg-ncRed text-white text-[11px] sm:text-xs px-4 py-2 flex justify-between items-center">
         <div class="flex items-center space-x-1.5 font-medium">
             <i class="fa-solid fa-headset text-xs"></i><span>Customer Service 24 Jam</span>
         </div>
@@ -376,5 +405,6 @@
             }
         });
     </script>
+</div>
 </body>
 </html>
