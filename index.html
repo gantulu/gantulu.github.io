@@ -1,477 +1,191 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <title>Dakota Cargo - Cek Resi Pengiriman</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        ncRed: '#e10613',
-                        ncDarkBlue: '#06132a',
-                        ncNavy: '#0c1b33',
-                        ncLightBg: '#f8f9fa'
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            min-height: 100%;
-            margin: 0;
-        }
-        html {
-            height: 100%;
-            overscroll-behavior-x: none;
-            touch-action: pan-y;
-        }
-        body {
-            height: 100%;
-            min-height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
-            overflow-x: hidden;
-            overscroll-behavior-x: none;
-        }
-        .app-shell {
-            width: 100%;
-            height: 100%;
-            max-width: 500px;
-            min-height: 100%;
-            margin-inline: auto;
-        }
-        .app-header {
-            position: relative;
-            z-index: 100;
-        }
-        .dotted-pattern {
-            background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
-            background-size: 12px 12px;
-        }
-        @keyframes splashProgress {
-            from { width: 0; }
-            to { width: 100%; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nusantara Cargo - Cek Resi Pengiriman</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = { theme: { extend: {
+      fontFamily: { sans: ['Inter', 'sans-serif'] },
+      colors: { ncRed:'#e10613', ncDarkBlue:'#06132a', ncNavy:'#0c1b33', ncLightBg:'#f8f9fa' }
+    }}};
+  </script>
+  <style>
+    html, body { width:100%; height:100%; margin:0; }
+    html { overscroll-behavior-x:none; touch-action:pan-y; }
+    body { font-family:'Inter',sans-serif; background:#0f172a; overflow-x:hidden; }
+    .app-shell { width:100%; height:100%; max-width:500px; margin-inline:auto; }
+    .dotted-pattern { background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px); background-size:12px 12px; }
+  </style>
 </head>
 <body class="h-full w-full flex flex-col items-center justify-start text-gray-800 antialiased selection:bg-red-600 selection:text-white">
-    <section id="splashScreen" class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white px-6 text-center" aria-label="Splash screen Dakota Cargo">
-        <img src="https://dakotacargo.co.id/dakotacargo/assets/logo_dbs.webp" alt="Dakota Cargo" class="w-auto max-w-[75%] max-h-28 object-contain" />
-        <div id="splashLoading" class="mt-8 flex flex-col items-center gap-3" role="status" aria-live="polite">
-            <div class="h-1.5 w-40 overflow-hidden rounded-full bg-gray-200">
-                <div class="h-full w-1/3 rounded-full bg-red-600 animate-[splashProgress_3s_ease-in-out_forwards]"></div>
-            </div>
-            <p class="text-sm font-medium text-gray-500">Menyiapkan aplikasi...</p>
-        </div>
-        <div id="splashAction" class="hidden mt-8 w-full max-w-xs">
-            <button id="openAppBtn" type="button" class="w-full rounded-xl bg-red-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg transition active:scale-[0.98] hover:bg-red-700">
-                <i class="fa-solid fa-expand mr-2" aria-hidden="true"></i>Buka Aplikasi
-            </button>
-            <p class="mt-3 text-xs text-gray-500">Tekan untuk membuka aplikasi dalam mode layar penuh.</p>
-        </div>
-        <p id="splashError" class="hidden mt-4 max-w-xs text-xs text-red-600" role="alert"></p>
-    </section>
-
-<div id="appShell" class="app-shell hidden flex flex-col">
-
-
+  <div id="appShell" class="app-shell flex flex-col">
     <main class="w-full max-w-md bg-white shadow-2xl flex flex-col flex-1 min-h-0 overflow-y-auto border border-gray-100">
-    <header class="app-header w-full shrink-0 bg-ncRed text-white text-[11px] sm:text-xs px-4 py-2 flex justify-between items-center">
-        <div class="flex items-center space-x-1.5 font-medium">
-            <i class="fa-solid fa-headset text-xs"></i><span>Customer Service 24 Jam</span>
-        </div>
+      <header class="w-full shrink-0 bg-ncRed text-white text-[11px] sm:text-xs px-4 py-2 flex justify-between items-center">
+        <div class="flex items-center space-x-1.5 font-medium"><i class="fa-solid fa-headset text-xs"></i><span>Customer Service 24 Jam</span></div>
         <div class="flex items-center space-x-3 sm:space-x-5 font-semibold text-[11px]">
-            <a href="#searchForm" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-magnifying-glass text-[10px]"></i><span>Cek Resi</span></a>
-            <a href="#footer" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-calculator text-[10px]"></i><span>Cek Ongkir</span></a>
-            <a href="#footer" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-user text-[10px]"></i><span>Login</span></a>
+          <a href="#searchForm" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-magnifying-glass text-[10px]"></i><span>Cek Resi</span></a>
+          <a href="#footer" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-calculator text-[10px]"></i><span>Cek Ongkir</span></a>
+          <a href="#footer" class="hover:underline flex items-center space-x-1"><i class="fa-solid fa-user text-[10px]"></i><span>Login</span></a>
         </div>
-    </header>
+      </header>
 
-        <nav class="flex justify-between items-center px-4 py-3 bg-white border-b border-gray-100 shrink-0 shadow-sm">
-            <a href="#" class="flex items-center space-x-2" aria-label="Dakota Cargo Beranda">
-                <img src="https://dakotacargo.co.id/dakotacargo/assets/logo_dbs.webp" alt="Dakota Cargo" class="h-10 w-auto max-w-[190px] object-contain" />
-            </a>
-            <button id="menuBtn" type="button" onclick="toggleMenu()" class="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none active:scale-95 transition" aria-label="Buka atau tutup menu" aria-expanded="false" aria-controls="mobileMenu">
-                <span class="block w-5 h-0.5 bg-gray-800 mb-1 rounded-full"></span>
-                <span class="block w-5 h-0.5 bg-gray-800 mb-1 rounded-full"></span>
-                <span class="block w-5 h-0.5 bg-gray-800 rounded-full"></span>
-            </button>
-        </nav>
+      <nav class="flex justify-between items-center px-4 py-3 bg-white border-b border-gray-100 shrink-0 shadow-sm">
+        <a href="#" class="flex items-center space-x-1.5" aria-label="Nusantara Cargo Beranda">
+          <span class="text-ncRed font-black italic tracking-tighter text-2xl leading-none">NC</span>
+          <span class="leading-tight pl-1 border-l-2 border-red-500"><span class="block font-black text-[11px] tracking-wider text-ncNavy leading-none">NUSANTARA</span><span class="block text-[8px] font-bold text-gray-400 tracking-widest uppercase mt-0.5">CARGO</span></span>
+        </a>
+        <button id="menuBtn" type="button" onclick="toggleMenu()" class="p-2 border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none active:scale-95 transition" aria-label="Toggle Menu" aria-expanded="false" aria-controls="mobileMenu">
+          <span class="block w-5 h-0.5 bg-gray-800 mb-1 rounded-full"></span><span class="block w-5 h-0.5 bg-gray-800 mb-1 rounded-full"></span><span class="block w-5 h-0.5 bg-gray-800 rounded-full"></span>
+        </button>
+      </nav>
 
-        <div id="mobileMenu" class="hidden bg-ncNavy text-white px-5 py-4 text-xs space-y-3 z-30 border-b border-slate-700">
-            <div class="font-bold text-red-500 pb-1 border-b border-slate-700 tracking-wider">NAVIGASI UTAMA</div>
-            <a href="#" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-house mr-2 w-4"></i>Beranda</a>
-            <a href="#searchForm" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-box mr-2 w-4"></i>Cek Resi Pengiriman</a>
-            <a href="#footer" class="block text-red-400 font-semibold py-1 transition"><i class="fa-solid fa-calculator mr-2 w-4"></i>Cek Tarif / Ongkir</a>
-            <a href="#footer" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-truck-fast mr-2 w-4"></i>Layanan Cargo</a>
-            <a href="#footer" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-building mr-2 w-4"></i>Tentang Kami</a>
+      <div id="mobileMenu" class="hidden shrink-0 bg-ncNavy text-white px-5 py-4 text-xs space-y-3 border-b border-slate-700">
+        <div class="font-bold text-red-500 pb-1 border-b border-slate-700 tracking-wider">NAVIGASI UTAMA</div>
+        <a href="#" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-house mr-2 w-4"></i>Beranda</a>
+        <a href="#searchForm" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-box mr-2 w-4"></i>Cek Resi Pengiriman</a>
+        <a href="#footer" class="block text-red-400 font-semibold py-1 transition"><i class="fa-solid fa-calculator mr-2 w-4"></i>Cek Tarif / Ongkir</a>
+        <a href="#footer" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-truck-fast mr-2 w-4"></i>Layanan Cargo</a>
+        <a href="#footer" class="block hover:text-red-400 py-1 transition"><i class="fa-solid fa-building mr-2 w-4"></i>Tentang Kami</a>
+      </div>
+
+      <section class="relative shrink-0 bg-gradient-to-r from-gray-900 via-ncNavy to-blue-950 text-white p-5 overflow-hidden">
+        <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image:url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80')"></div>
+        <div class="relative z-10 py-1"><h1 class="text-xl font-extrabold tracking-wide mb-1 text-white drop-shadow-md">Cek Resi Pengiriman</h1><p class="text-[11px] text-gray-300">Lacak status paket &amp; armada Nusantara Cargo Anda</p></div>
+      </section>
+
+      <section class="shrink-0 p-4 bg-white border-b border-gray-100">
+        <form id="searchForm" class="space-y-3">
+          <label for="resiInput" class="sr-only">Nomor resi</label>
+          <input type="text" id="resiInput" value="NSTCG0012555774" placeholder="Masukkan Nomor Resi..." required autocomplete="off" class="w-full bg-white text-gray-900 border border-gray-300 font-semibold text-sm px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ncRed focus:border-ncRed transition">
+          <button type="submit" class="w-full bg-ncRed hover:bg-red-700 active:scale-[0.99] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center space-x-2 cursor-pointer"><span>Lacak Sekarang</span></button>
+        </form>
+      </section>
+
+      <div id="errorAlert" role="alert" aria-live="polite" class="hidden shrink-0 mx-4 mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">Nomor resi <strong id="invalidResiCode"></strong> tidak ditemukan. Silakan gunakan resi contoh: <code class="font-mono bg-red-100 px-1 rounded">NSTCG0012555774</code></div>
+
+      <section id="trackingResult" class="flex-1 bg-white">
+        <div class="px-4 py-3 bg-gray-50 flex justify-between items-center border-t border-b border-gray-200/80">
+          <div><div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">NO. RESI</div><div id="displayResiNo" class="text-base font-extrabold text-gray-900 tracking-wide">NSTCG0012555774</div></div>
+          <div class="bg-amber-100/80 p-2.5 rounded-xl border border-amber-200 text-amber-800 shadow-sm flex items-center justify-center"><i class="fa-solid fa-box-open text-xl"></i></div>
         </div>
-
-        <section class="relative bg-gradient-to-r from-gray-900 via-ncNavy to-blue-950 text-white p-5 overflow-hidden">
-            <div class="absolute inset-0 bg-cover bg-center opacity-30" style="background-image: url('https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80');"></div>
-            <div class="relative z-10 py-1">
-                <h1 class="text-xl font-extrabold tracking-wide mb-1 text-white drop-shadow-md">Cek Resi Pengiriman</h1>
-                <p class="text-[11px] text-gray-300">Lacak status paket &amp; armada Dakota Cargo Anda</p>
-            </div>
-        </section>
-
-        <section class="p-4 bg-white border-b border-gray-100">
-            <form id="searchForm" class="space-y-3">
-                <label for="resiInput" class="sr-only">Nomor resi</label>
-                <input type="text" id="resiInput" value="NSTCGO0125557744" placeholder="Masukkan Nomor Resi..." required autocomplete="off" class="w-full bg-white text-gray-900 border border-gray-300 font-semibold text-sm px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-ncRed focus:border-ncRed transition" />
-                <button type="submit" class="w-full bg-ncRed hover:bg-red-700 active:scale-[0.99] text-white font-bold py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition flex items-center justify-center space-x-2 cursor-pointer">
-                    <span>Lacak Sekarang</span>
-                </button>
-            </form>
-        </section>
-
-        <div id="errorAlert" role="alert" aria-live="polite" class="hidden mx-4 mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">
-            Nomor resi <strong id="invalidResiCode"></strong> tidak ditemukan. Silakan periksa kembali nomor resi Anda.
+        <div class="p-3.5 bg-white text-center flex justify-center items-center space-x-4 border-b border-gray-100"><span id="displayOrigin" class="font-extrabold text-gray-900 text-base tracking-wide uppercase">JAKARTA</span><span class="text-ncRed font-black text-xl">➔</span><span id="displayDestination" class="font-extrabold text-gray-900 text-base tracking-wide uppercase">JAWA BARAT</span></div>
+        <div class="p-4 m-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 shadow-sm space-y-3.5 text-xs">
+          <div><div class="text-gray-400 text-[11px] font-medium mb-0.5">Pengirim</div><div id="displaySenderName" class="font-bold text-gray-900 text-sm">BRILink Indonesia</div><div class="text-gray-600 mt-0.5">No. HP: <span id="displaySenderPhone" class="font-medium text-gray-900">+5281534341003</span></div><div class="text-gray-600 mt-1 leading-relaxed">Alamat: <span id="displaySenderAddress">Jl. Jenderal Gatot Soebroto Kav. 71 - 73, Pancoran Jakarta, Jakarta Selatan 12870.</span></div></div>
+          <hr class="border-gray-200/80 my-2">
+          <div><div class="text-gray-400 text-[11px] font-medium mb-0.5">Penerima</div><div id="displayRecipientName" class="font-bold text-gray-900 text-sm">WASTIM</div><div class="text-gray-600 mt-0.5">No. HP: <span id="displayRecipientPhone" class="font-medium text-gray-900">+52882001715955</span></div><div class="text-gray-600 mt-1 leading-relaxed">Alamat: <span id="displayRecipientAddress">Desa Karanganyar, RT 04/RW 02, Kec. Kandanghaur, Kab. Indramayu, Prov. Jawa Barat 45213.</span></div></div>
+          <hr class="border-gray-200/80 my-2">
+          <div class="grid grid-cols-2 gap-y-3 gap-x-2 pt-1 text-xs">
+            <div><div class="text-gray-400 text-[11px]">Jenis Barang</div><div id="displayItemType" class="font-bold text-gray-900 mt-0.5">Mesin EDC BRILink</div></div>
+            <div><div class="text-gray-400 text-[11px]">Berat</div><div id="displayItemWeight" class="font-bold text-gray-900 mt-0.5">0.60 Kg</div></div>
+            <div><div class="text-gray-400 text-[11px]">Jenis Pengiriman</div><div id="displayServiceType" class="font-bold text-gray-900 mt-0.5">Express</div></div>
+            <div><div class="text-gray-400 text-[11px]">Layanan</div><div id="displayShippingMethod" class="font-bold text-gray-900 mt-0.5">Pengiriman Udara</div></div>
+          </div>
         </div>
-        <div id="statusAlert" role="status" aria-live="polite" class="hidden mx-4 mt-3 p-3 bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-lg"></div>
+        <section class="px-5 py-3 bg-white"><h2 class="font-extrabold text-gray-900 mb-5 text-sm tracking-wide">Riwayat Pengiriman</h2><div id="historyTimeline" class="relative border-l-2 border-gray-200 ml-3.5 space-y-6 pb-2"></div></section>
+      </section>
 
-        <section id="trackingResult" class="hidden flex-1 bg-white">
-            <div class="px-4 py-3 bg-gray-50 flex justify-between items-center border-t border-b border-gray-200/80">
-                <div>
-                    <div class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">NO. RESI</div>
-                    <div id="displayResiNo" class="text-base font-extrabold text-gray-900 tracking-wide">NSTCG0012555774</div>
-                </div>
-                <div class="bg-amber-100/80 p-2.5 rounded-xl border border-amber-200 text-amber-800 shadow-sm flex items-center justify-center"><i class="fa-solid fa-box-open text-xl"></i></div>
-            </div>
-
-            <div class="p-3.5 bg-white text-center flex justify-center items-center space-x-4 border-b border-gray-100">
-                <span id="displayOrigin" class="font-extrabold text-gray-900 text-base tracking-wide uppercase">JAKARTA</span>
-                <span class="text-ncRed font-black text-xl" aria-hidden="true">➔</span>
-                <span id="displayDestination" class="font-extrabold text-gray-900 text-base tracking-wide uppercase">JAWA BARAT</span>
-            </div>
-
-            <div class="p-4 m-4 bg-gray-50/80 rounded-2xl border border-gray-200/80 shadow-sm space-y-3.5 text-xs">
-                <div>
-                    <div class="text-gray-400 text-[11px] font-medium mb-0.5">Pengirim</div>
-                    <div id="displaySenderName" class="font-bold text-gray-900 text-sm">BRILink Indonesia</div>
-                    <div class="text-gray-600 mt-0.5">No. HP: <span id="displaySenderPhone" class="font-medium text-gray-900">+6281534341003</span></div>
-                    <div class="text-gray-600 mt-1 leading-relaxed">Alamat: <span id="displaySenderAddress">Jl. Jenderal Gatot Soebroto Kav. 71 - 73, Pancoran Jakarta, Jakarta Selatan 12870.</span></div>
-                </div>
-                <hr class="border-gray-200/80 my-2" />
-                <div>
-                    <div class="text-gray-400 text-[11px] font-medium mb-0.5">Penerima</div>
-                    <div id="displayRecipientName" class="font-bold text-gray-900 text-sm">WASTIM</div>
-                    <div class="text-gray-600 mt-0.5">No. HP: <span id="displayRecipientPhone" class="font-medium text-gray-900">+62882001715955</span></div>
-                    <div class="text-gray-600 mt-1 leading-relaxed">Alamat: <span id="displayRecipientAddress">Desa Karanganyar, RT 04/RW 02, Kec. Kandanghaur, Kab. Indramayu, Prov. Jawa Barat 45213.</span></div>
-                </div>
-                <hr class="border-gray-200/80 my-2" />
-                <div class="grid grid-cols-2 gap-y-3 gap-x-2 pt-1 text-xs">
-                    <div><div class="text-gray-400 text-[11px]">Jenis Barang</div><div id="displayItemType" class="font-bold text-gray-900 mt-0.5">Mesin EDC BRILink</div></div>
-                    <div><div class="text-gray-400 text-[11px]">Berat</div><div id="displayItemWeight" class="font-bold text-gray-900 mt-0.5">0.60 Kg</div></div>
-                    <div><div class="text-gray-400 text-[11px]">Jenis Pengiriman</div><div id="displayServiceType" class="font-bold text-gray-900 mt-0.5">Express</div></div>
-                    <div><div class="text-gray-400 text-[11px]">Layanan</div><div id="displayShippingMethod" class="font-bold text-gray-900 mt-0.5">Pengiriman Udara</div></div>
-                </div>
-            </div>
-
-            <section class="px-5 py-3 bg-white">
-                <h2 class="font-extrabold text-gray-900 mb-5 text-sm tracking-wide">Riwayat Pengiriman</h2>
-                <div id="historyTimeline" class="relative border-l-2 border-gray-200 ml-3.5 space-y-6 pb-2"></div>
-            </section>
-        </section>
-
-        <footer id="footer" class="bg-ncDarkBlue dotted-pattern text-white p-6 text-xs mt-auto border-t-2 border-ncRed">
-            <div class="flex items-center space-x-2 mb-6">
-                <img src="https://dakotacargo.co.id/dakotacargo/assets/logo_dbs.webp" alt="Dakota Cargo" class="h-10 w-auto max-w-[190px] object-contain" />
-            </div>
-            <div class="mb-6">
-                <h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">LAYANAN KAMI</h3>
-                <ul class="space-y-2.5 text-gray-300 text-xs">
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-square-xmark text-ncRed text-xs"></i><span>Cargo Darat</span></li>
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-plane text-ncRed text-xs"></i><span>Cargo Udara</span></li>
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-ship text-ncRed text-xs"></i><span>Cargo Laut</span></li>
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-box text-ncRed text-xs"></i><span>Packing</span></li>
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-warehouse text-ncRed text-xs"></i><span>Gudang</span></li>
-                    <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-shield-halved text-ncRed text-xs"></i><span>Asuransi</span></li>
-                </ul>
-            </div>
-            <div class="mb-6">
-                <h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">INFORMASI</h3>
-                <ul class="space-y-2 text-gray-300 text-xs">
-                    <li><a href="#footer" class="hover:text-red-400 transition">Tentang Kami</a></li>
-                    <li><a href="#footer" class="hover:text-red-400 transition">Layanan</a></li>
-                    <li><a href="#searchForm" class="hover:text-red-400 transition">Cek Resi</a></li>
-                    <li><a href="#footer" class="hover:text-red-400 transition">Cek Ongkir</a></li>
-                    <li><a href="#footer" class="hover:text-red-400 transition">Lokasi</a></li>
-                    <li><a href="#footer" class="hover:text-red-400 transition">Berita</a></li>
-                    <li><a href="#footer" class="hover:text-red-400 transition">Kontak Kami</a></li>
-                </ul>
-            </div>
-            <div class="pt-2 border-t border-slate-800/80">
-                <h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">HUBUNGI KAMI</h3>
-                <div class="space-y-3 text-gray-300 text-xs">
-                    <div class="flex items-center space-x-2.5"><i class="fa-solid fa-phone text-ncRed text-sm w-4"></i><span class="font-medium">+62 85285397865</span></div>
-                    <div class="flex items-center space-x-2.5"><i class="fa-solid fa-envelope text-ncRed text-sm w-4"></i><span class="font-medium">Support@nusantara-cargo.com</span></div>
-                    <div class="flex items-start space-x-2.5"><i class="fa-solid fa-location-dot text-ncRed text-sm w-4 mt-0.5"></i><span class="leading-relaxed">ITC ROXY MAS, Komplek Ruko No.11 Blok C3, RW 8, Cideng, Kecamatan Gambir, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10150</span></div>
-                </div>
-            </div>
-            <div class="mt-8 pt-4 border-t border-slate-800/80 text-center text-[10px] text-gray-400">© 2026 Dakota Cargo. All rights reserved.</div>
-        </footer>
+      <footer id="footer" class="shrink-0 bg-ncDarkBlue dotted-pattern text-white p-6 text-xs mt-auto border-t-2 border-ncRed">
+        <div class="flex items-center space-x-2 mb-6"><span class="text-ncRed font-black italic tracking-tighter text-2xl leading-none">NC</span><span class="leading-tight pl-1 border-l-2 border-red-500"><span class="block font-black text-xs tracking-wider text-white leading-none">NUSANTARA</span><span class="block text-[9px] font-bold text-gray-400 tracking-widest uppercase mt-0.5">CARGO</span></span></div>
+        <div class="mb-6"><h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">LAYANAN KAMI</h3><ul class="space-y-2.5 text-gray-300 text-xs">
+          <li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-square-xmark text-ncRed"></i><span>Cargo Darat</span></li><li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-plane text-ncRed"></i><span>Cargo Udara</span></li><li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-ship text-ncRed"></i><span>Cargo Laut</span></li><li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-box text-ncRed"></i><span>Packing</span></li><li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-warehouse text-ncRed"></i><span>Gudang</span></li><li class="flex items-center space-x-2.5 hover:text-white transition"><i class="fa-solid fa-shield-halved text-ncRed"></i><span>Asuransi</span></li>
+        </ul></div>
+        <div class="mb-6"><h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">INFORMASI</h3><ul class="space-y-2 text-gray-300 text-xs">
+          <li><a href="#footer" class="hover:text-red-400 transition">Tentang Kami</a></li><li><a href="#footer" class="hover:text-red-400 transition">Layanan</a></li><li><a href="#searchForm" class="hover:text-red-400 transition">Cek Resi</a></li><li><a href="#footer" class="hover:text-red-400 transition">Cek Ongkir</a></li><li><a href="#footer" class="hover:text-red-400 transition">Lokasi</a></li><li><a href="#footer" class="hover:text-red-400 transition">Berita</a></li><li><a href="#footer" class="hover:text-red-400 transition">Kontak Kami</a></li>
+        </ul></div>
+        <div class="pt-2 border-t border-slate-800/80"><h3 class="font-bold text-sm mb-3 tracking-wider text-gray-100 border-l-2 border-ncRed pl-2 uppercase">HUBUNGI KAMI</h3><div class="space-y-3 text-gray-300 text-xs">
+          <div class="flex items-center space-x-2.5"><i class="fa-solid fa-phone text-ncRed text-sm w-4"></i><span class="font-medium">+62 85285397865</span></div><div class="flex items-center space-x-2.5"><i class="fa-solid fa-envelope text-ncRed text-sm w-4"></i><span class="font-medium">Support@nusantara-cargo.com</span></div><div class="flex items-start space-x-2.5"><i class="fa-solid fa-location-dot text-ncRed text-sm w-4 mt-0.5"></i><span class="leading-relaxed">ITC ROXY MAS, Komplek Ruko No.11 Blok C3, RW 8, Cideng, Kecamatan Gambir, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10150</span></div>
+        </div></div>
+        <div class="mt-8 pt-4 border-t border-slate-800/80 text-center text-[10px] text-gray-400">© 2026 Nusantara Cargo. All rights reserved.</div>
+      </footer>
     </main>
+  </div>
 
-    <script>
-        const API_URL = "https://oszqantvugvbvydlizix.supabase.co/functions/v1/get-dakota";
-        let latestSearchId = 0;
-        let splashTimer = null;
+  <script>
+    const MOCK_SHIPMENTS = {
+      "NSTCG0012555774": {
+        noResi:"NSTCG0012555774", origin:"JAKARTA", destination:"JAWA BARAT",
+        sender:{name:"BRILink Indonesia",phone:"+5281534341003",address:"Jl. Jenderal Gatot Soebroto Kav. 71 - 73, Pancoran Jakarta, Jakarta Selatan 12870."},
+        recipient:{name:"WASTIM",phone:"+52882001715955",address:"Desa Karanganyar, RT 04/RW 02, Kec. Kandanghaur, Kab. Indramayu, Prov. Jawa Barat 45213."},
+        itemDetails:{type:"Mesin EDC BRILink",weight:"0.60 Kg",serviceType:"Express",shippingMethod:"Pengiriman Udara"},
+        history:[
+          {status:"Barang diproses",description:"Paket sedang diproses di JAKARTA.",date:"2026-10-10 14:07:18",active:true},
+          {status:"Pesanan dibuat",description:"Data pengiriman dibuat dan telah diterima oleh pihak cargo.",date:"2026-10-10 14:03:39",active:false}
+        ]
+      }
+    };
 
-        const splashScreen = document.getElementById('splashScreen');
-        const splashLoading = document.getElementById('splashLoading');
-        const splashAction = document.getElementById('splashAction');
-        const splashError = document.getElementById('splashError');
-        const appShell = document.getElementById('appShell');
-        const openAppBtn = document.getElementById('openAppBtn');
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      const button = document.getElementById('menuBtn');
+      const isHidden = menu.classList.toggle('hidden');
+      button.setAttribute('aria-expanded', String(!isHidden));
+    }
 
-        function showSplash() {
-            if (splashTimer) window.clearTimeout(splashTimer);
-            splashScreen.classList.remove('hidden');
-            appShell.classList.add('hidden');
-            appShell.classList.remove('flex');
-            splashLoading.classList.remove('hidden');
-            splashAction.classList.add('hidden');
-            splashError.classList.add('hidden');
-            splashError.textContent = '';
+    function setText(id, value) { document.getElementById(id).textContent = value ?? '—'; }
 
-            splashTimer = window.setTimeout(() => {
-                splashLoading.classList.add('hidden');
-                splashAction.classList.remove('hidden');
-            }, 3000);
-        }
+    function renderTrackingData(data) {
+      setText('displayResiNo', data.noResi);
+      setText('displayOrigin', data.origin);
+      setText('displayDestination', data.destination);
+      setText('displaySenderName', data.sender.name);
+      setText('displaySenderPhone', data.sender.phone);
+      setText('displaySenderAddress', data.sender.address);
+      setText('displayRecipientName', data.recipient.name);
+      setText('displayRecipientPhone', data.recipient.phone);
+      setText('displayRecipientAddress', data.recipient.address);
+      setText('displayItemType', data.itemDetails.type);
+      setText('displayItemWeight', data.itemDetails.weight);
+      setText('displayServiceType', data.itemDetails.serviceType);
+      setText('displayShippingMethod', data.itemDetails.shippingMethod);
 
-        openAppBtn.addEventListener('click', async () => {
-            splashError.classList.add('hidden');
-            splashError.textContent = '';
+      const timeline = document.getElementById('historyTimeline');
+      timeline.replaceChildren();
+      data.history.forEach(hist => {
+        const item = document.createElement('div');
+        item.className = 'ml-5 relative';
+        const marker = document.createElement('div');
+        marker.className = 'absolute -left-[30px] top-0.5 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center ' +
+          (hist.active ? 'border-ncRed ring-4 ring-red-100' : 'border-emerald-500');
+        const dot = document.createElement('div');
+        dot.className = 'w-1.5 h-1.5 rounded-full ' + (hist.active ? 'bg-ncRed' : 'bg-emerald-500');
+        marker.appendChild(dot);
+        const title = document.createElement('div');
+        title.className = 'font-bold text-xs ' + (hist.active ? 'text-ncRed' : 'text-emerald-700');
+        title.textContent = hist.status;
+        const description = document.createElement('div');
+        description.className = 'text-gray-600 text-xs mt-1 leading-relaxed';
+        description.textContent = hist.description;
+        const date = document.createElement('div');
+        date.className = 'text-gray-400 text-[10px] mt-1.5 font-medium';
+        date.textContent = hist.date;
+        const content = document.createElement('div');
+        content.append(title, description, date);
+        item.append(marker, content);
+        timeline.appendChild(item);
+      });
+    }
 
-            if (!document.documentElement.requestFullscreen) {
-                splashError.textContent = 'Browser ini tidak mendukung mode layar penuh. Coba buka melalui browser yang mendukung Fullscreen API.';
-                splashError.classList.remove('hidden');
-                return;
-            }
+    document.getElementById('searchForm').addEventListener('submit', event => {
+      event.preventDefault();
+      const value = document.getElementById('resiInput').value.trim().toUpperCase();
+      const alert = document.getElementById('errorAlert');
+      const result = document.getElementById('trackingResult');
+      if (MOCK_SHIPMENTS[value]) {
+        alert.classList.add('hidden');
+        result.classList.remove('hidden');
+        renderTrackingData(MOCK_SHIPMENTS[value]);
+      } else {
+        setText('invalidResiCode', value || '(kosong)');
+        alert.classList.remove('hidden');
+        result.classList.add('hidden');
+      }
+    });
 
-            try {
-                await document.documentElement.requestFullscreen();
-                splashScreen.classList.add('hidden');
-                appShell.classList.remove('hidden');
-                appShell.classList.add('flex');
-            } catch (error) {
-                splashError.textContent = 'Mode layar penuh tidak dapat diaktifkan. Izinkan layar penuh di browser lalu coba lagi.';
-                splashError.classList.remove('hidden');
-            }
-        });
-
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                showSplash();
-            }
-        });
-
-        showSplash();
-
-        function toggleMenu() {
-            const menu = document.getElementById('mobileMenu');
-            const button = document.getElementById('menuBtn');
-            const isHidden = menu.classList.toggle('hidden');
-            button.setAttribute('aria-expanded', String(!isHidden));
-        }
-
-        function displayValue(value) {
-            return value === null || value === undefined || value === '' ? '—' : String(value);
-        }
-
-        function clearTrackingData() {
-            [
-                'displayResiNo', 'displayOrigin', 'displayDestination',
-                'displaySenderName', 'displaySenderPhone', 'displaySenderAddress',
-                'displayRecipientName', 'displayRecipientPhone', 'displayRecipientAddress',
-                'displayItemType', 'displayItemWeight', 'displayServiceType', 'displayShippingMethod'
-            ].forEach((id) => {
-                document.getElementById(id).textContent = '—';
-            });
-            document.getElementById('historyTimeline').replaceChildren();
-        }
-
-        function validateShipmentPayload(payload, requestedResi) {
-            if (!payload || typeof payload !== 'object' || payload.success !== true ||
-                !Array.isArray(payload.data) || payload.data.length !== 1) {
-                return null;
-            }
-
-            const shipment = payload.data[0];
-            const requiredFields = [
-                'no_resi', 'asal', 'tujuan', 'pengirim_nama', 'pengirim_no_hp',
-                'pengirim_alamat', 'penerima_nama', 'penerima_no_hp', 'penerima_alamat',
-                'barang_jenis', 'berat_kg', 'jenis_pengiriman', 'layanan',
-                'status_terkini', 'keterangan_status', 'riwayat_pengiriman'
-            ];
-
-            if (!shipment || typeof shipment !== 'object' ||
-                shipment.no_resi !== requestedResi ||
-                !requiredFields.every((field) => Object.prototype.hasOwnProperty.call(shipment, field)) ||
-                !Array.isArray(shipment.riwayat_pengiriman)) {
-                return null;
-            }
-
-            const validHistory = shipment.riwayat_pengiriman.every((entry) =>
-                entry && typeof entry === 'object' &&
-                ['tanggal', 'waktu', 'status', 'keterangan'].every((field) =>
-                    Object.prototype.hasOwnProperty.call(entry, field)
-                )
-            );
-
-            return validHistory ? shipment : null;
-        }
-
-        function renderTrackingData(shipment) {
-            document.getElementById('displayResiNo').textContent = displayValue(shipment.no_resi);
-            document.getElementById('displayOrigin').textContent = displayValue(shipment.asal);
-            document.getElementById('displayDestination').textContent = displayValue(shipment.tujuan);
-            document.getElementById('displaySenderName').textContent = displayValue(shipment.pengirim_nama);
-            document.getElementById('displaySenderPhone').textContent = displayValue(shipment.pengirim_no_hp);
-            document.getElementById('displaySenderAddress').textContent = displayValue(shipment.pengirim_alamat);
-            document.getElementById('displayRecipientName').textContent = displayValue(shipment.penerima_nama);
-            document.getElementById('displayRecipientPhone').textContent = displayValue(shipment.penerima_no_hp);
-            document.getElementById('displayRecipientAddress').textContent = displayValue(shipment.penerima_alamat);
-            document.getElementById('displayItemType').textContent = displayValue(shipment.barang_jenis);
-
-            const weight = shipment.berat_kg;
-            document.getElementById('displayItemWeight').textContent =
-                weight === null || weight === undefined || weight === ''
-                    ? '—'
-                    : (Number.isFinite(Number(weight)) ? Number(weight).toFixed(2) + ' Kg' : displayValue(weight));
-
-            document.getElementById('displayServiceType').textContent = displayValue(shipment.jenis_pengiriman);
-            document.getElementById('displayShippingMethod').textContent = displayValue(shipment.layanan);
-
-            const timeline = document.getElementById('historyTimeline');
-            timeline.replaceChildren();
-
-            shipment.riwayat_pengiriman.forEach((historyEntry) => {
-                const isCurrent = historyEntry.status === shipment.status_terkini;
-                const item = document.createElement('div');
-                item.className = 'ml-5 relative';
-
-                const marker = document.createElement('div');
-                marker.className = 'absolute -left-[30px] top-0.5 w-4 h-4 rounded-full border-2 bg-white flex items-center justify-center ' +
-                    (isCurrent ? 'border-ncRed ring-4 ring-red-100' : 'border-emerald-500');
-
-                const dot = document.createElement('div');
-                dot.className = 'w-1.5 h-1.5 rounded-full ' + (isCurrent ? 'bg-ncRed' : 'bg-emerald-500');
-                marker.appendChild(dot);
-
-                const status = document.createElement('div');
-                status.className = 'font-bold text-xs ' + (isCurrent ? 'text-ncRed' : 'text-emerald-700');
-                status.textContent = displayValue(historyEntry.status);
-
-                const description = document.createElement('div');
-                description.className = 'text-gray-600 text-xs mt-1 leading-relaxed';
-                description.textContent = displayValue(historyEntry.keterangan);
-
-                const date = document.createElement('div');
-                date.className = 'text-gray-400 text-[10px] mt-1.5 font-medium';
-                date.textContent = [historyEntry.tanggal, historyEntry.waktu]
-                    .filter((value) => value !== null && value !== undefined && value !== '')
-                    .map(String)
-                    .join(' • ') || '—';
-
-                const content = document.createElement('div');
-                content.append(status, description, date);
-                item.append(marker, content);
-                timeline.appendChild(item);
-            });
-        }
-
-        document.getElementById('searchForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const requestedResi = document.getElementById('resiInput').value;
-            const errorAlert = document.getElementById('errorAlert');
-            const statusAlert = document.getElementById('statusAlert');
-            const trackingResult = document.getElementById('trackingResult');
-            const button = event.currentTarget.querySelector('button[type="submit"]');
-            const buttonText = button.querySelector('span');
-            const searchId = ++latestSearchId;
-
-            errorAlert.classList.add('hidden');
-            statusAlert.classList.add('hidden');
-            trackingResult.classList.add('hidden');
-            clearTrackingData();
-
-            if (requestedResi.length === 0) {
-                document.getElementById('invalidResiCode').textContent = '(kosong)';
-                errorAlert.classList.remove('hidden');
-                return;
-            }
-
-            statusAlert.textContent = 'Sedang mencari data pengiriman…';
-            statusAlert.className = 'mx-4 mt-3 p-3 bg-blue-50 border border-blue-200 text-blue-800 text-xs rounded-lg';
-            button.setAttribute('aria-busy', 'true');
-            buttonText.textContent = 'Sedang mencari…';
-
-            try {
-                const url = new URL(API_URL);
-                url.searchParams.set('no_resi', requestedResi);
-
-                const response = await fetch(url.toString(), {
-                    method: 'GET',
-                    headers: { 'Accept': 'application/json' },
-                    cache: 'no-store'
-                });
-
-                let payload;
-                try {
-                    payload = await response.json();
-                } catch {
-                    throw new Error('Respons server bukan JSON yang valid.');
-                }
-
-                if (searchId !== latestSearchId) return;
-
-                if (payload && Array.isArray(payload.data) && payload.data.length === 0) {
-                    document.getElementById('invalidResiCode').textContent = requestedResi;
-                    errorAlert.classList.remove('hidden');
-                    statusAlert.classList.add('hidden');
-                    return;
-                }
-
-                if (!response.ok) {
-                    throw new Error('Server tidak dapat memproses pencarian (HTTP ' + response.status + ').');
-                }
-
-                const shipment = validateShipmentPayload(payload, requestedResi);
-                if (!shipment) {
-                    throw new Error('Struktur respons API tidak sesuai kontrak.');
-                }
-
-                renderTrackingData(shipment);
-                trackingResult.classList.remove('hidden');
-                statusAlert.classList.add('hidden');
-            } catch (error) {
-                if (searchId !== latestSearchId) return;
-                statusAlert.textContent = error instanceof TypeError
-                    ? 'Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.'
-                    : (error && error.message ? error.message : 'Terjadi kesalahan saat mencari data.');
-                statusAlert.className = 'mx-4 mt-3 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg';
-                statusAlert.classList.remove('hidden');
-            } finally {
-                if (searchId === latestSearchId) {
-                    button.removeAttribute('aria-busy');
-                    buttonText.textContent = 'Lacak Sekarang';
-                }
-            }
-        });
-    </script>
-</div>
+    renderTrackingData(MOCK_SHIPMENTS['NSTCG0012555774']);
+  </script>
 </body>
 </html>
