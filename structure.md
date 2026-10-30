@@ -1,10 +1,8 @@
 # Project Structure
 
-Dokumen ini menjelaskan struktur direktori yang direncanakan untuk aplikasi **React + TypeScript + Vite** pada repository `gantulu/gantulu.github.io`.
+Dokumen ini mencatat struktur aktual repository `gantulu/gantulu.github.io` dan rencana pengembangan berikutnya. Repository aktual tetap menjadi sumber kebenaran.
 
-> **Catatan:** Tree di bawah adalah acuan struktur proyek, bukan hasil verifikasi bahwa seluruh file dan direktori tersebut sudah tersedia di repository.
-
-## Directory Tree
+## Current Directory Tree
 
 ```text
 .
@@ -12,69 +10,74 @@ Dokumen ini menjelaskan struktur direktori yang direncanakan untuk aplikasi **Re
 │   └── workflows/
 │       └── deploy.yml
 ├── public/
-│   └──
+│   └── favicon.svg
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   │   ├── common/
-│   │   └── ui/
-│   ├── layouts/
-│   │   └── MainLayout/
-│   ├── pages/
-│   │   ├── Home/
-│   │   ├── Products/
-│   │   ├── Orders/
-│   │   └── Livechat/
-│   ├── routes/
-│   │   └── AppRoutes.tsx
 │   ├── styles/
 │   │   └── global.css
 │   ├── App.tsx
-│   └── main.tsx
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── .gitignore
 ├── index.html
 ├── package.json
+├── README.md
+├── role.md
+├── structure.md
 ├── tsconfig.json
-├── vite.config.ts
-└── README.md
+└── vite.config.ts
+```
+
+## Planned Source Directories
+
+Direktori berikut belum dibuat. Tambahkan ketika kebutuhan implementasi sudah jelas dan terdapat file sumber yang akan ditempatkan di dalamnya.
+
+```text
+src/
+├── assets/
+├── components/
+│   ├── common/
+│   └── ui/
+├── layouts/
+│   └── MainLayout/
+├── pages/
+│   ├── Home/
+│   ├── Products/
+│   ├── Orders/
+│   └── Livechat/
+└── routes/
 ```
 
 ## Directory Responsibilities
 
 | Path | Responsibility |
 |---|---|
-| `.github/workflows/` | GitHub Actions workflow untuk build dan deploy ke GitHub Pages. |
-| `public/` | File statis yang disalin Vite tanpa proses import dari source code. |
-| `src/assets/` | Asset yang di-import oleh aplikasi, seperti gambar dan ikon. |
-| `src/components/common/` | Komponen reusable yang bersifat umum. |
-| `src/components/ui/` | Komponen UI dasar dan konsisten. |
-| `src/layouts/MainLayout/` | Layout utama yang digunakan oleh halaman aplikasi. |
+| `.github/workflows/` | Workflow GitHub Actions untuk build dan deployment manual GitHub Pages. |
+| `public/` | Aset statis yang disalin Vite tanpa melalui import source code. |
+| `src/assets/` | Aset yang diimpor oleh aplikasi. |
+| `src/components/common/` | Komponen reusable lintas fitur. |
+| `src/components/ui/` | Komponen UI dasar. |
+| `src/layouts/` | Layout yang digunakan oleh halaman aplikasi. |
 | `src/pages/` | Komponen halaman berdasarkan fitur atau route. |
-| `src/routes/` | Definisi dan konfigurasi routing aplikasi. |
+| `src/routes/` | Definisi dan konfigurasi routing bila diperlukan. |
 | `src/styles/` | Global stylesheet dan aturan styling bersama. |
 | `src/App.tsx` | Komponen root aplikasi. |
-| `src/main.tsx` | Entry point React untuk memasang aplikasi ke DOM. |
+| `src/main.tsx` | Entry point React. |
+| `src/vite-env.d.ts` | Deklarasi tipe bawaan Vite. |
 | `index.html` | HTML entry point Vite. |
-| `package.json` | Metadata proyek, dependencies, dan npm scripts. |
+| `package.json` | Metadata, dependencies, dan npm scripts. |
 | `tsconfig.json` | Konfigurasi TypeScript. |
-| `vite.config.ts` | Konfigurasi Vite, termasuk base path untuk GitHub Pages. |
-| `README.md` | Dokumentasi utama proyek dan instruksi pengembangan/deployment. |
+| `vite.config.ts` | Konfigurasi Vite dan base path GitHub Pages. |
+| `README.md` | Dokumentasi instalasi, development, build, dan deployment. |
+| `.gitignore` | Daftar file dan direktori lokal yang tidak dilacak Git. |
 
-## File Organization Conventions
+## GitHub Pages
 
-1. Letakkan komponen yang dipakai lintas fitur di `components/`.
-2. Letakkan komponen khusus halaman di direktori halaman terkait.
-3. Pisahkan konfigurasi route dari implementasi halaman.
-4. Gunakan ekstensi `.tsx` untuk file TypeScript yang berisi JSX dan `.ts` untuk TypeScript tanpa JSX.
-5. Hindari membuat folder atau file sebelum ada kebutuhan implementasi yang jelas.
-6. Jangan menggandakan komponen, konfigurasi, atau sumber data yang sudah tersedia.
-
-## GitHub Pages Deployment
-
-- Build aplikasi menggunakan script yang didefinisikan di `package.json`.
-- Atur `base` pada `vite.config.ts` sesuai jenis repository GitHub Pages.
-- Workflow `deploy.yml` bertanggung jawab menjalankan build dan menerbitkan hasil build ke GitHub Pages.
-- Pastikan konfigurasi routing kompatibel dengan static hosting GitHub Pages.
-- Deployment hanya dilakukan setelah perubahan dan hasil build diverifikasi.
+- Repository ini adalah GitHub user-site `gantulu.github.io`; Vite menggunakan `base: "/"`.
+- Workflow `deploy.yml` hanya menggunakan trigger `workflow_dispatch`.
+- Workflow tidak berjalan otomatis ketika ada push.
+- Deployment memerlukan GitHub Pages menggunakan source **GitHub Actions**.
+- Jangan menjalankan workflow deployment sebelum mendapat persetujuan.
+- Workflow memasang dependency menggunakan `npm install` karena `package-lock.json` belum tersedia. Setelah lockfile dihasilkan dan ditambahkan ke repository, ubah langkah instalasi menjadi `npm ci`.
 
 ## Technology Boundary
 
@@ -87,11 +90,12 @@ Standar teknologi proyek:
 - GitHub Actions
 - GitHub Pages
 
-Penambahan framework, library, atau layanan lain harus memiliki kebutuhan teknis yang jelas dan disetujui terlebih dahulu.
+Penambahan framework, library, atau layanan lain harus memiliki kebutuhan teknis dan persetujuan.
 
 ## Maintenance Rules
 
-- Repository aktual adalah sumber kebenaran untuk kondisi implementasi.
-- Perbarui dokumen ini ketika struktur proyek berubah.
-- Jangan menganggap item pada tree sudah dibuat sebelum diverifikasi di repository.
-- Hindari perubahan di luar scope dan jangan menghapus fitur tanpa persetujuan.
+1. Audit repository sebelum perubahan.
+2. Perbarui dokumen ini ketika struktur aktual berubah.
+3. Bedakan file yang sudah ada dari direktori rencana.
+4. Hindari file kosong, duplikasi, dan perubahan di luar scope.
+5. Verifikasi setiap perubahan.
