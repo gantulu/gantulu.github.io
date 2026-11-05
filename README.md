@@ -1,6 +1,6 @@
 # React + Vite
 
-Starter application menggunakan React, Vite, JavaScript (JSX), CSS, dan React Router.
+Starter aplikasi menggunakan React, Vite, JavaScript (JSX), CSS, dan React Router.
 
 ## Persyaratan
 
@@ -10,7 +10,7 @@ Starter application menggunakan React, Vite, JavaScript (JSX), CSS, dan React Ro
 ## Menjalankan project
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -20,6 +20,19 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+Hasil build production tersedia di folder `dist/`.
+
+## GitHub Pages
+
+Repository ini menggunakan GitHub Actions untuk membangun aplikasi Vite dan menerbitkan artifact `dist/` ke GitHub Pages.
+
+- Workflow deployment: `.github/workflows/deploy-pages.yml`
+- Trigger otomatis: setiap push ke branch `main`
+- Trigger manual: `workflow_dispatch`
+- Vite base path: `/` karena repository ini dipublikasikan sebagai GitHub user site (`gantulu.github.io`).
+
+Aktifkan **Settings → Pages → Build and deployment → Source: GitHub Actions** satu kali sebelum deployment pertama.
 
 ## Struktur
 
